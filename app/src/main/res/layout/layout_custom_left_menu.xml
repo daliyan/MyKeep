@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:background="@color/white"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include android:id="@+id/item_menu_1"
+        layout="@layout/item_left_menu"/>
+
+    <include android:id="@+id/item_menu_2"
+        layout="@layout/item_left_menu"/>
+
+    <include android:id="@+id/item_menu_3"
+        layout="@layout/item_left_menu"/>
+
+    <include android:id="@+id/item_menu_4"
+        layout="@layout/item_left_menu"/>
+
+</LinearLayout>
