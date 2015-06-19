@@ -9,6 +9,8 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import ssj.androiddesign.R;
+import ssj.androiddesign.View.TimeLineView;
+import ssj.androiddesign.bean.ChildRocommend;
 import ssj.androiddesign.bean.Recommend;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
@@ -16,27 +18,34 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
    private List<Recommend> mDataset;
    public RecyclerAdapter(List<Recommend> mDataset){
        this.mDataset=mDataset;
-       //this.mProgressBarCircularIndeterminate=progressBarCircularIndeterminate;
    }
 
-    // Create new views (invoked by the layout manager)
     @Override
     public RecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        // create a new view
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_main_list, parent, false);
         ViewHolder vh = new ViewHolder(v);
         return vh;
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.mTitleTv.setText(mDataset.get(position).title);
-        holder.mSubTitleTv.setText(mDataset.get(position).subtitle);
-        holder.phoneIv.setImageResource(mDataset.get(position).image);
+        if(mDataset!=null && mDataset.size()>0){
+            ChildRocommend childRocommend=mDataset.get(position).childRocommend;
+            if(childRocommend!=null){
+                holder.mTitleTv.setText(childRocommend.title);
+                holder.mSubTitleTv.setText(childRocommend.subtitle);
+                holder.phoneIv.setImageResource(childRocommend.image);
+                if(mDataset.get(position).timeTitle!=null){
+                    holder.timeLineView.setText(mDataset.get(position).timeTitle,true);
+                }else{
+                    holder.timeLineView.setText("",false);
+                }
+
+            }
+        }
+
     }
 
-    // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
         return mDataset.size();
@@ -50,11 +59,13 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         public TextView mTitleTv;
         public TextView mSubTitleTv;
         public CircleImageView phoneIv;
+        public TimeLineView timeLineView;
         public ViewHolder(View v) {
             super(v);
             mTitleTv =(TextView) v.findViewById(R.id.title);
             mSubTitleTv =(TextView) v.findViewById(R.id.subtitle);
             phoneIv =(CircleImageView) v.findViewById(R.id.phone_iv);
+            timeLineView=(TimeLineView) v.findViewById(R.id.title_timeLine_Tlv);
         }
     }
 }

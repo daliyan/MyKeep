@@ -17,12 +17,15 @@ import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import ssj.androiddesign.R;
 import ssj.androiddesign.adapter.RecyclerAdapter;
 import ssj.androiddesign.base.BaseActivity;
+import ssj.androiddesign.bean.ChildRocommend;
 import ssj.androiddesign.bean.Recommend;
+import ssj.androiddesign.util.DateUtil;
 
 
 public class MainActivity extends BaseActivity implements View.OnClickListener{
@@ -155,11 +158,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
 
     private List<Recommend> getData(){
         List<Recommend> mainRecylers=new ArrayList<Recommend>();
-        for(int i=0;i<1000;i++){
+        for(int i=0;i<100;i++){
             if(i%2==0){
-                mainRecylers.add(new Recommend("aspen","读书或者旅行",R.drawable.test));
+                mainRecylers.add(new Recommend(new ChildRocommend("aspen","读书或者旅行",R.drawable.test),DateUtil.getNowDayMothString(i)));
+                for(int j=0;j<2;j++){
+                    mainRecylers.add(new Recommend(new ChildRocommend("aspen","读书或者旅行",R.drawable.test),null));
+                }
             }else{
-                mainRecylers.add(new Recommend("yzw","高富帅",R.drawable.me));
+                mainRecylers.add(new Recommend(new ChildRocommend("yzw","高富帅",R.drawable.me),DateUtil.getNowDayMothString(i)));
+                for(int j=0;j<1;j++){
+                    mainRecylers.add(new Recommend(new ChildRocommend("yzw","高富帅",R.drawable.me),null));
+                }
             }
         }
         return mainRecylers;

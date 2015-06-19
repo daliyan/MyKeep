@@ -12,17 +12,9 @@
         android:orientation="vertical">
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="180dip"
+            android:layout_height="60dip"
             android:background="@color/main_bg">
-            <com.gc.materialdesign.views.ButtonFloat
-                android:id="@+id/buttonFloat"
-                android:layout_width="40dip"
-                android:layout_height="40dip"
-                android:background="#8BC34A"
-                materialdesign:animate="true"
-                android:layout_marginRight="10dip"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentBottom="true"/>
+
         </RelativeLayout>
 
 
@@ -46,6 +38,15 @@
                 android:gravity="center"
                 android:layout_gravity="center"
                 android:background="#1E88E5" />
+
+            <com.gc.materialdesign.views.ButtonFloat
+                android:id="@+id/buttonFloat"
+                android:layout_width="60dip"
+                android:layout_height="60dip"
+                android:background="#8BC34A"
+                android:layout_marginRight="5dip"
+                android:layout_gravity="bottom|right"
+                materialdesign:animate="true"/>
         </FrameLayout>
 
     </LinearLayout>
