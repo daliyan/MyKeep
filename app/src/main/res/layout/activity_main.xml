@@ -7,14 +7,7 @@
     android:background="@color/white"
     android:gravity="center_horizontal">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:background="@color/main_bg" />
-
-    <include layout="@layout/layout_custom_drawer" />
+   <include layout="@layout/layout_toolbar"/>
+   <include layout="@layout/layout_custom_drawer" />
 
 </LinearLayout>

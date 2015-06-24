@@ -5,16 +5,78 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include android:id="@+id/item_menu_1"
-        layout="@layout/item_left_menu"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/main_bg"
+        android:orientation="vertical"
+        android:layout_gravity="center">
 
-    <include android:id="@+id/item_menu_2"
-        layout="@layout/item_left_menu"/>
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/user_image_iv"
+            android:layout_width="80dip"
+            android:layout_height="80dip"
+            android:layout_marginTop="16dip"
+            android:layout_gravity="center"
+            android:src="@drawable/head"/>
 
-    <include android:id="@+id/item_menu_3"
-        layout="@layout/item_left_menu"/>
+        <TextView
+            android:id="@+id/username_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:layout_gravity="center"
+            android:paddingTop="5dip"
+            android:layout_marginBottom="5dip"
+            android:text="zhiwu_yan"
+            android:textSize="14sp"/>
 
-    <include android:id="@+id/item_menu_4"
-        layout="@layout/item_left_menu"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:orientation="vertical"
+        android:layout_weight="1">
+
+        <include android:id="@+id/item_menu_1"
+            layout="@layout/item_left_menu"/>
+
+        <include android:id="@+id/item_menu_2"
+            layout="@layout/item_left_menu"/>
+
+        <include android:id="@+id/item_menu_3"
+            layout="@layout/item_left_menu"/>
+
+        <include android:id="@+id/item_menu_4"
+            layout="@layout/item_left_menu"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/left_menu_bottom_bg"
+        android:gravity="bottom">
+
+        <include android:id="@+id/item_menu_5"
+            android:layout_width="wrap_content"
+            android:layout_height="50dip"
+            android:layout_weight="1"
+            layout="@layout/item_left_menu"/>
+
+        <View
+            android:layout_width="0.5dip"
+            android:layout_height="match_parent"
+            android:background="@color/line_bg"/>
+        <include android:id="@+id/item_menu_6"
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:layout_height="50dip"
+            layout="@layout/item_left_menu"/>
+
+    </LinearLayout>
 
 </LinearLayout>

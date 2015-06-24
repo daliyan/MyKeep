@@ -1,0 +1,68 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_gravity="center_horizontal"
+    android:fitsSystemWindows="true"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include android:id="@+id/login_toolbar"
+        layout="@layout/layout_toolbar"/>
+
+    <EditText
+        android:id="@+id/username_et"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/login_toolbar"
+        android:drawablePadding="5dip"
+        android:textColor="@color/black"
+        android:drawableLeft="@drawable/ic_perm_identity_black_24dp"
+        android:layout_margin="16dp"
+        android:hint="@string/username" />
+
+    <EditText
+        android:id="@+id/password_et"
+        android:inputType="textPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/ic_invert_colors_black_24dp"
+        android:layout_below="@+id/username_et"
+        android:textColor="@color/black"
+        android:drawablePadding="5dip"
+        android:layout_margin="16dp"
+        android:fontFamily="sans-serif"
+        android:hint="@string/password"/>
+
+    <Button
+        android:id="@+id/login_btn"
+        android:layout_width="match_parent"
+        android:layout_height="50dip"
+        android:background="#E91E63"
+        android:layout_below="@+id/password_et"
+        android:textColor="@color/white"
+        android:layout_margin="16dip"
+        android:fontFamily="sans-serif"
+        android:text="登录"/>
+
+    <TextView
+        android:id="@+id/forgot_password_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="16dip"
+        android:layout_below="@+id/login_btn"
+        android:textColor="@color/black"
+        android:fontFamily="sans-serif"
+        android:text="@string/forgot_password"/>
+
+    <TextView
+        android:id="@+id/regis_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dip"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        android:fontFamily="sans-serif"
+        android:text="@string/regis"/>
+
+</RelativeLayout>

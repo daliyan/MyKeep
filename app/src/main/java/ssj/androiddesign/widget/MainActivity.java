@@ -1,5 +1,6 @@
 package ssj.androiddesign.widget;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
@@ -7,35 +8,41 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVUser;
+import com.avos.avoscloud.SignUpCallback;
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import ssj.androiddesign.R;
 import ssj.androiddesign.adapter.RecyclerAdapter;
 import ssj.androiddesign.base.BaseActivity;
-import ssj.androiddesign.bean.ChildRocommend;
-import ssj.androiddesign.bean.Recommend;
+import ssj.androiddesign.bean.vo.ChildRocommend;
+import ssj.androiddesign.bean.vo.Recommend;
 import ssj.androiddesign.util.DateUtil;
 
 
 public class MainActivity extends BaseActivity implements View.OnClickListener{
+
+    private final static String TAG="MainActivity";
+    public final static int LOGIN_REQUEST=0;
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private ProgressBarCircularIndeterminate mProgressBar;
 
-    private Toolbar mToolbar;
     private DrawerLayout mDrawerDl;//侧滑菜单布局控件
     private ActionBarDrawerToggle mDrawerToggle;
 
@@ -43,25 +50,36 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
     private View mFiledView;
     private View mRecycleView;
     private View mSettingView;
+    private View mSyncView;//同步数据
+    private View mHelpView;//帮助
 
     private TextView mRecordTv;
     private TextView mFiledTv;
     private TextView mRecycleTv;
     private TextView mSettingTv;
+    private TextView mSyncTv;
+    private TextView mHelpTv;
 
+    private ImageView mRecordIv;
+    private ImageView mFiledIv;
+    private ImageView mRecycleIv;
+    private ImageView mSettingIv;
+    private ImageView mSyncIv;
+    private ImageView mHelpIv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        findView();
-        initView();
         setDrawer();
-        setOnClick();
     }
 
-    private void findView(){
-        mToolbar= (Toolbar) findViewById(R.id.toolbar);
+    @Override
+    protected void setBackListener() {
+    }
+
+    @Override
+    protected void findView(){
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         mProgressBar=(ProgressBarCircularIndeterminate) findViewById(R.id.progressBarCircularIndeterminate);
         mDrawerDl=(DrawerLayout)findViewById(R.id.left_menu_dl);
@@ -69,23 +87,32 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
 
         mRecordView= findViewById(R.id.item_menu_1);
         mRecordTv =(TextView) mRecordView.findViewById(R.id.title_tv);
+        mRecordIv =(ImageView) mRecordView.findViewById(R.id.title_iv);
 
         mFiledView= findViewById(R.id.item_menu_2);
         mFiledTv =(TextView) mFiledView.findViewById(R.id.title_tv);
+        mFiledIv =(ImageView) mFiledView.findViewById(R.id.title_iv);
 
         mRecycleView= findViewById(R.id.item_menu_3);
         mRecycleTv =(TextView) mRecycleView.findViewById(R.id.title_tv);
+        mRecycleIv =(ImageView) mRecycleView.findViewById(R.id.title_iv);
 
-        mSettingView= findViewById(R.id.item_menu_4);
+        mSettingView = findViewById(R.id.item_menu_4);
         mSettingTv =(TextView) mSettingView.findViewById(R.id.title_tv);
+        mSettingIv =(ImageView) mSettingView.findViewById(R.id.title_iv);
 
+        mSyncView= findViewById(R.id.item_menu_5);
+        mSyncTv=(TextView) mSyncView.findViewById(R.id.title_tv);
+        mSyncIv=(ImageView) mSyncView.findViewById(R.id.title_iv);
+
+        mHelpView= findViewById(R.id.item_menu_6);
+        mHelpTv=(TextView) mHelpView.findViewById(R.id.title_tv);
+        mHelpIv=(ImageView) mHelpView.findViewById(R.id.title_iv);
     }
 
-    /**
-     * 初始化View的基本数据
-     */
-    private void initView(){
-        setToolBar();
+    @Override
+    protected void initView(){
+        setToolBarTitle("记事");
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new RecyclerAdapter(getData());
@@ -95,9 +122,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         mFiledView.setBackgroundResource(R.color.white);
         mRecycleView.setBackgroundResource(R.color.white);
         mSettingView.setBackgroundResource(R.color.white);
-
-        setStatusBarView();
         setLeftMenuItem();
+    }
+
+    @Override
+    protected void setOnClick(){
+        mRecordView.setOnClickListener(this);
+        mRecycleView.setOnClickListener(this);
+        mSettingView.setOnClickListener(this);
+        mFiledView.setOnClickListener(this);
     }
 
     /**
@@ -105,33 +138,23 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
      */
    private void setLeftMenuItem(){
        mRecordTv.setText(getResources().getString(R.string.item_menu_1));
-       mFiledTv.setText(getResources().getString(R.string.item_menu_2));
-       mRecycleTv.setText(getResources().getString(R.string.item_menu_3));
-       mSettingTv.setText(getResources().getString(R.string.item_menu_4));
-   }
-    /**
-     * 设置ToolBar
-     */
-    private void setToolBar(){
-        mToolbar.setTitle("akiyamay的博客");
-        setSupportActionBar(mToolbar);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
+       mRecordIv.setImageResource(R.drawable.ic_assignment_black_24dp);
 
-    /**
-     * 设置状态栏的颜色，目前只是在4.4上面有效
-     */
-    private void setStatusBarView() {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-            SystemBarTintManager tintManager = new SystemBarTintManager(this);
-            tintManager.setStatusBarTintEnabled(true);
-            tintManager.setNavigationBarTintEnabled(false);
-            tintManager.setTintColor(getResources().getColor(R.color.main_bg));
-        }
-    }
+       mFiledTv.setText(getResources().getString(R.string.item_menu_2));
+       mFiledIv.setImageResource(R.drawable.ic_access_alarms_black_24dp);
+
+       mRecycleTv.setText(getResources().getString(R.string.item_menu_3));
+       mRecycleIv.setImageResource(R.drawable.ic_drafts_black_24dp);
+
+       mSettingTv.setText(getResources().getString(R.string.item_menu_4));
+       mSettingIv.setImageResource(R.drawable.ic_settings_black_24dp);
+
+       mSyncTv.setText(getResources().getString(R.string.item_menu_5));
+       mSyncIv.setImageResource(R.drawable.ic_loop_black_24dp);
+
+       mHelpTv.setText(getResources().getString(R.string.item_menu_6));
+       mHelpIv.setImageResource(R.drawable.ic_help_black_24dp);
+   }
 
     private void setDrawer(){
         //创建返回键，并实现打开关/闭监听
@@ -147,13 +170,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         };
         mDrawerToggle.syncState();
         mDrawerDl.setDrawerListener(mDrawerToggle);
-    }
-
-    private void setOnClick(){
-        mRecordView.setOnClickListener(this);
-        mRecycleView.setOnClickListener(this);
-        mSettingView.setOnClickListener(this);
-        mFiledView.setOnClickListener(this);
     }
 
     private List<Recommend> getData(){
@@ -183,11 +199,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_search) {
-            return true;
+        switch (id){
+            case R.id.action_login:
+                showLoginDilog();
+                break;
+            default:
+                break;
         }
-        return super.onOptionsItemSelected(item);
+        return true;
     }
+
 
     @Override
     public void onClick(View v) {
@@ -222,4 +243,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == LOGIN_REQUEST) {
+            if (resultCode == RESULT_OK) {
+
+            }
+        }
+    }
+
+    private void showLoginDilog(){
+        Intent login=new Intent(this,LoginRegActivity.class);
+        startActivityForResult(login,LOGIN_REQUEST);
+    }
 }

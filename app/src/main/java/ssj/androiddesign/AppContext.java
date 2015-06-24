@@ -5,6 +5,8 @@ import android.app.Application;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
+import com.avos.avoscloud.AVOSCloud;
+
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -33,6 +35,9 @@ public class AppContext extends Application{
     @Override
     public void onCreate() {
         super.onCreate();
+        //初始化AVOS
+        AVOSCloud.initialize(this,"0t6l98r6429fu5z6pde2f6zn9r8ykm5itbrmuxzormpuifva",
+                "1aw548nzzzhxetq0b8yxgbdjpatr9pvj8m8zttebl1z2t73l");
         init();
         initAppInfo();
     }
@@ -99,4 +104,5 @@ public class AppContext extends Application{
     public static AppContext getInstance(){
         return mInstance;
     }
+
 }

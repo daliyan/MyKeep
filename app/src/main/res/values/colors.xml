@@ -9,4 +9,6 @@
     <color name="list_title">#1f1f1f</color>
     <color name="list_subtitle">#828282</color>
 
+    <color name="left_menu_bottom_bg">#E0E0E0</color>
+    <color name="line_bg">#BDBDBD</color>
 </resources>

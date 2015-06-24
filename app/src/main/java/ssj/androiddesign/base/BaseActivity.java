@@ -1,23 +1,134 @@
 package ssj.androiddesign.base;
 
 import android.app.Activity;
+import android.content.res.Resources;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.view.View;
+import android.view.WindowManager;
+
+import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVObject;
+import com.avos.avoscloud.AVUser;
+import com.avos.avoscloud.SaveCallback;
+import com.avos.avoscloud.SignUpCallback;
+import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 import ssj.androiddesign.AppContext;
+import ssj.androiddesign.R;
+import ssj.androiddesign.util.LogUtil;
 
 /**
  * Activity基类
+ * <br/>.继承该BaseActivity必须在布局文件中实现Toolbar，否则会找不到mToolbar而报错
+ * <br/>.如果需要重新定义ToolBar上面的HomeAsUp图标只需要重写setBackEvent()事件即可
  * @author zhiwu_yan
  * @version 1.0
  * @since 2015-06-12  09:59
  */
-public class BaseActivity extends ActionBarActivity{
+public abstract class BaseActivity extends ActionBarActivity{
 
+    private final static String TAG="BaseActivity";
     protected final Activity mContext=this;
+    protected Toolbar mToolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AppContext.setActiveContext(this);
     }
+
+    @Override
+    public void setContentView(int layoutResID) {
+        super.setContentView(layoutResID);
+        mToolbar= (Toolbar) findViewById(R.id.toolbar);
+        findView();
+        initView();
+        setOnClick();
+        setStatusBarView();
+        regi();
+    }
+
+    private void regi(){
+        AVUser user = new AVUser();
+        user.setUsername("yzw");
+        user.setPassword("123456789");
+        user.setEmail("dali_yan@yeah.net");
+        user.put("phone", "213-253-0000");
+        user.signUpInBackground(new SignUpCallback() {
+            public void done(AVException e) {
+                if (e == null) {
+                    // successfully
+                } else {
+                    // failed
+                }
+            }
+        });
+    }
+
+    /**
+     * 设置ToolBar
+     */
+    protected void setToolBarTitle(String title){
+        if(!TextUtils.isEmpty(title)){
+            mToolbar.setTitle(title);
+        }
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        final Drawable upArrow = getResources().getDrawable(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+        upArrow.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+        getSupportActionBar().setHomeAsUpIndicator(upArrow);
+        setBackListener();
+    }
+
+    protected void setBackListener(){
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setBackEvent();
+            }
+        });
+    }
+
+    /**
+     * 设置返回按钮的事件，默认是返回到前一个界面
+     */
+    protected void setBackEvent(){
+        onBackPressed();
+    }
+
+    /**
+     * 设置状态栏的颜色，目前只是在4.4上面有效
+     */
+    protected void setStatusBarView() {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+            SystemBarTintManager tintManager = new SystemBarTintManager(this);
+            tintManager.setStatusBarTintEnabled(true);
+            tintManager.setNavigationBarTintEnabled(false);
+            tintManager.setTintColor(getResources().getColor(R.color.main_bg));
+        }
+    }
+
+    /**
+     * 获取布局控件
+     */
+    protected abstract void findView();
+
+    /**
+     * 初始化View的一些数据
+     */
+    protected abstract void initView();
+
+    /**
+     * 设置监听
+     */
+    protected abstract void setOnClick();
 }

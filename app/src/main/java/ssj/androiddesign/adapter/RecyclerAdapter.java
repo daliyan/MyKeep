@@ -10,8 +10,8 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 import ssj.androiddesign.R;
 import ssj.androiddesign.View.TimeLineView;
-import ssj.androiddesign.bean.ChildRocommend;
-import ssj.androiddesign.bean.Recommend;
+import ssj.androiddesign.bean.vo.ChildRocommend;
+import ssj.androiddesign.bean.vo.Recommend;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
 
