@@ -50,24 +50,6 @@ public abstract class BaseActivity extends ActionBarActivity{
         initView();
         setOnClick();
         setStatusBarView();
-        regi();
-    }
-
-    private void regi(){
-        AVUser user = new AVUser();
-        user.setUsername("yzw");
-        user.setPassword("123456789");
-        user.setEmail("dali_yan@yeah.net");
-        user.put("phone", "213-253-0000");
-        user.signUpInBackground(new SignUpCallback() {
-            public void done(AVException e) {
-                if (e == null) {
-                    // successfully
-                } else {
-                    // failed
-                }
-            }
-        });
     }
 
     /**

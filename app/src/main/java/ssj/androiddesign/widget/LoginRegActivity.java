@@ -8,6 +8,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVUser;
+import com.avos.avoscloud.LogInCallback;
+import com.avos.avoscloud.RequestPasswordResetCallback;
+
 import ssj.androiddesign.R;
 import ssj.androiddesign.base.BaseActivity;
 import ssj.androiddesign.bean.User;
@@ -28,7 +33,6 @@ public class LoginRegActivity extends BaseActivity implements View.OnClickListen
     private EditText passwordEt;
     private Button loginBtn;
     private TextView forgotPasswordTv;
-    private UserService userService=new UserImple();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,44 +63,28 @@ public class LoginRegActivity extends BaseActivity implements View.OnClickListen
         int id=v.getId();
         switch (id){
             case R.id.login_btn:
-                if(isLogin()){
-                    setResult(RESULT_OK);
-                    finish();
-                }else{
-                    Toast.makeText(this,"用户名或密码错误！",Toast.LENGTH_LONG).show();
-                }
+                login();
                 break;
             case R.id.forgot_password_tv:
-                if(isForgotPassword()){
-                    Toast.makeText(this,"密码重置成功，请查看邮件重置密码！",Toast.LENGTH_LONG).show();
-                }else{
-                    Toast.makeText(this,"用户名不存在！",Toast.LENGTH_LONG).show();
-                }
                 break;
         }
     }
 
-    private boolean isLogin(){
-
+    private void login(){
         String userName=userNameEt.getText().toString();
         String password=passwordEt.getText().toString();
         if(!TextUtils.isEmpty(userName) && !TextUtils.isEmpty(password)){
-            User user=new User();
-            user.userName=userName;
-            user.passWord=password;
-            return userService.login(user);
+                AVUser.logInInBackground(userName, password, new LogInCallback() {
+                    public void done(AVUser user, AVException e) {
+                        if (user != null) {
+                            setResult(RESULT_OK);
+                            finish();
+                        } else {
+                                Toast.makeText(LoginRegActivity.this,"用户名或密码错误！",Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
         }
-        return false;
     }
-
-    private boolean isForgotPassword(){
-        String userName=userNameEt.getText().toString();
-        if(!TextUtils.isEmpty(userName)){
-            return userService.findPassword(userService.getUserByUserName(userName).email);
-        }
-
-        return false;
-    }
-
 
 }

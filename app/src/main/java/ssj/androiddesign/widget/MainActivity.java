@@ -22,6 +22,8 @@ import com.avos.avoscloud.SignUpCallback;
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,15 +69,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
     private ImageView mSyncIv;
     private ImageView mHelpIv;
 
+    private TextView mUserName;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setDrawer();
-    }
-
-    @Override
-    protected void setBackListener() {
+        setUserInfo();
     }
 
     @Override
@@ -108,6 +109,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         mHelpView= findViewById(R.id.item_menu_6);
         mHelpTv=(TextView) mHelpView.findViewById(R.id.title_tv);
         mHelpIv=(ImageView) mHelpView.findViewById(R.id.title_iv);
+
+        mUserName=(TextView) findViewById(R.id.username_tv);
     }
 
     @Override
@@ -131,6 +134,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         mRecycleView.setOnClickListener(this);
         mSettingView.setOnClickListener(this);
         mFiledView.setOnClickListener(this);
+    }
+
+    @Override
+    protected void setBackListener() {
     }
 
     /**
@@ -172,27 +179,36 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         mDrawerDl.setDrawerListener(mDrawerToggle);
     }
 
-    private List<Recommend> getData(){
-        List<Recommend> mainRecylers=new ArrayList<Recommend>();
-        for(int i=0;i<100;i++){
-            if(i%2==0){
-                mainRecylers.add(new Recommend(new ChildRocommend("aspen","读书或者旅行",R.drawable.test),DateUtil.getNowDayMothString(i)));
-                for(int j=0;j<2;j++){
-                    mainRecylers.add(new Recommend(new ChildRocommend("aspen","读书或者旅行",R.drawable.test),null));
-                }
-            }else{
-                mainRecylers.add(new Recommend(new ChildRocommend("yzw","高富帅",R.drawable.me),DateUtil.getNowDayMothString(i)));
-                for(int j=0;j<1;j++){
-                    mainRecylers.add(new Recommend(new ChildRocommend("yzw","高富帅",R.drawable.me),null));
-                }
-            }
+    /**
+     * 判断是否有缓存的用户
+     * @return AVUser
+     */
+    private AVUser getCurrentUser(){
+        return AVUser.getCurrentUser();
+    }
+
+    /**
+     * 设置用户信息
+     */
+    private void setUserInfo(){
+        if(getCurrentUser()!=null){
+            mUserName.setText(getCurrentUser().getUsername());
+        }else{
+            mUserName.setText(getResources().getString(R.string.no_login));
         }
-        return mainRecylers;
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        MenuItem login=menu.findItem(R.id.action_login);
+        AVUser avUser=getCurrentUser();
+        if(avUser!=null){
+            login.setTitle(getResources().getString(R.string.loginOut));
+        }else{
+            login.setTitle(getResources().getString(R.string.action_login));
+        }
         return true;
     }
 
@@ -201,7 +217,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         int id = item.getItemId();
         switch (id){
             case R.id.action_login:
-                showLoginDilog();
+                if(getCurrentUser()!=null){
+                    loginOut();
+                }else{
+                    goLogin();
+                }
                 break;
             default:
                 break;
@@ -247,13 +267,38 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == LOGIN_REQUEST) {
             if (resultCode == RESULT_OK) {
-
+                supportInvalidateOptionsMenu();
+                setUserInfo();
             }
         }
     }
 
-    private void showLoginDilog(){
+    private void goLogin(){
         Intent login=new Intent(this,LoginRegActivity.class);
         startActivityForResult(login,LOGIN_REQUEST);
+    }
+
+    private void loginOut(){
+        AVUser.logOut();//清除当前缓存的数据
+        supportInvalidateOptionsMenu();
+        setUserInfo();
+    }
+
+    private List<Recommend> getData(){
+        List<Recommend> mainRecylers=new ArrayList<Recommend>();
+        for(int i=0;i<100;i++){
+            if(i%2==0){
+                mainRecylers.add(new Recommend(new ChildRocommend("aspen","读书或者旅行",R.drawable.test),DateUtil.getNowDayMothString(i)));
+                for(int j=0;j<2;j++){
+                    mainRecylers.add(new Recommend(new ChildRocommend("aspen","读书或者旅行",R.drawable.test),null));
+                }
+            }else{
+                mainRecylers.add(new Recommend(new ChildRocommend("yzw","高富帅",R.drawable.me),DateUtil.getNowDayMothString(i)));
+                for(int j=0;j<1;j++){
+                    mainRecylers.add(new Recommend(new ChildRocommend("yzw","高富帅",R.drawable.me),null));
+                }
+            }
+        }
+        return mainRecylers;
     }
 }

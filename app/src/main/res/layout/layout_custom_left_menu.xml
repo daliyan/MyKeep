@@ -6,6 +6,7 @@
     android:layout_height="match_parent">
 
     <LinearLayout
+        android:id="@+id/login_ll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/main_bg"
@@ -28,7 +29,7 @@
             android:layout_gravity="center"
             android:paddingTop="5dip"
             android:layout_marginBottom="5dip"
-            android:text="zhiwu_yan"
+            android:text="@string/no_login"
             android:textSize="14sp"/>
 
     </LinearLayout>
