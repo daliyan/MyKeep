@@ -11,4 +11,9 @@
 
     <color name="left_menu_bottom_bg">#E0E0E0</color>
     <color name="line_bg">#BDBDBD</color>
+
+
+
+
+    <color name="trans">#00000000</color>
 </resources>

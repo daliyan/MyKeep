@@ -25,6 +25,9 @@
 
         <activity android:name=".widget.LoginRegActivity"
             android:screenOrientation="portrait"/>
+
+        <activity android:name=".widget.AddRecordActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

@@ -21,11 +21,13 @@ import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 import ssj.androiddesign.AppContext;
 import ssj.androiddesign.R;
+import ssj.androiddesign.event.imple.EventObserver;
 import ssj.androiddesign.util.LogUtil;
 
 /**
  * Activity基类
  * <br/>.继承该BaseActivity必须在布局文件中实现Toolbar，否则会找不到mToolbar而报错
+ * <br/>.ToolBar的书写方式为：<include layout="@layout/layout_toolbar"/>
  * <br/>.如果需要重新定义ToolBar上面的HomeAsUp图标只需要重写setBackEvent()事件即可
  * @author zhiwu_yan
  * @version 1.0
@@ -36,6 +38,7 @@ public abstract class BaseActivity extends ActionBarActivity{
     private final static String TAG="BaseActivity";
     protected final Activity mContext=this;
     protected Toolbar mToolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,4 +116,5 @@ public abstract class BaseActivity extends ActionBarActivity{
      * 设置监听
      */
     protected abstract void setOnClick();
+
 }

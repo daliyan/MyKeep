@@ -11,13 +11,12 @@ import android.widget.Toast;
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.LogInCallback;
-import com.avos.avoscloud.RequestPasswordResetCallback;
 
 import ssj.androiddesign.R;
 import ssj.androiddesign.base.BaseActivity;
 import ssj.androiddesign.bean.User;
-import ssj.androiddesign.db.imple.UserImple;
-import ssj.androiddesign.db.service.UserService;
+import ssj.androiddesign.event.EventType;
+import ssj.androiddesign.event.Notify;
 
 /**
  * 登录和注册帐号界面
@@ -77,10 +76,10 @@ public class LoginRegActivity extends BaseActivity implements View.OnClickListen
                 AVUser.logInInBackground(userName, password, new LogInCallback() {
                     public void done(AVUser user, AVException e) {
                         if (user != null) {
-                            setResult(RESULT_OK);
+                            Notify.getInstance().NotifyActivity(EventType.EVENT_LOGIN);//通知登录成功
                             finish();
                         } else {
-                                Toast.makeText(LoginRegActivity.this,"用户名或密码错误！",Toast.LENGTH_LONG).show();
+                            Toast.makeText(LoginRegActivity.this, "用户名或密码错误！", Toast.LENGTH_LONG).show();
                         }
                     }
                 });

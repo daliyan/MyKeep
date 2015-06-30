@@ -1,49 +1,47 @@
 package ssj.androiddesign.widget;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.AVUser;
-import com.avos.avoscloud.SignUpCallback;
+import com.avos.avoscloud.FindCallback;
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
-import com.readystatesoftware.systembartint.SystemBarTintManager;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import ssj.androiddesign.R;
 import ssj.androiddesign.adapter.RecyclerAdapter;
-import ssj.androiddesign.base.BaseActivity;
+import ssj.androiddesign.base.BaseObserverActivity;
+import ssj.androiddesign.bean.Record;
 import ssj.androiddesign.bean.vo.ChildRocommend;
 import ssj.androiddesign.bean.vo.Recommend;
+import ssj.androiddesign.event.EventType;
+import ssj.androiddesign.event.Notify;
 import ssj.androiddesign.util.DateUtil;
+import ssj.androiddesign.util.LoginHelper;
 
 
-public class MainActivity extends BaseActivity implements View.OnClickListener{
+public class MainActivity extends BaseObserverActivity implements View.OnClickListener{
 
     private final static String TAG="MainActivity";
-    public final static int LOGIN_REQUEST=0;
-
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private ProgressBarCircularIndeterminate mProgressBar;
+    private List<Recommend> mRecommends;
 
     private DrawerLayout mDrawerDl;//侧滑菜单布局控件
     private ActionBarDrawerToggle mDrawerToggle;
@@ -68,8 +66,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
     private ImageView mSettingIv;
     private ImageView mSyncIv;
     private ImageView mHelpIv;
-
-    private TextView mUserName;
+    private TextView mUserNameTv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +74,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         setContentView(R.layout.activity_main);
         setDrawer();
         setUserInfo();
+        getRecord();
     }
+
 
     @Override
     protected void findView(){
@@ -110,17 +109,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         mHelpTv=(TextView) mHelpView.findViewById(R.id.title_tv);
         mHelpIv=(ImageView) mHelpView.findViewById(R.id.title_iv);
 
-        mUserName=(TextView) findViewById(R.id.username_tv);
+        mUserNameTv =(TextView) findViewById(R.id.username_tv);
     }
 
     @Override
     protected void initView(){
         setToolBarTitle("记事");
+        mProgressBar.setVisibility(View.GONE);
+        mRecommends=new ArrayList<Recommend>();
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new RecyclerAdapter(getData());
+        mAdapter = new RecyclerAdapter(mRecommends);
         mRecyclerView.setAdapter(mAdapter);
-        mProgressBar.setVisibility(View.GONE);
         mRecordView.setBackgroundResource(R.color.light_gray);
         mFiledView.setBackgroundResource(R.color.white);
         mRecycleView.setBackgroundResource(R.color.white);
@@ -138,6 +138,32 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
 
     @Override
     protected void setBackListener() {
+    }
+
+    @Override
+    protected void onChange(String eventType) {
+        if(eventType.equals(EventType.EVENT_LOGIN)){
+            supportInvalidateOptionsMenu();
+            mUserNameTv.setText(LoginHelper.getCurrentUser().getUsername());
+            getRecord();
+        }else if(eventType.equals(EventType.EVENT_LOGINOUT)){
+            supportInvalidateOptionsMenu();
+            mUserNameTv.setText(getResources().getString(R.string.no_login));
+            mRecommends.clear();
+            mAdapter = new RecyclerAdapter(mRecommends);
+            mRecyclerView.setAdapter(mAdapter);
+        }else if(eventType.equals(EventType.EVENT_ADD_RECORD)){
+            getRecord();
+        }
+    }
+
+    @Override
+    protected String[] getObserverEventType() {
+        return new String[]{
+                EventType.EVENT_LOGIN,
+                EventType.EVENT_LOGINOUT,
+                EventType.EVENT_ADD_RECORD
+        };
     }
 
     /**
@@ -180,21 +206,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
     }
 
     /**
-     * 判断是否有缓存的用户
-     * @return AVUser
-     */
-    private AVUser getCurrentUser(){
-        return AVUser.getCurrentUser();
-    }
-
-    /**
      * 设置用户信息
      */
     private void setUserInfo(){
-        if(getCurrentUser()!=null){
-            mUserName.setText(getCurrentUser().getUsername());
+        if(LoginHelper.isLogin()){
+            mUserNameTv.setText(LoginHelper.getCurrentUser().getUsername());
         }else{
-            mUserName.setText(getResources().getString(R.string.no_login));
+            mUserNameTv.setText(getResources().getString(R.string.no_login));
         }
 
     }
@@ -203,7 +221,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         MenuItem login=menu.findItem(R.id.action_login);
-        AVUser avUser=getCurrentUser();
+        AVUser avUser=LoginHelper.getCurrentUser();
         if(avUser!=null){
             login.setTitle(getResources().getString(R.string.loginOut));
         }else{
@@ -217,11 +235,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         int id = item.getItemId();
         switch (id){
             case R.id.action_login:
-                if(getCurrentUser()!=null){
-                    loginOut();
+                if(LoginHelper.isLogin()){
+                    AVUser.logOut();//清除当前缓存的数据
+                    Notify.getInstance().NotifyActivity(EventType.EVENT_LOGINOUT);//通知注销登录信息
+                    Toast.makeText(this, "注销成功！", Toast.LENGTH_LONG).show();
                 }else{
                     goLogin();
                 }
+                break;
+            case R.id.action_add:
+                goAddRcord();
                 break;
             default:
                 break;
@@ -263,42 +286,47 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == LOGIN_REQUEST) {
-            if (resultCode == RESULT_OK) {
-                supportInvalidateOptionsMenu();
-                setUserInfo();
-            }
-        }
-    }
-
     private void goLogin(){
         Intent login=new Intent(this,LoginRegActivity.class);
-        startActivityForResult(login,LOGIN_REQUEST);
+        startActivity(login);
+    }
+
+    private void goAddRcord(){
+        Intent addRecord=new Intent(this,AddRecordActivity.class);
+        startActivity(addRecord);
+    }
+
+    private List<Recommend> getData(List<Record> records){
+        List<Recommend> mainRecylers=new ArrayList<Recommend>();
+        for(int i=0;i<records.size();i++){
+            mainRecylers.add(new Recommend(new ChildRocommend(records.get(i).getTitle(),records.get(i).getContent(),R.drawable.test),
+                    DateUtil.getDate(records.get(i).getDateTime())));
+        }
+        return mainRecylers;
+    }
+
+
+    private void getRecord(){
+        if(LoginHelper.isLogin()){
+            mProgressBar.setVisibility(View.VISIBLE);
+            AVQuery<Record> query = new AVQuery<Record>("Record");
+            query.whereNotEqualTo("creator", LoginHelper.getCurrentUser().getUsername());
+            query.orderByDescending("createdAt");
+            query.findInBackground(new FindCallback<Record>() {
+                public void done(List<Record> avObjects, AVException e) {
+                    if (null == avObjects || null != e) {
+                        return;
+                    }
+                    mRecommends=getData(avObjects);
+                    mAdapter = new RecyclerAdapter(mRecommends);
+                    mRecyclerView.setAdapter(mAdapter);
+                    mProgressBar.setVisibility(View.GONE);
+                }
+            });
+        }
     }
 
     private void loginOut(){
-        AVUser.logOut();//清除当前缓存的数据
-        supportInvalidateOptionsMenu();
-        setUserInfo();
-    }
 
-    private List<Recommend> getData(){
-        List<Recommend> mainRecylers=new ArrayList<Recommend>();
-        for(int i=0;i<100;i++){
-            if(i%2==0){
-                mainRecylers.add(new Recommend(new ChildRocommend("aspen","读书或者旅行",R.drawable.test),DateUtil.getNowDayMothString(i)));
-                for(int j=0;j<2;j++){
-                    mainRecylers.add(new Recommend(new ChildRocommend("aspen","读书或者旅行",R.drawable.test),null));
-                }
-            }else{
-                mainRecylers.add(new Recommend(new ChildRocommend("yzw","高富帅",R.drawable.me),DateUtil.getNowDayMothString(i)));
-                for(int j=0;j<1;j++){
-                    mainRecylers.add(new Recommend(new ChildRocommend("yzw","高富帅",R.drawable.me),null));
-                }
-            }
-        }
-        return mainRecylers;
     }
 }

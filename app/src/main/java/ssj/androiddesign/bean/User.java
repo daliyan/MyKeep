@@ -2,17 +2,22 @@ package ssj.androiddesign.bean;
 
 import com.avos.avoscloud.AVUser;
 
+import java.util.List;
+
 /**
- * 帐号,这里当前只是使用邮件、用户名、密码、手机号码
+ * 帐号子类化
  * @author zhiwu_yan
  * @version 1.0
  * @since 2015-06-24  14:02
  */
-public class User {
+public class User extends AVUser{
 
-    public String email;
-    public String userName;
-    public String passWord;
-    public String phone;
+    public List getRecord() {
+        return (List)getList("records");
+    }
+
+    public void addRecord(Record record) {
+        addUnique("records", record);
+    }
 
 }

@@ -21,10 +21,12 @@
     <string name="password">密码</string>
     <string name="forgot_password">忘记密码？</string>
     <string name="regis">注册</string>
-    <string name="loginOut">登出</string>
+    <string name="loginOut">注销</string>
     <string name="no_login">未登录</string>
 
     <string name="signin">确定</string>
     <string name="cancel">取消</string>
 
+    <string name="record_title">标题</string>
+    <string name="record_content">记事</string>
 </resources>
