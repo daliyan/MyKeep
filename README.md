@@ -1,2 +1,7 @@
-# MyBlog
-使用android material-design的设计方式来设计博客，目前仅仅作为material-design的练手项目
+# MyKeep
+##项目说明
+ 稍后编辑
+##使用的技术
+ 稍后编辑
+##已知问题
+稍后编辑
