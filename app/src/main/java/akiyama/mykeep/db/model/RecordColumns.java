@@ -1,10 +1,12 @@
 package akiyama.mykeep.db.model;
 
+import android.content.ContentResolver;
 import android.net.Uri;
 
+import akiyama.mykeep.common.Constants;
+
 /**
- * FIXME
- *
+ * “记录”表项
  * @author zhiwu_yan
  * @version 1.0
  * @since 2015-07-03  16:39
@@ -12,26 +14,27 @@ import android.net.Uri;
 public class RecordColumns extends BaseColumns{
 
     public final static String TABLE_NAME="record";
-    private final static String TITLE="title";
-    private final static String CONTENT="content";
-    private final static String ALARMTIME="alarm_time";
-    private final static String LEVEL="level";
-    private final static String USERID="user_id";
+    public final static String TITLE="title";
+    public final static String CONTENT="content";
+    public final static String ALARMTIME="alarm_time";
+    public final static String LEVEL="level";
+    public final static String USERID="user_id";
 
-    private final static Uri CONTENT_URI=Uri.parse("content://"+AUTHORITY+"/"+TABLE_NAME);
+    public final static Uri CONTENT_URI=Uri.parse("content://"+ Constants.AUTHORITY+"/"+TABLE_NAME);
 
     public static final String CREATE_TABLE = "create table "
             + TABLE_NAME + " ( "
             + _ID + " integer primary key autoincrement, "
-            + ID + " text not null, "
             + TITLE + " text, "
             + CONTENT + " text not null, "
             + ALARMTIME + " text not null, "
             + LEVEL + " INTEGER not null, "
             + CREATAT + " text not null, "
             + UPDATEAT + " text not null, "
-            + USERID + " text not null, "
-            + "unique ( "
-            + ID
-            + " ) on conflict ignore );";
+            + USERID + " text not null)";
+
+    public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE
+            + "/vnd.mykeep.record";
+    public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
+            + "/vnd.mykeep.record";
 }

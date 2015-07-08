@@ -10,9 +10,7 @@ import akiyama.mykeep.common.Constants;
  */
 public class BaseColumns {
 
-    protected final static String AUTHORITY = Constants.PACKAGE_NAME+ ".provider";
-    protected final static String _ID="_id";
-    protected final static String ID = "id";
-    protected final static String CREATAT="creat_time";
-    protected final static String UPDATEAT="update_time";
+    public final static String _ID="_id";
+    public final static String CREATAT="creat_time";
+    public final static String UPDATEAT="update_time";
 }

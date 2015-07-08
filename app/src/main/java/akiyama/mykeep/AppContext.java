@@ -14,6 +14,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import akiyama.mykeep.bean.Record;
+import akiyama.mykeep.controller.BaseController;
+import akiyama.mykeep.db.SQLiteHelper;
 import akiyama.mykeep.util.LogUtil;
 
 /**

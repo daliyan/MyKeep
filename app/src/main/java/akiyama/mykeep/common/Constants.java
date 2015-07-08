@@ -8,5 +8,6 @@ package akiyama.mykeep.common;
  */
 public class Constants {
 
-   public final static String PACKAGE_NAME="com.mykeep";
+   public final static String PACKAGE_NAME="akiyama.mykeep";
+   public final static String AUTHORITY = Constants.PACKAGE_NAME+ ".provider";
 }

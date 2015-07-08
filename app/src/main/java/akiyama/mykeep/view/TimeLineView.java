@@ -1,4 +1,4 @@
-package akiyama.mykeep.View;
+package akiyama.mykeep.view;
 
 import android.content.Context;
 import android.content.res.ColorStateList;

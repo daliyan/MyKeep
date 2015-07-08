@@ -5,7 +5,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Parcel;
 
-import akiyama.mykeep.db.DataProviderHelper;
+import akiyama.mykeep.util.DataProviderHelper;
 
 /**
  * FIXME
@@ -45,29 +45,35 @@ public class UserModel extends BaseModel{
         }
         UserModel user=new UserModel();
         user.id= DataProviderHelper.parseString(cursor,BaseColumns._ID);
-        user.objectId=DataProviderHelper.parseString(cursor,BaseColumns.ID);
         user.username=DataProviderHelper.parseString(cursor,UserColumns.USERNAME);
         user.password=DataProviderHelper.parseString(cursor,UserColumns.PASSWORD);
         user.email=DataProviderHelper.parseString(cursor,UserColumns.EMAIL);
         user.password=DataProviderHelper.parseString(cursor,UserColumns.PHONE);
         user.creatTime=DataProviderHelper.parseString(cursor,BaseColumns.CREATAT);
         user.updateTime=DataProviderHelper.parseString(cursor,BaseColumns.UPDATEAT);
+        user.profileImageUrl=DataProviderHelper.parseString(cursor,UserColumns.PROFILE_IMAGE_URL);
         return user;
     }
 
     @Override
     public ContentValues values() {
-        return null;
+        ContentValues cv=convert();
+        cv.put(UserColumns.USERNAME,username);
+        cv.put(UserColumns.PASSWORD,password);
+        cv.put(UserColumns.EMAIL,email);
+        cv.put(UserColumns.PHONE,phone);
+        cv.put(UserColumns.PROFILE_IMAGE_URL,profileImageUrl);
+        return cv;
     }
 
     @Override
     public Uri getContentUri() {
-        return null;
+        return UserColumns.CONTENT_URI;
     }
 
     @Override
     public String getTable() {
-        return null;
+        return UserColumns.TABLE_NAME;
     }
 
     @Override
@@ -77,6 +83,51 @@ public class UserModel extends BaseModel{
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        writeBase(dest,flags);
+        dest.writeString(username);
+        dest.writeString(password);
+        dest.writeString(email);
+        dest.writeString(phone);
+        dest.writeString(profileImageUrl);
+    }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public String getProfileImageUrl() {
+        return profileImageUrl;
+    }
+
+    public void setProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
     }
 }

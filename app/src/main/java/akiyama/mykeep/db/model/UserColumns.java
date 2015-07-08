@@ -1,6 +1,9 @@
 package akiyama.mykeep.db.model;
 
+import android.content.ContentResolver;
 import android.net.Uri;
+
+import akiyama.mykeep.common.Constants;
 
 
 /**
@@ -17,13 +20,11 @@ public class UserColumns extends BaseColumns{
     public final static String EMAIL="email";
     public final static String PHONE="phone";
     public static final String PROFILE_IMAGE_URL = "profile_image_url";
-
-    private final static Uri CONTENT_URI=Uri.parse("content://"+AUTHORITY+"/"+TABLE_NAME);
+    public final static Uri CONTENT_URI=Uri.parse("content://"+ Constants.AUTHORITY+"/"+TABLE_NAME);
 
     public static final String CREATE_TABLE = "create table "
             + TABLE_NAME + " ( "
             + _ID + " integer primary key autoincrement, "
-            + ID + " text not null, "
             + USERNAME + " text not null, "
             + PASSWORD + " text not null, "
             + EMAIL + " text not null, "
@@ -32,7 +33,11 @@ public class UserColumns extends BaseColumns{
             + CREATAT + " text not null, "
             + UPDATEAT + " text not null, "
             + "unique ( "
-            + USERNAME + ","
-            + ID
+            + USERNAME
             + " ) on conflict ignore );";
+
+    public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE
+            + "/vnd.mykeep.user";
+    public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
+            + "/vnd.mykeep.user";
 }
