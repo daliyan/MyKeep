@@ -3,7 +3,7 @@ package akiyama.mykeep.event.imple;
 import java.util.ArrayList;
 import java.util.List;
 
-import akiyama.mykeep.event.EventSubjectI;
+import akiyama.mykeep.event.IEventSubject;
 
 /**
  * FIXME
@@ -12,7 +12,7 @@ import akiyama.mykeep.event.EventSubjectI;
  * @version 1.0
  * @since 2015-06-30  14:36
  */
-public class EventSubject implements EventSubjectI{
+public class EventSubject implements IEventSubject {
     private List<EventObserver> mEventObservers=new ArrayList<EventObserver>();
     private static volatile EventSubject mEventSubject;
     private EventSubject(){

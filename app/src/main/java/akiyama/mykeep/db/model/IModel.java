@@ -1,6 +1,7 @@
 package akiyama.mykeep.db.model;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Parcelable;
 
@@ -17,4 +18,6 @@ public interface IModel extends Parcelable {
     public abstract Uri getContentUri();
 
     public abstract String getTable();
+
+    public abstract <T extends BaseModel> T getModel(Cursor cursor);
 }

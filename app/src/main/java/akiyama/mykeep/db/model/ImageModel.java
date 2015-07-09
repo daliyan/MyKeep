@@ -29,7 +29,8 @@ public class ImageModel extends BaseModel{
         recordId=in.readString();
     }
 
-    public static ImageModel getImageModel(Cursor cursor){
+    @Override
+    public ImageModel getModel(Cursor cursor) {
         if(cursor==null){
             return null;
         }
@@ -42,6 +43,19 @@ public class ImageModel extends BaseModel{
         imageModel.recordId=DataProviderHelper.parseString(cursor,ImageColumns.RECORD_ID);
         return imageModel;
     }
+    /*public static ImageModel getImageModel(Cursor cursor){
+        if(cursor==null){
+            return null;
+        }
+
+        ImageModel imageModel=new ImageModel();
+        imageModel.id= DataProviderHelper.parseString(cursor, BaseColumns._ID);
+        imageModel.updateTime=DataProviderHelper.parseString(cursor,BaseColumns.UPDATEAT);
+        imageModel.creatTime=DataProviderHelper.parseString(cursor,BaseColumns.CREATAT);
+        imageModel.url=DataProviderHelper.parseString(cursor,ImageColumns.URL);
+        imageModel.recordId=DataProviderHelper.parseString(cursor,ImageColumns.RECORD_ID);
+        return imageModel;
+    }*/
 
     @Override
     public ContentValues values() {

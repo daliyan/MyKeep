@@ -10,8 +10,8 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 import akiyama.mykeep.R;
 import akiyama.mykeep.view.TimeLineView;
-import akiyama.mykeep.bean.vo.ChildRocommend;
-import akiyama.mykeep.bean.vo.Recommend;
+import akiyama.mykeep.vo.ChildRocommend;
+import akiyama.mykeep.vo.Recommend;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
 

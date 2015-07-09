@@ -16,6 +16,10 @@ import akiyama.mykeep.util.DataProviderHelper;
  */
 public class RecordModel extends BaseModel{
 
+    public static final String NORMAL="normal";
+    public static final String IMPORTANT="important";
+    public static final String VERY_IMPORTANT="very_important";
+
     private String title;
     private String content;
     private String alarmTime;
@@ -34,7 +38,7 @@ public class RecordModel extends BaseModel{
         level=in.readString();
         userId=in.readString();
     }
-    
+/*
     public static RecordModel getRecordModel(Cursor cursor){
         if(cursor==null){
             return null;
@@ -49,7 +53,7 @@ public class RecordModel extends BaseModel{
         recordModel.updateTime=DataProviderHelper.parseString(cursor,BaseColumns.UPDATEAT);
         recordModel.userId=DataProviderHelper.parseString(cursor,RecordColumns.USERID);
         return recordModel;
-    }
+    }*/
     @Override
     public ContentValues values() {
         ContentValues cv=convert();
@@ -69,6 +73,23 @@ public class RecordModel extends BaseModel{
     @Override
     public String getTable() {
         return RecordColumns.TABLE_NAME;
+    }
+
+    @Override
+    public RecordModel getModel(Cursor cursor) {
+        if(cursor==null){
+            return null;
+        }
+        RecordModel recordModel=new RecordModel();
+        recordModel.id= DataProviderHelper.parseString(cursor,BaseColumns._ID);
+        recordModel.title=DataProviderHelper.parseString(cursor,RecordColumns.TITLE);
+        recordModel.content=DataProviderHelper.parseString(cursor,RecordColumns.CONTENT);
+        recordModel.alarmTime=DataProviderHelper.parseString(cursor,RecordColumns.ALARMTIME);
+        recordModel.level=DataProviderHelper.parseString(cursor,RecordColumns.LEVEL);
+        recordModel.creatTime=DataProviderHelper.parseString(cursor,BaseColumns.CREATAT);
+        recordModel.updateTime=DataProviderHelper.parseString(cursor,BaseColumns.UPDATEAT);
+        recordModel.userId=DataProviderHelper.parseString(cursor,RecordColumns.USERID);
+        return recordModel;
     }
 
     @Override

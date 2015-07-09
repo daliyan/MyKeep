@@ -5,32 +5,21 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 
-import com.avos.avoscloud.AVException;
-import com.avos.avoscloud.SaveCallback;
-import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 
 import java.util.Calendar;
-import java.util.jar.Attributes;
 
 import akiyama.mykeep.R;
 import akiyama.mykeep.base.BaseActivity;
-import akiyama.mykeep.bean.Record;
-import akiyama.mykeep.controller.BaseController;
-import akiyama.mykeep.controller.IRecordController;
 import akiyama.mykeep.controller.RecordController;
 import akiyama.mykeep.db.model.RecordModel;
 import akiyama.mykeep.event.EventType;
 import akiyama.mykeep.event.Notify;
-import akiyama.mykeep.util.LogUtil;
 import akiyama.mykeep.util.LoginHelper;
 
 /**
@@ -85,35 +74,6 @@ public class AddRecordActivity extends BaseActivity {
         return true;
     }
 
-    private void saveRecord(){
-        String title=mTitleEt.getText().toString();
-        String content=mContentEt.getText().toString();
-        if(!LoginHelper.isLogin()){
-            goLogin();
-        }else{
-            if(!TextUtils.isEmpty(title) && !TextUtils.isEmpty(content)){
-                Record record=new Record();
-                record.setTitle(title);
-                record.setContent(content);
-                record.setLevel(Record.NORMAL);
-                record.setDateTime(String.valueOf(Calendar.getInstance().getTimeInMillis()));
-                record.setCreator(LoginHelper.getCurrentUser());
-                record.saveInBackground(new SaveCallback() {
-                    @Override
-                    public void done(AVException e) {
-                        if(e==null){
-                            Toast.makeText(mContext,"保存成功！",Toast.LENGTH_LONG).show();
-                            Notify.getInstance().NotifyActivity(EventType.EVENT_ADD_RECORD);
-                            AddRecordActivity.this.finish();
-                        }
-                    }
-                });
-            }else{
-                Toast.makeText(mContext,"必须填写标题和内容哦！",Toast.LENGTH_LONG).show();
-            }
-        }
-    }
-
     private void saveRecordToDb(){
         String title=mTitleEt.getText().toString();
         String content=mContentEt.getText().toString();
@@ -124,7 +84,7 @@ public class AddRecordActivity extends BaseActivity {
                 RecordModel record=new RecordModel();
                 record.setTitle(title);
                 record.setContent(content);
-                record.setLevel(Record.NORMAL);
+                record.setLevel(RecordModel.NORMAL);
                 record.setCreatTime(String.valueOf(Calendar.getInstance().getTimeInMillis()));
                 record.setUpdateTime(String.valueOf(Calendar.getInstance().getTimeInMillis()));
                 record.setAlarmTime(String.valueOf(Calendar.getInstance().getTimeInMillis()));

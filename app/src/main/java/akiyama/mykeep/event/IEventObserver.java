@@ -6,7 +6,7 @@ package akiyama.mykeep.event;
  * @version 1.0
  * @since 2015-06-30  14:37
  */
-public interface EventObserverI {
+public interface IEventObserver {
     /**
      * 根据事件进行数据或者UI的更新
      * @param eventType

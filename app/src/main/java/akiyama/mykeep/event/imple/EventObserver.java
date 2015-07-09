@@ -3,7 +3,7 @@ package akiyama.mykeep.event.imple;
 import android.os.Handler;
 import android.os.Looper;
 
-import akiyama.mykeep.event.EventObserverI;
+import akiyama.mykeep.event.IEventObserver;
 
 /**
  * 具体的观察者
@@ -11,7 +11,7 @@ import akiyama.mykeep.event.EventObserverI;
  * @version 1.0
  * @since 2015-06-30  14:38
  */
-public abstract class EventObserver implements EventObserverI{
+public abstract class EventObserver implements IEventObserver {
 
     private Handler mHandler;
 

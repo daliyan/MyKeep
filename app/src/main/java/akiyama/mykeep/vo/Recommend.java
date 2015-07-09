@@ -1,5 +1,7 @@
-package akiyama.mykeep.bean.vo;
+package akiyama.mykeep.vo;
 
+
+import akiyama.mykeep.vo.ChildRocommend;
 
 /**
  * 计事对象

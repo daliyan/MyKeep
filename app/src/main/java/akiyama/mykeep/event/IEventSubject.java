@@ -8,7 +8,7 @@ import akiyama.mykeep.event.imple.EventObserver;
  * @version 1.0
  * @since 2015-06-30  14:35
  */
-public interface EventSubjectI {
+public interface IEventSubject {
     /**
      * 注册观察者
      * @param observer

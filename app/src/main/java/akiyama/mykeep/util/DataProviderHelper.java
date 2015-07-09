@@ -21,8 +21,18 @@ public class DataProviderHelper {
         return c.getString(c.getColumnIndexOrThrow(columnName));
     }
 
-    private static Uri withAppendedId(Uri baseUri, String id) {
+    public static Uri withAppendedId(Uri baseUri, String id) {
         return Uri.withAppendedPath(baseUri, "id/" + id);
+    }
+
+    /**
+     * 返回user_id的ContentUri
+     * @param baseUri
+     * @param userId
+     * @return
+     */
+    public static Uri withAppendedRecordUserId(Uri baseUri, String userId) {
+        return Uri.withAppendedPath(baseUri, "user_id/" + userId);
     }
 
     public static ContentValues[] getContentValuesByModels(List<? extends BaseModel> models) {

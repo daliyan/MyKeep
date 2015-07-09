@@ -1,4 +1,4 @@
-package akiyama.mykeep.bean.vo;
+package akiyama.mykeep.vo;
 
 /**
  * 记事的子项目

@@ -34,27 +34,6 @@ public class UserModel extends BaseModel{
         profileImageUrl = in.readString();
     }
 
-    /**
-     * 通过Cursor获取对应的数据，出现错误的时候返回null
-     * @param cursor
-     * @return
-     */
-    public static UserModel getUserByCursor(Cursor cursor){
-        if(cursor==null){
-            return null;
-        }
-        UserModel user=new UserModel();
-        user.id= DataProviderHelper.parseString(cursor,BaseColumns._ID);
-        user.username=DataProviderHelper.parseString(cursor,UserColumns.USERNAME);
-        user.password=DataProviderHelper.parseString(cursor,UserColumns.PASSWORD);
-        user.email=DataProviderHelper.parseString(cursor,UserColumns.EMAIL);
-        user.password=DataProviderHelper.parseString(cursor,UserColumns.PHONE);
-        user.creatTime=DataProviderHelper.parseString(cursor,BaseColumns.CREATAT);
-        user.updateTime=DataProviderHelper.parseString(cursor,BaseColumns.UPDATEAT);
-        user.profileImageUrl=DataProviderHelper.parseString(cursor,UserColumns.PROFILE_IMAGE_URL);
-        return user;
-    }
-
     @Override
     public ContentValues values() {
         ContentValues cv=convert();
@@ -74,6 +53,23 @@ public class UserModel extends BaseModel{
     @Override
     public String getTable() {
         return UserColumns.TABLE_NAME;
+    }
+
+    @Override
+    public UserModel getModel(Cursor cursor) {
+        if(cursor==null){
+            return null;
+        }
+        UserModel user=new UserModel();
+        user.id= DataProviderHelper.parseString(cursor,BaseColumns._ID);
+        user.username=DataProviderHelper.parseString(cursor,UserColumns.USERNAME);
+        user.password=DataProviderHelper.parseString(cursor,UserColumns.PASSWORD);
+        user.email=DataProviderHelper.parseString(cursor,UserColumns.EMAIL);
+        user.password=DataProviderHelper.parseString(cursor,UserColumns.PHONE);
+        user.creatTime=DataProviderHelper.parseString(cursor,BaseColumns.CREATAT);
+        user.updateTime=DataProviderHelper.parseString(cursor,BaseColumns.UPDATEAT);
+        user.profileImageUrl=DataProviderHelper.parseString(cursor,UserColumns.PROFILE_IMAGE_URL);
+        return user;
     }
 
     @Override

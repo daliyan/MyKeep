@@ -13,9 +13,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import akiyama.mykeep.bean.Record;
-import akiyama.mykeep.controller.BaseController;
-import akiyama.mykeep.db.SQLiteHelper;
 import akiyama.mykeep.util.LogUtil;
 
 /**
@@ -39,9 +36,7 @@ public class AppContext extends Application{
     @Override
     public void onCreate() {
         super.onCreate();
-        AVObject.registerSubclass(Record.class);//子类化记事表
-        AVOSCloud.initialize(this,"0t6l98r6429fu5z6pde2f6zn9r8ykm5itbrmuxzormpuifva",
-                "1aw548nzzzhxetq0b8yxgbdjpatr9pvj8m8zttebl1z2t73l");
+        AVOSCloud.initialize(this,"0t6l98r6429fu5z6pde2f6zn9r8ykm5itbrmuxzormpuifva","1aw548nzzzhxetq0b8yxgbdjpatr9pvj8m8zttebl1z2t73l");
         init();
         initAppInfo();
     }

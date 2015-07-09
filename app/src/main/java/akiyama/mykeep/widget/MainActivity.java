@@ -1,6 +1,7 @@
 package akiyama.mykeep.widget;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -13,10 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.avos.avoscloud.AVException;
-import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.AVUser;
-import com.avos.avoscloud.FindCallback;
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 
 import java.util.ArrayList;
@@ -25,9 +23,10 @@ import java.util.List;
 import akiyama.mykeep.R;
 import akiyama.mykeep.adapter.RecyclerAdapter;
 import akiyama.mykeep.base.BaseObserverActivity;
-import akiyama.mykeep.bean.Record;
-import akiyama.mykeep.bean.vo.ChildRocommend;
-import akiyama.mykeep.bean.vo.Recommend;
+import akiyama.mykeep.vo.ChildRocommend;
+import akiyama.mykeep.vo.Recommend;
+import akiyama.mykeep.controller.RecordController;
+import akiyama.mykeep.db.model.RecordModel;
 import akiyama.mykeep.event.EventType;
 import akiyama.mykeep.event.Notify;
 import akiyama.mykeep.util.DateUtil;
@@ -43,6 +42,7 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
     private ProgressBarCircularIndeterminate mProgressBar;
     private List<Recommend> mRecommends;
 
+    private RecordController rc=new RecordController();
     private DrawerLayout mDrawerDl;//侧滑菜单布局控件
     private ActionBarDrawerToggle mDrawerToggle;
 
@@ -164,6 +164,13 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
                 EventType.EVENT_LOGINOUT,
                 EventType.EVENT_ADD_RECORD
         };
+    }
+
+
+    private void getRecord(){
+        if(LoginHelper.isLogin()){
+            new SaveRecordTask().execute(LoginHelper.getCurrentUser().getObjectId());
+        }
     }
 
     /**
@@ -296,37 +303,35 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         startActivity(addRecord);
     }
 
-    private List<Recommend> getData(List<Record> records){
+    private List<Recommend> getData(List<RecordModel> records){
         List<Recommend> mainRecylers=new ArrayList<Recommend>();
         for(int i=0;i<records.size();i++){
-            mainRecylers.add(new Recommend(new ChildRocommend(records.get(i).getTitle(),records.get(i).getContent(),R.drawable.test),
-                    DateUtil.getDate(records.get(i).getDateTime())));
+            mainRecylers.add(new Recommend(
+                    new ChildRocommend(records.get(i).getTitle(),records.get(i).getContent(),R.drawable.test),
+                    DateUtil.getDate(records.get(i).getCreatTime())));
         }
         return mainRecylers;
     }
 
+    private class SaveRecordTask extends AsyncTask<String,Void,List<RecordModel>> {
 
-    private void getRecord(){
-        if(LoginHelper.isLogin()){
-            mProgressBar.setVisibility(View.VISIBLE);
-            AVQuery<Record> query = new AVQuery<Record>("Record");
-            query.whereNotEqualTo("creator", LoginHelper.getCurrentUser().getUsername());
-            query.orderByDescending("createdAt");
-            query.findInBackground(new FindCallback<Record>() {
-                public void done(List<Record> avObjects, AVException e) {
-                    if (null == avObjects || null != e) {
-                        return;
-                    }
-                    mRecommends=getData(avObjects);
-                    mAdapter = new RecyclerAdapter(mRecommends);
-                    mRecyclerView.setAdapter(mAdapter);
-                    mProgressBar.setVisibility(View.GONE);
-                }
-            });
+        @Override
+        protected List<RecordModel> doInBackground(String... params) {
+            List<RecordModel> models=new ArrayList<RecordModel>();
+            if(params[0]!=null){
+                models=rc.getRecordsByUserId(mContext,params[0]);
+            }
+            return models;
         }
-    }
 
-    private void loginOut(){
-
+        @Override
+        protected void onPostExecute(List<RecordModel> recordModels) {
+            if(recordModels!=null){
+                mRecommends=getData(recordModels);
+                mAdapter = new RecyclerAdapter(mRecommends);
+                mRecyclerView.setAdapter(mAdapter);
+                mProgressBar.setVisibility(View.GONE);
+            }
+        }
     }
 }
