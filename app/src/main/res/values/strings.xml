@@ -29,4 +29,8 @@
 
     <string name="record_title">标题</string>
     <string name="record_content">记事</string>
+
+    <string name="add_label">添加标签</string>
+    <string name="share_content">分享发送</string>
+    <string name="delete_record">删除记事</string>
 </resources>

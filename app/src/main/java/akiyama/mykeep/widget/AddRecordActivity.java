@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -41,6 +42,8 @@ public class AddRecordActivity extends BaseActivity {
     private List<LabelVo> mLabels;
     private EditText mTitleEt;
     private EditText mContentEt;
+    private Button mSaveBtn;
+    private Button mGiveUpBtn;
     private Spinner mLabelSp;
     private static RecordController rc=new RecordController();
     @Override
@@ -55,6 +58,8 @@ public class AddRecordActivity extends BaseActivity {
         mTitleEt=(EditText) findViewById(R.id.record_title_et);
         mContentEt=(EditText) findViewById(R.id.record_content_et);
         mLabelSp=(Spinner) findViewById(R.id.label_sp);
+        mSaveBtn=(Button) findViewById(R.id.save_btn);
+        mGiveUpBtn=(Button) findViewById(R.id.give_up_btn);
     }
 
     @Override
@@ -66,12 +71,8 @@ public class AddRecordActivity extends BaseActivity {
 
     @Override
     protected void setOnClick() {
-        /*mLabelSp.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-            }
-        });*/
+        mSaveBtn.setOnClickListener(this);
+        mGiveUpBtn.setOnClickListener(this);
     }
 
     @Override
@@ -84,11 +85,29 @@ public class AddRecordActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id=item.getItemId();
         switch (id){
-            case R.id.action_check:
-                saveRecordToDb();
+            case R.id.action_add_label:
+                //saveRecordToDb();
+                break;
+            case R.id.action_share_content:
+                break;
+            case R.id.action_delete_record:
                 break;
         }
         return true;
+    }
+
+    @Override
+    public void onClick(View v) {
+        int id=v.getId();
+        switch (id){
+            case R.id.save_btn:
+                saveRecordToDb();
+                break;
+            case R.id.give_up_btn:
+                break;
+            default:
+                break;
+        }
     }
 
     private void saveRecordToDb(){
@@ -145,7 +164,8 @@ public class AddRecordActivity extends BaseActivity {
                 Notify.getInstance().NotifyActivity(EventType.EVENT_ADD_RECORD);
                 mTitleEt.setText("");
                 mContentEt.setText("");
-                mProgressBar.hide();
+                mProgressBar.dismiss();
+                AddRecordActivity.this.finish();
             }
         }
     }

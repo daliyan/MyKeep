@@ -3,7 +3,8 @@
     android:orientation="vertical"
     android:fitsSystemWindows="true"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
     <include layout="@layout/layout_toolbar"/>
 
@@ -23,9 +24,9 @@
     <EditText
         android:id="@+id/record_content_et"
         android:layout_width="match_parent"
-        android:layout_height="0dip"
-        android:layout_weight="1"
+        android:layout_height="50dip"
         android:layout_margin="15dip"
+        android:layout_weight="1"
         android:background="#00000000"
         android:text=""
         android:textColor="@color/black"
@@ -49,5 +50,32 @@
         android:padding="10dip"
         android:gravity="right"
         android:text="修改时间"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginBottom="15dip">
+        <Button
+            android:id="@+id/save_btn"
+            android:layout_width="0dip"
+            android:layout_height="40dip"
+            android:layout_margin="10dip"
+            android:layout_weight="1"
+            android:textColor="@color/white"
+            android:background="@drawable/save_btn_bg"
+            android:text="保存"/>
+
+        <Button
+            android:id="@+id/give_up_btn"
+            android:layout_width="0dip"
+            android:layout_height="40dip"
+            android:layout_weight="1"
+            android:layout_margin="10dip"
+            android:textColor="@color/white"
+            android:background="@drawable/give_up_btn_bg"
+            android:text="舍弃"/>
+
+    </LinearLayout>
 
 </LinearLayout>

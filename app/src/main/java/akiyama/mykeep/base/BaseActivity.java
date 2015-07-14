@@ -25,7 +25,7 @@ import akiyama.mykeep.R;
  * @version 1.0
  * @since 2015-06-12  09:59
  */
-public abstract class BaseActivity extends ActionBarActivity{
+public abstract class BaseActivity extends ActionBarActivity implements View.OnClickListener{
 
     private final static String TAG="BaseActivity";
     protected final Activity mContext=this;
