@@ -2,6 +2,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <item android:id="@+id/action_select_style"
+        android:title="@string/action_settings"
+        android:icon="@drawable/ic_settings_input_svideo_white_24dp"
+        android:orderInCategory="100"
+        app:showAsAction="always" />
+
+    <item android:id="@+id/action_camera"
+        android:title="@string/action_settings"
+        android:icon="@drawable/ic_camera_alt_white_24dp"
+        android:orderInCategory="100"
+        app:showAsAction="always" />
+
+
     <item android:id="@+id/action_check"
         android:title="@string/action_settings"
         android:icon="@drawable/ic_check_white_24dp"

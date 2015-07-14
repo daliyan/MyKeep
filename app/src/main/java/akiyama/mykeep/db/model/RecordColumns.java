@@ -19,6 +19,7 @@ public class RecordColumns extends BaseColumns{
     public final static String ALARMTIME="alarm_time";
     public final static String LEVEL="level";
     public final static String USERID="user_id";
+    public final static String LABELID="label_id";
 
     public final static Uri CONTENT_URI=Uri.parse("content://"+ Constants.AUTHORITY+"/"+TABLE_NAME);
 
@@ -31,7 +32,8 @@ public class RecordColumns extends BaseColumns{
             + LEVEL + " INTEGER not null, "
             + CREATAT + " text not null, "
             + UPDATEAT + " text not null, "
-            + USERID + " text not null)";
+            + USERID + " text not null, "
+            + LABELID + " text)";
 
     public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE
             + "/vnd.mykeep.record";

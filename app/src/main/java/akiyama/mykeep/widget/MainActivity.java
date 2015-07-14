@@ -23,13 +23,12 @@ import java.util.List;
 import akiyama.mykeep.R;
 import akiyama.mykeep.adapter.RecyclerAdapter;
 import akiyama.mykeep.base.BaseObserverActivity;
-import akiyama.mykeep.vo.ChildRocommend;
-import akiyama.mykeep.vo.Recommend;
+import akiyama.mykeep.util.DateUtil;
+import akiyama.mykeep.vo.ChildRocommendVo;
 import akiyama.mykeep.controller.RecordController;
 import akiyama.mykeep.db.model.RecordModel;
 import akiyama.mykeep.event.EventType;
 import akiyama.mykeep.event.Notify;
-import akiyama.mykeep.util.DateUtil;
 import akiyama.mykeep.util.LoginHelper;
 
 
@@ -40,7 +39,7 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private ProgressBarCircularIndeterminate mProgressBar;
-    private List<Recommend> mRecommends;
+    private List<ChildRocommendVo> mRecommends;
 
     private RecordController rc=new RecordController();
     private DrawerLayout mDrawerDl;//侧滑菜单布局控件
@@ -116,7 +115,7 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
     protected void initView(){
         setToolBarTitle("记事");
         mProgressBar.setVisibility(View.GONE);
-        mRecommends=new ArrayList<Recommend>();
+        mRecommends=new ArrayList<ChildRocommendVo>();
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new RecyclerAdapter(mRecommends);
@@ -303,12 +302,10 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         startActivity(addRecord);
     }
 
-    private List<Recommend> getData(List<RecordModel> records){
-        List<Recommend> mainRecylers=new ArrayList<Recommend>();
+    private List<ChildRocommendVo> getData(List<RecordModel> records){
+        List<ChildRocommendVo> mainRecylers=new ArrayList<ChildRocommendVo>();
         for(int i=0;i<records.size();i++){
-            mainRecylers.add(new Recommend(
-                    new ChildRocommend(records.get(i).getTitle(),records.get(i).getContent(),R.drawable.test),
-                    DateUtil.getDate(records.get(i).getCreatTime())));
+            mainRecylers.add(new ChildRocommendVo(records.get(i).getTitle(),records.get(i).getContent(), DateUtil.getDate(records.get(i).getUpdateTime()),R.drawable.me));
         }
         return mainRecylers;
     }

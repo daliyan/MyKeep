@@ -7,20 +7,26 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 
-
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import akiyama.mykeep.R;
+import akiyama.mykeep.adapter.SpinnerAdapter;
 import akiyama.mykeep.base.BaseActivity;
 import akiyama.mykeep.controller.RecordController;
 import akiyama.mykeep.db.model.RecordModel;
 import akiyama.mykeep.event.EventType;
 import akiyama.mykeep.event.Notify;
 import akiyama.mykeep.util.LoginHelper;
+import akiyama.mykeep.vo.LabelVo;
 
 /**
  * 添加一条记录
@@ -31,8 +37,11 @@ import akiyama.mykeep.util.LoginHelper;
 public class AddRecordActivity extends BaseActivity {
 
     private static final String TAG="AddRecordActivity";
+    private SpinnerAdapter mSpa;
+    private List<LabelVo> mLabels;
     private EditText mTitleEt;
     private EditText mContentEt;
+    private Spinner mLabelSp;
     private static RecordController rc=new RecordController();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,16 +54,24 @@ public class AddRecordActivity extends BaseActivity {
     protected void findView() {
         mTitleEt=(EditText) findViewById(R.id.record_title_et);
         mContentEt=(EditText) findViewById(R.id.record_content_et);
+        mLabelSp=(Spinner) findViewById(R.id.label_sp);
     }
 
     @Override
     protected void initView() {
         setToolBarTitle("添加记事");
+        mLabels=new ArrayList<LabelVo>();
+        new GetLabelsTask().execute();
     }
 
     @Override
     protected void setOnClick() {
+        /*mLabelSp.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+            }
+        });*/
     }
 
     @Override
@@ -85,6 +102,7 @@ public class AddRecordActivity extends BaseActivity {
                 record.setTitle(title);
                 record.setContent(content);
                 record.setLevel(RecordModel.NORMAL);
+                record.setLabelId(mLabels.get(mLabelSp.getSelectedItemPosition()).getLabelName());
                 record.setCreatTime(String.valueOf(Calendar.getInstance().getTimeInMillis()));
                 record.setUpdateTime(String.valueOf(Calendar.getInstance().getTimeInMillis()));
                 record.setAlarmTime(String.valueOf(Calendar.getInstance().getTimeInMillis()));
@@ -129,6 +147,26 @@ public class AddRecordActivity extends BaseActivity {
                 mContentEt.setText("");
                 mProgressBar.hide();
             }
+        }
+    }
+
+
+
+    private class GetLabelsTask extends AsyncTask<Void,Void,Void>{
+        private List<LabelVo> labelVos=new ArrayList<LabelVo>();
+        @Override
+        protected Void doInBackground(Void... params) {
+            labelVos.add(new LabelVo("0","家庭"));
+            labelVos.add(new LabelVo("1","工作"));
+            labelVos.add(new LabelVo("2","个人"));
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            mLabels=labelVos;
+            mSpa=new SpinnerAdapter(mContext,mLabels);
+            mLabelSp.setAdapter(mSpa);
         }
     }
 }

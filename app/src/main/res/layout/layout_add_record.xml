@@ -6,6 +6,7 @@
     android:layout_height="match_parent">
 
     <include layout="@layout/layout_toolbar"/>
+
     <EditText
         android:id="@+id/record_title_et"
         android:layout_width="match_parent"
@@ -26,11 +27,27 @@
         android:layout_weight="1"
         android:layout_margin="15dip"
         android:background="#00000000"
+        android:text=""
         android:textColor="@color/black"
         android:gravity="top"
-        android:maxLines="1"
         android:textSize="16sp"
         android:hint="@string/record_content"/>
 
+    <Spinner
+        android:id="@+id/label_sp"
+        android:layout_width="80dip"
+        android:layout_height="wrap_content"
+        android:background="@color/trans"
+        android:padding="10dip"
+        android:layout_gravity="right"
+        android:gravity="right"/>
+
+    <TextView
+        android:id="@+id/update_time_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dip"
+        android:gravity="right"
+        android:text="修改时间"/>
 
 </LinearLayout>

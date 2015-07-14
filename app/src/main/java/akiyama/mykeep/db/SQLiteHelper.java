@@ -5,6 +5,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import akiyama.mykeep.db.model.ImageColumns;
+import akiyama.mykeep.db.model.LabelCoumnls;
+import akiyama.mykeep.db.model.LabelModel;
 import akiyama.mykeep.db.model.RecordColumns;
 import akiyama.mykeep.db.model.UserColumns;
 
@@ -30,6 +32,7 @@ public class SQLiteHelper extends SQLiteOpenHelper{
         db.execSQL(UserColumns.CREATE_TABLE);
         db.execSQL(RecordColumns.CREATE_TABLE);
         db.execSQL(ImageColumns.CREATE_TABLE);
+        db.execSQL(LabelCoumnls.CREATE_TABLE);
     }
 
     @Override
@@ -37,6 +40,7 @@ public class SQLiteHelper extends SQLiteOpenHelper{
         db.execSQL("DROP TABLE IF EXISTS " + RecordColumns.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + UserColumns.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + ImageColumns.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + LabelCoumnls.CREATE_TABLE);
         onCreate(db);
     }
 }

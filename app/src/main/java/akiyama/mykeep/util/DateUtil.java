@@ -67,10 +67,8 @@ public class DateUtil {
     public static String getDate(String timeString){
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(Long.valueOf(timeString));
-        //int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH)+1;
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
-        return month+"."+day;
+        SimpleDateFormat sf=new SimpleDateFormat("MM月dd日 HH:mm");
+        return  sf.format(calendar.getTime());
     }
 
 

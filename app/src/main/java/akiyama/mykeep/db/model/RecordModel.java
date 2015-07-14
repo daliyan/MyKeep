@@ -25,6 +25,7 @@ public class RecordModel extends BaseModel{
     private String alarmTime;
     private String level;
     private String userId;
+    private String labelId;
 
     public RecordModel(){
 
@@ -37,6 +38,7 @@ public class RecordModel extends BaseModel{
         alarmTime=in.readString();
         level=in.readString();
         userId=in.readString();
+        labelId=in.readString();
     }
 /*
     public static RecordModel getRecordModel(Cursor cursor){
@@ -62,6 +64,7 @@ public class RecordModel extends BaseModel{
         cv.put(RecordColumns.ALARMTIME,alarmTime);
         cv.put(RecordColumns.LEVEL,level);
         cv.put(RecordColumns.USERID,userId);
+        cv.put(RecordColumns.LABELID,labelId);
         return cv;
     }
 
@@ -89,6 +92,7 @@ public class RecordModel extends BaseModel{
         recordModel.creatTime=DataProviderHelper.parseString(cursor,BaseColumns.CREATAT);
         recordModel.updateTime=DataProviderHelper.parseString(cursor,BaseColumns.UPDATEAT);
         recordModel.userId=DataProviderHelper.parseString(cursor,RecordColumns.USERID);
+        recordModel.labelId=DataProviderHelper.parseString(cursor,RecordColumns.LABELID);
         return recordModel;
     }
 
@@ -105,6 +109,7 @@ public class RecordModel extends BaseModel{
         dest.writeString(alarmTime);
         dest.writeString(level);
         dest.writeString(userId);
+        dest.writeString(labelId);
     }
 
     public void setTitle(String title) {
@@ -145,5 +150,13 @@ public class RecordModel extends BaseModel{
 
     public String getUserId() {
         return userId;
+    }
+
+    public void setLabelId(String labelId) {
+        this.labelId = labelId;
+    }
+
+    public String getLabelId() {
+        return labelId;
     }
 }

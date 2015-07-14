@@ -4,19 +4,17 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import java.util.List;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 import akiyama.mykeep.R;
-import akiyama.mykeep.view.TimeLineView;
-import akiyama.mykeep.vo.ChildRocommend;
-import akiyama.mykeep.vo.Recommend;
+import akiyama.mykeep.vo.ChildRocommendVo;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
 
-   private List<Recommend> mDataset;
-   public RecyclerAdapter(List<Recommend> mDataset){
+   private List<ChildRocommendVo> mDataset;
+   public RecyclerAdapter(List<ChildRocommendVo> mDataset){
        this.mDataset=mDataset;
    }
 
@@ -30,17 +28,12 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         if(mDataset!=null && mDataset.size()>0){
-            ChildRocommend childRocommend=mDataset.get(position).childRocommend;
+            ChildRocommendVo childRocommend=mDataset.get(position);
             if(childRocommend!=null){
                 holder.mTitleTv.setText(childRocommend.title);
                 holder.mSubTitleTv.setText(childRocommend.subtitle);
-                holder.phoneIv.setImageResource(childRocommend.image);
-                if(mDataset.get(position).timeTitle!=null){
-                    holder.timeLineView.setText(mDataset.get(position).timeTitle,true);
-                }else{
-                    holder.timeLineView.setText("",false);
-                }
-
+                holder.mPhoneIv.setImageResource(childRocommend.image);
+                holder.mUpdateView.setText(childRocommend.updateTime);
             }
         }
 
@@ -51,21 +44,17 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         return mDataset.size();
     }
 
-    // Provide a reference to the views for each data item
-    // Complex data items may need more than one view per item, and
-    // you provide access to all the views for a data item in a view holder
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        // each data item is just a string in this case
         public TextView mTitleTv;
         public TextView mSubTitleTv;
-        public CircleImageView phoneIv;
-        public TimeLineView timeLineView;
+        public ImageView mPhoneIv;
+        public TextView mUpdateView;
         public ViewHolder(View v) {
             super(v);
             mTitleTv =(TextView) v.findViewById(R.id.title);
             mSubTitleTv =(TextView) v.findViewById(R.id.subtitle);
-            phoneIv =(CircleImageView) v.findViewById(R.id.phone_iv);
-            timeLineView=(TimeLineView) v.findViewById(R.id.title_timeLine_Tlv);
+            mPhoneIv =(ImageView) v.findViewById(R.id.phone_iv);
+            mUpdateView=(TextView) v.findViewById(R.id.update_time_tv);
         }
     }
 }

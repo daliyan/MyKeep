@@ -16,7 +16,7 @@ import java.util.List;
 import akiyama.mykeep.util.LogUtil;
 
 /**
- *  全局Application
+ * 全局Application
  * @author zhiwu_yan
  * @version 1.0
  * @since 2015-06-12  09:56
@@ -53,9 +53,7 @@ public class AppContext extends Application{
             mVersionName=pageInfo.versionName;
             mVersionCode=pageInfo.versionCode;
             mInfo=pageInfo;
-            if(DEBUG){
-                LogUtil.d(TAG, "initAppInfo: versionName:" + mVersionName + " VersionCode:" + mVersionCode + " PackageName:" + mPackageName);
-            }
+            LogUtil.d(TAG, "initAppInfo: versionName:" + mVersionName + " VersionCode:" + mVersionCode + " PackageName:" + mPackageName);
         } catch (PackageManager.NameNotFoundException e) {
             throw new RuntimeException(e);
         }
