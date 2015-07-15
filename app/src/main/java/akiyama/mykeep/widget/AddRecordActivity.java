@@ -8,7 +8,6 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -78,7 +77,7 @@ public class AddRecordActivity extends BaseActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_add_record,menu);
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -86,7 +85,7 @@ public class AddRecordActivity extends BaseActivity {
         int id=item.getItemId();
         switch (id){
             case R.id.action_add_label:
-                //saveRecordToDb();
+                goAddLabel();
                 break;
             case R.id.action_share_content:
                 break;
@@ -138,6 +137,10 @@ public class AddRecordActivity extends BaseActivity {
         startActivity(login);
     }
 
+    private void goAddLabel(){
+        Intent addLabel=new Intent(this,AddLabelActivity.class);
+        startActivity(addLabel);
+    }
     private class SaveRecordTask extends AsyncTask<RecordModel,Void,Boolean>{
 
         private ProgressDialog mProgressBar;

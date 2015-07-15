@@ -233,7 +233,7 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         }else{
             login.setTitle(getResources().getString(R.string.action_login));
         }
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
