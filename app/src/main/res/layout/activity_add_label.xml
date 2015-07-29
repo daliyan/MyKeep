@@ -8,4 +8,9 @@
     <include android:id="@+id/login_toolbar"
         layout="@layout/layout_toolbar"/>
 
+    <akiyama.mykeep.view.SearchLayout
+        android:id="@+id/search_sly"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
 </LinearLayout>
