@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+     <EditText
+         android:id="@+id/search_content_et"
+         android:layout_width="match_parent"
+         android:layout_height="50dip"
+         android:textColor="@color/black"
+         android:textSize="16sp"
+         android:gravity="bottom"
+         android:paddingLeft="15dip"
+         android:hint="添加标签"/>
+
+    <ListView
+        android:id="@+id/search_result_lv"
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        android:dividerHeight="0dip"/>
+
+</LinearLayout>

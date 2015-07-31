@@ -29,6 +29,8 @@
         <activity android:name="akiyama.mykeep.widget.AddRecordActivity"
             android:screenOrientation="portrait"/>
 
+        <activity android:name=".widget.AddLabelActivity"
+            android:screenOrientation="portrait"/>
         <provider
             android:name="akiyama.mykeep.db.DataProvider"
             android:authorities="akiyama.mykeep.provider"

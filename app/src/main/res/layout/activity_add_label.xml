@@ -8,17 +8,9 @@
     <include android:id="@+id/login_toolbar"
         layout="@layout/layout_toolbar"/>
 
-    <EditText
-        android:id="@+id/search_view"
+    <akiyama.mykeep.view.SearchLayout
+        android:id="@+id/search_sly"
         android:layout_width="match_parent"
-        android:layout_height="48dip"
-        android:paddingLeft="15dip"
-        android:gravity="bottom"
-        android:hint="添加标签" />
-
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="0dip"
-        android:layout_weight="1"/>
+        android:layout_height="match_parent"/>
 
 </LinearLayout>
