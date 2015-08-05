@@ -23,13 +23,15 @@ import akiyama.mykeep.vo.SearchVo;
  * @version 1.0
  * @since 2015-07-29  16:21
  */
-public class SearchAdapter extends BaseAdapter {
+public class SearchAdapter extends BaseAdapter{
 
     private List<SearchVo> mSearchVoList;
+    private List<SearchVo> mSearchFilterList=new ArrayList<SearchVo>();
     private Context mContext;
     public SearchAdapter(Context context,List<SearchVo> searchVoList){
         this.mContext=context;
         this.mSearchVoList=searchVoList;
+        this.mSearchFilterList=searchVoList;
     }
 
     @Override
@@ -63,14 +65,17 @@ public class SearchAdapter extends BaseAdapter {
             viewHolder.mSelectLabelCb.setChecked(mSearchVoList.get(position).getIsCheck());
         }
 
+        viewHolder.mSelectLabelCb.setClickable(false);
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 viewHolder.mSelectLabelCb.setChecked(!viewHolder.mSelectLabelCb.isChecked());
                 if(viewHolder.mSelectLabelCb.isChecked()){
                     mSearchVoList.get(position).setIsCheck(true);
+                    mSearchFilterList.get(position).setIsCheck(true);
                 }else{
                     mSearchVoList.get(position).setIsCheck(false);
+                    mSearchFilterList.get(position).setIsCheck(false);
                 }
                 Notify.getInstance().NotifyActivity(EventType.EVENT_ADD_LABEL_LIST);
             }
@@ -81,6 +86,10 @@ public class SearchAdapter extends BaseAdapter {
     public void refreshDate(List<SearchVo> searchVoList){
         this.mSearchVoList=searchVoList;
         notifyDataSetChanged();
+    }
+
+    public List<SearchVo> getFinalSearchDate(){
+        return mSearchFilterList;
     }
 
     public List<SearchVo> getSearchVoList() {

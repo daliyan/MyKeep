@@ -44,7 +44,7 @@ public class AddLabelActivity extends BaseObserverActivity {
     protected void onChange(String eventType) {
         Toast.makeText(mContext,eventType,Toast.LENGTH_SHORT).show();
         if(eventType.equals(EventType.EVENT_ADD_LABEL_LIST)){
-            mSearchList=mSearchAdpter.getSearchVoList();
+            mSearchList=mSearchAdpter.getFinalSearchDate();
         }
     }
 
@@ -92,7 +92,7 @@ public class AddLabelActivity extends BaseObserverActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if(s.length()==0){
-                    mSearchAdpter.refreshDate(mSearchList);
+                    mSearchAdpter.refreshDate(mSearchAdpter.getFinalSearchDate());
                 }else{
                     mSearchAdpter.refreshDate(queryList(s.toString()));
                 }
