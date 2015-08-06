@@ -33,4 +33,6 @@
     <string name="add_label">添加标签</string>
     <string name="share_content">分享发送</string>
     <string name="delete_record">删除记事</string>
+
+    <string name="create_new_label_edit_mode">创建新标签</string>
 </resources>

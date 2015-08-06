@@ -3,6 +3,7 @@ package akiyama.mykeep.widget;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -93,8 +94,13 @@ public class AddLabelActivity extends BaseObserverActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if(s.length()==0){
                     mSearchAdpter.refreshDate(mSearchAdpter.getFinalSearchDate());
+                    mSearchSly.setHideCreatLayout();
                 }else{
-                    mSearchAdpter.refreshDate(queryList(s.toString()));
+                    List<SearchVo> queryList=queryList(s.toString());
+                    mSearchAdpter.refreshDate(queryList);
+                    if(queryList.size()==0 && !TextUtils.isEmpty(mSearchSly.getSearchText())){
+                        mSearchSly.setShowCreatLayout("创建“"+mSearchSly.getSearchText()+"”");
+                    }
                 }
             }
 

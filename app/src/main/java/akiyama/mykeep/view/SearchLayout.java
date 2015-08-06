@@ -1,16 +1,19 @@
 package akiyama.mykeep.view;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewStub;
 import android.widget.Adapter;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import akiyama.mykeep.R;
 
@@ -28,6 +31,7 @@ public class SearchLayout extends LinearLayout{
     private ListView mListViewLv;
     private View mView;
     private ListAdapter mAdpter=null;
+    private View mCreatLayout=null;
     public SearchLayout(Context context) {
         super(context);
         init(context);
@@ -61,5 +65,25 @@ public class SearchLayout extends LinearLayout{
         if(mAdpter!=null){
             mListViewLv.setAdapter(mAdpter);
         }
+    }
+
+    public void setShowCreatLayout(String labelContet){
+        if(mCreatLayout==null){
+            mCreatLayout = ((ViewStub) mView.findViewById(R.id.add_label_vs)).inflate();
+        }
+        TextView title=(TextView) mCreatLayout.findViewById(R.id.creat_label_tv);
+        if(!TextUtils.isEmpty(labelContet)){
+            title.setText(labelContet);
+        }
+    }
+
+    public void setHideCreatLayout(){
+        if(mCreatLayout!=null){
+            mCreatLayout.setVisibility(GONE);
+        }
+    }
+
+    public String getSearchText(){
+        return mEditTextEt.getText().toString();
     }
 }

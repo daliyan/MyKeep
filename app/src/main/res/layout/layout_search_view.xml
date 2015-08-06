@@ -14,11 +14,18 @@
          android:paddingLeft="15dip"
          android:hint="添加标签"/>
 
+    <ViewStub
+        android:id="@+id/add_label_vs"
+        android:layout_width="match_parent"
+        android:layout_height="50dip"
+        android:layout="@layout/layout_add_search_label"/>
+
     <ListView
         android:id="@+id/search_result_lv"
         android:layout_width="match_parent"
         android:layout_height="0dip"
         android:layout_weight="1"
         android:dividerHeight="0dip"/>
+
 
 </LinearLayout>
