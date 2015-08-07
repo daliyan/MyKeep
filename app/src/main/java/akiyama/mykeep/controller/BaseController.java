@@ -7,6 +7,7 @@ import android.net.Uri;
 
 import java.util.List;
 
+import akiyama.mykeep.controller.imple.IBaseController;
 import akiyama.mykeep.db.SQLiteHelper;
 import akiyama.mykeep.db.model.BaseModel;
 import akiyama.mykeep.db.model.IModel;
@@ -19,7 +20,7 @@ import akiyama.mykeep.util.LogUtil;
  * @version 1.0
  * @since 2015-07-08  13:54
  */
-public class BaseController implements IBaseController{
+public class BaseController implements IBaseController {
 
     private static final String TAG="BaseController";
     @Override
@@ -40,7 +41,7 @@ public class BaseController implements IBaseController{
         try{
             return context.getContentResolver().insert(uri,model.values());
         }catch (Exception e){
-            e.printStackTrace();
+            LogUtil.e(TAG,"cause:"+e.getCause());
         }
         return null;
     }

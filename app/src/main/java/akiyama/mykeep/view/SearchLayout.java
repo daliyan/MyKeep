@@ -18,8 +18,7 @@ import android.widget.TextView;
 import akiyama.mykeep.R;
 
 /**
- * FIXME
- *
+ * 搜索标签Layout
  * @author zhiwu_yan
  * @version 1.0
  * @since 2015-07-29  14:16
@@ -31,11 +30,14 @@ public class SearchLayout extends LinearLayout{
     private ListView mListViewLv;
     private View mView;
     private ListAdapter mAdpter=null;
-    private View mCreatLayout=null;
+    private LinearLayout mCreatLl;
+    private TextView mCreatLabelTitleTv;
+    private CreatLabelClickEvent mCreatLabelClickEvent;
     public SearchLayout(Context context) {
         super(context);
         init(context);
     }
+
     public SearchLayout(Context context, AttributeSet attrs){
         super(context,attrs);
         init(context);
@@ -51,9 +53,20 @@ public class SearchLayout extends LinearLayout{
         mView = LayoutInflater.from(context).inflate(R.layout.layout_search_view, this);
         mEditTextEt = (EditText) mView.findViewById(R.id.search_content_et);
         mListViewLv = (ListView) mView.findViewById(R.id.search_result_lv);
+        mCreatLl =(LinearLayout) mView.findViewById(R.id.add_label_vs);
+        mCreatLabelTitleTv = (TextView) mView.findViewById(R.id.creat_label_tv);
         if(mAdpter!=null){
             mListViewLv.setAdapter(mAdpter);
         }
+
+        mCreatLl.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mCreatLabelClickEvent!=null){
+                    mCreatLabelClickEvent.setCreatLabelClickEvent();//绑定mCreatLayout事件
+                }
+            }
+        });
     }
 
     public void setInputChangeListener(TextWatcher textWatcher){
@@ -67,23 +80,34 @@ public class SearchLayout extends LinearLayout{
         }
     }
 
+    /**
+     * 设置显示的创建Label标签功能，并显示搜索出来的内容
+     * @param labelContet
+     */
     public void setShowCreatLayout(String labelContet){
-        if(mCreatLayout==null){
-            mCreatLayout = ((ViewStub) mView.findViewById(R.id.add_label_vs)).inflate();
+        if(mCreatLl.getVisibility()==GONE){
+            mCreatLl.setVisibility(VISIBLE);
         }
-        TextView title=(TextView) mCreatLayout.findViewById(R.id.creat_label_tv);
         if(!TextUtils.isEmpty(labelContet)){
-            title.setText(labelContet);
+            mCreatLabelTitleTv.setText(labelContet);
         }
     }
 
     public void setHideCreatLayout(){
-        if(mCreatLayout!=null){
-            mCreatLayout.setVisibility(GONE);
+        if(mCreatLl.getVisibility()==VISIBLE){
+            mCreatLl.setVisibility(GONE);
         }
     }
 
     public String getSearchText(){
         return mEditTextEt.getText().toString();
+    }
+
+    public void setCreatLabelClickEvent(CreatLabelClickEvent creatLabelClickEvent) {
+        this.mCreatLabelClickEvent = creatLabelClickEvent;
+    }
+
+    public interface CreatLabelClickEvent{
+        public void setCreatLabelClickEvent();
     }
 }
