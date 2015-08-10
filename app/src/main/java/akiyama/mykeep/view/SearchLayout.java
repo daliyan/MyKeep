@@ -103,6 +103,10 @@ public class SearchLayout extends LinearLayout{
         return mEditTextEt.getText().toString();
     }
 
+    public void setSearchText(CharSequence text){
+        mEditTextEt.setText(text);
+    }
+
     public void setCreatLabelClickEvent(CreatLabelClickEvent creatLabelClickEvent) {
         this.mCreatLabelClickEvent = creatLabelClickEvent;
     }

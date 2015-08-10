@@ -8,6 +8,8 @@ import java.util.List;
 
 import akiyama.mykeep.controller.imple.IRecordController;
 import akiyama.mykeep.db.model.BaseColumns;
+import akiyama.mykeep.db.model.BaseModel;
+import akiyama.mykeep.db.model.IModel;
 import akiyama.mykeep.db.model.RecordColumns;
 import akiyama.mykeep.db.model.RecordModel;
 
@@ -20,7 +22,7 @@ import akiyama.mykeep.db.model.RecordModel;
 public class RecordController extends BaseController implements IRecordController {
 
     @Override
-    public List<RecordModel> getRecordsByUserId(Context context, String userId) {
+    public List<? extends BaseModel> getDbByUserId(Context context, String userId) {
         List<RecordModel> recordModels=new ArrayList<RecordModel>();
         Cursor cursor=context.getContentResolver().query(RecordColumns.CONTENT_URI,null, RecordColumns.USERID + " =? ",new String[]{userId},BaseColumns.UPDATEAT+" DESC");
         if(cursor!=null ){

@@ -1,27 +1,28 @@
 package akiyama.mykeep.widget;
 
 import android.os.Bundle;
-import android.support.v4.view.MenuItemCompat;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.SearchView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import akiyama.mykeep.R;
-import akiyama.mykeep.Task.SaveSingleDbTask;
+import akiyama.mykeep.common.UserLoginConfig;
+import akiyama.mykeep.db.model.BaseModel;
+import akiyama.mykeep.task.QueryByUserDbTask;
+import akiyama.mykeep.task.SaveSingleDbTask;
 import akiyama.mykeep.adapter.SearchAdapter;
-import akiyama.mykeep.base.BaseActivity;
 import akiyama.mykeep.base.BaseObserverActivity;
 import akiyama.mykeep.controller.LabelController;
 import akiyama.mykeep.db.model.LabelModel;
 import akiyama.mykeep.event.EventType;
+import akiyama.mykeep.util.LoginHelper;
 import akiyama.mykeep.view.SearchLayout;
 import akiyama.mykeep.vo.SearchVo;
 
@@ -33,10 +34,11 @@ import akiyama.mykeep.vo.SearchVo;
  */
 public class AddLabelActivity extends BaseObserverActivity implements SearchLayout.CreatLabelClickEvent,TextWatcher{
 
+    public static final String KEY_EXTRA_SELECT_LABEL="extra_select_label";//选定的Label标签，从上一个界面传递过来的
     private SearchLayout mSearchSly;
     private SearchAdapter mSearchAdpter;
     private List<SearchVo> mSearchList;
-    private LabelController mLabelController;
+    private List<LabelModel> mSelectLabels;//已经选定的Label标签
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,15 +74,10 @@ public class AddLabelActivity extends BaseObserverActivity implements SearchLayo
     @Override
     protected void initView() {
         setToolBarTitle("增加标签");
-        mSearchList=new ArrayList<SearchVo>();
-        for(int i=0;i<100;i++){
-            if(i%2==0){
-                mSearchList.add(new SearchVo("个人",false));
-            }else{
-                mSearchList.add(new SearchVo("家庭",false));
-            }
+        mSearchList = new ArrayList<>();
+        mSelectLabels =new ArrayList<>();
+        mSelectLabels = getIntent().getParcelableArrayListExtra(KEY_EXTRA_SELECT_LABEL);
 
-        }
         mSearchAdpter=new SearchAdapter(mContext,mSearchList);
     }
 
@@ -144,24 +141,40 @@ public class AddLabelActivity extends BaseObserverActivity implements SearchLayo
      * 保存标签操作
      */
     private void saveLabelToDb(){
-        if(mLabelController==null){
-            mLabelController=new LabelController();
-        }
+        LabelController labelController=new LabelController();
         LabelModel labelModel=new LabelModel();
         labelModel.setName(mSearchSly.getSearchText());//无需非NULL判断，因为能到这一步说明mSearchSly.getSearchText()一定不是null
-        new SaveSingleDbTask(mContext,mLabelController){
+        labelModel.setCreatTime(String.valueOf(Calendar.getInstance().getTimeInMillis()));
+        labelModel.setUpdateTime(String.valueOf(Calendar.getInstance().getTimeInMillis()));
+        labelModel.setUserId(LoginHelper.getCurrentUserId());
+        new SaveSingleDbTask(mContext,labelController){
 
             @Override
             public void savePostExecute(Boolean aBoolean) {
                 if(aBoolean){
-                    //保存成功后
-                    Toast.makeText(mContext,"保存成功",Toast.LENGTH_SHORT).show();
+                    mSearchSly.setSearchText("");
                 }
 
             }
         }.execute(labelModel);
     }
 
+   private void queryLabel(){
+       LabelController labelController=new LabelController();
+       new QueryByUserDbTask(mContext,labelController){
+
+           @Override
+           public void queryPostExecute(List<? extends BaseModel> models) {
+                if(models!=null && models.size()>0){
+                    List<LabelModel> labelModels=(ArrayList<LabelModel>) models;
+                    if(mSelectLabels!=null && mSearchList.size()>0){
+
+                    }
+                }
+           }
+
+       }.execute(LoginHelper.getCurrentUserId());
+   }
 
 
 }

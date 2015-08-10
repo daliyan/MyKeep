@@ -1,4 +1,4 @@
-package akiyama.mykeep.Task;
+package akiyama.mykeep.task;
 
 import android.app.ProgressDialog;
 import android.content.Context;

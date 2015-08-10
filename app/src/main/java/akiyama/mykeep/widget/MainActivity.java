@@ -316,7 +316,7 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         protected List<RecordModel> doInBackground(String... params) {
             List<RecordModel> models=new ArrayList<RecordModel>();
             if(params[0]!=null){
-                models=rc.getRecordsByUserId(mContext,params[0]);
+                models=(List<RecordModel>)rc.getDbByUserId(mContext, params[0]);
             }
             return models;
         }

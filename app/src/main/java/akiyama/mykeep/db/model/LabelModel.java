@@ -18,7 +18,7 @@ import akiyama.mykeep.util.DataProviderHelper;
  */
 public class LabelModel extends BaseModel{
     private String name;
-
+    private String userId;
     public LabelModel(){
 
     }
@@ -26,12 +26,14 @@ public class LabelModel extends BaseModel{
     public LabelModel(Parcel in){
         readBase(in);
         name=in.readString();
+        userId=in.readString();
     }
 
     @Override
     public ContentValues values() {
         ContentValues cv=convert();
         cv.put(LabelCoumnls.NAME,name);
+        cv.put(RecordColumns.USERID,userId);
         return cv;
     }
 
@@ -55,6 +57,7 @@ public class LabelModel extends BaseModel{
         lm.updateTime=DataProviderHelper.parseString(cursor,BaseColumns.UPDATEAT);
         lm.creatTime=DataProviderHelper.parseString(cursor,BaseColumns.CREATAT);
         lm.name= DataProviderHelper.parseString(cursor,LabelCoumnls.NAME);
+        lm.userId=DataProviderHelper.parseString(cursor,RecordColumns.USERID);
         return lm;
     }
 
@@ -67,6 +70,7 @@ public class LabelModel extends BaseModel{
     public void writeToParcel(Parcel dest, int flags) {
         writeBase(dest,flags);
         dest.writeString(name);
+        dest.writeString(userId);
     }
 
     public void setName(String name) {
@@ -75,5 +79,13 @@ public class LabelModel extends BaseModel{
 
     public String getName() {
         return name;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getUserId() {
+        return userId;
     }
 }

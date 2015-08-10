@@ -1,6 +1,5 @@
 package akiyama.mykeep.widget;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -19,7 +18,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import akiyama.mykeep.R;
-import akiyama.mykeep.Task.SaveSingleDbTask;
+import akiyama.mykeep.task.SaveSingleDbTask;
 import akiyama.mykeep.adapter.SpinnerAdapter;
 import akiyama.mykeep.base.BaseActivity;
 import akiyama.mykeep.controller.RecordController;
