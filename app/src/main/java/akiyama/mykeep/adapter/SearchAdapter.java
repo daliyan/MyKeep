@@ -2,11 +2,17 @@ package akiyama.mykeep.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.VelocityTracker;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
+import android.widget.Scroller;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +20,8 @@ import java.util.List;
 import akiyama.mykeep.R;
 import akiyama.mykeep.event.EventType;
 import akiyama.mykeep.event.Notify;
+import akiyama.mykeep.util.DimUtil;
+import akiyama.mykeep.util.LogUtil;
 import akiyama.mykeep.vo.SearchVo;
 
 /**
@@ -23,7 +31,7 @@ import akiyama.mykeep.vo.SearchVo;
  * @version 1.0
  * @since 2015-07-29  16:21
  */
-public class SearchAdapter extends BaseAdapter{
+public class SearchAdapter extends BaseAdapter {
 
     private List<SearchVo> mSearchVoList;
     private List<SearchVo> mSearchFilterList=new ArrayList<SearchVo>();
@@ -70,10 +78,10 @@ public class SearchAdapter extends BaseAdapter{
             @Override
             public void onClick(View v) {
                 viewHolder.mSelectLabelCb.setChecked(!viewHolder.mSelectLabelCb.isChecked());
-                if(viewHolder.mSelectLabelCb.isChecked()){
+                if (viewHolder.mSelectLabelCb.isChecked()) {
                     mSearchVoList.get(position).setIsCheck(true);
                     mSearchFilterList.get(position).setIsCheck(true);
-                }else{
+                } else {
                     mSearchVoList.get(position).setIsCheck(false);
                     mSearchFilterList.get(position).setIsCheck(false);
                 }
@@ -104,4 +112,6 @@ public class SearchAdapter extends BaseAdapter{
             mSelectLabelCb=(CheckBox) v.findViewById(R.id.select_label_cb);
         }
     }
+
+
 }

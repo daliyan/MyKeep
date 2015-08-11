@@ -44,7 +44,7 @@ public class DataProvider extends ContentProvider implements IDataProvider{
     public static final int IMAGE_ID=6;
 
     public static final int LABELS=7;//查询全部的标签
-    public static final int LABELS_ID=8;
+    public static final int LABEL_ID =8;
 
     static{
         sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -58,7 +58,7 @@ public class DataProvider extends ContentProvider implements IDataProvider{
         sUriMatcher.addURI(Constants.AUTHORITY,RecordColumns.TABLE_NAME+"/id/*",IMAGE_ID);
 
         sUriMatcher.addURI(Constants.AUTHORITY,LabelCoumnls.TABLE_NAME,LABELS);
-        sUriMatcher.addURI(Constants.AUTHORITY,LabelCoumnls.TABLE_NAME+"/id/*",LABELS_ID);
+        sUriMatcher.addURI(Constants.AUTHORITY,LabelCoumnls.TABLE_NAME+"/id/*", LABEL_ID);
     }
 
     @Override
@@ -78,7 +78,7 @@ public class DataProvider extends ContentProvider implements IDataProvider{
             case USER_ID:
             case RECORD_ID:
             case IMAGE_ID:
-            case LABELS_ID:
+            case LABEL_ID:
                 return queryItemById(uri);
             default:
                 throw new IllegalArgumentException("query Unknown URI " + uri);
@@ -102,7 +102,7 @@ public class DataProvider extends ContentProvider implements IDataProvider{
                 return ImageColumns.CONTENT_ITEM_TYPE;
             case LABELS:
                 return LabelCoumnls.CONTENT_TYPE;
-            case LABELS_ID:
+            case LABEL_ID:
                 return LabelCoumnls.CONTENT_ITEM_TYPE;
             default:
                 throw new IllegalArgumentException("getType() Unknown URI " + uri);
@@ -121,7 +121,7 @@ public class DataProvider extends ContentProvider implements IDataProvider{
             case USER_ID:
             case RECORD_ID:
             case IMAGE_ID:
-            case LABELS_ID:
+            case LABEL_ID:
             default:
                 throw new IllegalArgumentException("query Unknown URI " + uri);
         }
@@ -162,7 +162,7 @@ public class DataProvider extends ContentProvider implements IDataProvider{
             case USER_ID:
             case RECORD_ID:
             case IMAGE_ID:
-            case LABELS_ID:
+            case LABEL_ID:
                 return deleteItemByUri(uri);
             default:
                 throw new IllegalArgumentException("query Unknown URI " + uri);
@@ -180,7 +180,7 @@ public class DataProvider extends ContentProvider implements IDataProvider{
             case USER_ID:
             case RECORD_ID:
             case IMAGE_ID:
-            case LABELS_ID:
+            case LABEL_ID:
                 return updateItmeByUri(uri,values);
             default:
                 throw new IllegalArgumentException("query Unknown URI " + uri);

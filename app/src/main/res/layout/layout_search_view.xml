@@ -42,7 +42,7 @@
 
     </LinearLayout>
 
-    <ListView
+    <akiyama.mykeep.view.swipemenulistview.SwipeMenuListView
         android:id="@+id/search_result_lv"
         android:layout_width="match_parent"
         android:layout_height="0dip"

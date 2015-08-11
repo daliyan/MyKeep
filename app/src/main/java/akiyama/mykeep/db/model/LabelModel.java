@@ -49,7 +49,7 @@ public class LabelModel extends BaseModel{
 
     @Override
     public LabelModel getModel(Cursor cursor) {
-        if(cursor!=null){
+        if(cursor==null){
             return null;
         }
         LabelModel lm=new LabelModel();
@@ -57,7 +57,7 @@ public class LabelModel extends BaseModel{
         lm.updateTime=DataProviderHelper.parseString(cursor,BaseColumns.UPDATEAT);
         lm.creatTime=DataProviderHelper.parseString(cursor,BaseColumns.CREATAT);
         lm.name= DataProviderHelper.parseString(cursor,LabelCoumnls.NAME);
-        lm.userId=DataProviderHelper.parseString(cursor,RecordColumns.USERID);
+        lm.userId=DataProviderHelper.parseString(cursor,LabelCoumnls.USERID);
         return lm;
     }
 

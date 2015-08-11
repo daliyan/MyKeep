@@ -1,21 +1,24 @@
 package akiyama.mykeep.view;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewStub;
-import android.widget.Adapter;
-import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
+
 import akiyama.mykeep.R;
+import akiyama.mykeep.view.swipemenulistview.SwipeMenu;
+import akiyama.mykeep.view.swipemenulistview.SwipeMenuCreator;
+import akiyama.mykeep.view.swipemenulistview.SwipeMenuListView;
 
 /**
  * 搜索标签Layout
@@ -27,7 +30,7 @@ public class SearchLayout extends LinearLayout{
     private static final String TAG="SearchView";
     private Context mContext;
     private EditText mEditTextEt;
-    private ListView mListViewLv;
+    private SwipeMenuListView mListViewLv;
     private View mView;
     private ListAdapter mAdpter=null;
     private LinearLayout mCreatLl;
@@ -52,7 +55,7 @@ public class SearchLayout extends LinearLayout{
         mContext = context;
         mView = LayoutInflater.from(context).inflate(R.layout.layout_search_view, this);
         mEditTextEt = (EditText) mView.findViewById(R.id.search_content_et);
-        mListViewLv = (ListView) mView.findViewById(R.id.search_result_lv);
+        mListViewLv = (SwipeMenuListView) mView.findViewById(R.id.search_result_lv);
         mCreatLl =(LinearLayout) mView.findViewById(R.id.add_label_vs);
         mCreatLabelTitleTv = (TextView) mView.findViewById(R.id.creat_label_tv);
         if(mAdpter!=null){
@@ -67,6 +70,21 @@ public class SearchLayout extends LinearLayout{
                 }
             }
         });
+
+        SwipeMenuCreator creator = new SwipeMenuCreator() {
+            @Override
+            public void create(SwipeMenu menu) {
+                mCreatLabelClickEvent.setLabelContextMenu(menu);
+            }
+        };
+        mListViewLv.setMenuCreator(creator);
+        mListViewLv.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
+                return mCreatLabelClickEvent.setLabelContextMenuClick(position,menu,index);
+            }
+        });
+
     }
 
     public void setInputChangeListener(TextWatcher textWatcher){
@@ -111,7 +129,14 @@ public class SearchLayout extends LinearLayout{
         this.mCreatLabelClickEvent = creatLabelClickEvent;
     }
 
+    /**
+     * 一些item的事件接口
+     */
     public interface CreatLabelClickEvent{
-        public void setCreatLabelClickEvent();
+        public void setCreatLabelClickEvent();//单击事件
+        public void setLabelContextMenu(SwipeMenu menu);//定义滑动快捷菜单项
+        public boolean setLabelContextMenuClick(int position, SwipeMenu menu, int index);//滑动快捷菜单项的各个事件方法
     }
+
+
 }
