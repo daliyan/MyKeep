@@ -96,11 +96,11 @@ public class SwipeRecyclerView extends RecyclerView {
     }
 
     private void scrollToRight(View destView, int destX,int scrollX){
-        if(){
+        /*if(){
             destView.scrollTo(mScreenWidth/3,0);
         }else{
             destView.scrollBy(destX,0);
-        }
+        }*/
     }
 
 
