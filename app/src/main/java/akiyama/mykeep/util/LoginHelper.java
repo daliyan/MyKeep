@@ -2,6 +2,8 @@ package akiyama.mykeep.util;
 
 import com.avos.avoscloud.AVUser;
 
+import akiyama.mykeep.common.UserLoginConfig;
+
 /**
  * 登录帮助类
  * @author zhiwu_yan
@@ -27,5 +29,13 @@ public class LoginHelper {
             return true;
         }
         return false;
+    }
+
+    public static String getCurrentUserId(){
+        if(getCurrentUser()!=null){
+            return getCurrentUser().getObjectId();
+        }else{
+            return UserLoginConfig.DEFAULT_USER_ID;
+        }
     }
 }

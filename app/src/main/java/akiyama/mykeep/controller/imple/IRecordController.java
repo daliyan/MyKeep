@@ -1,4 +1,4 @@
-package akiyama.mykeep.controller;
+package akiyama.mykeep.controller.imple;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -15,11 +15,4 @@ import akiyama.mykeep.db.model.RecordModel;
  */
 public interface IRecordController {
 
-    /**
-     * 通过用户ID查询对应的“记录”
-     * @param context
-     * @param userId
-     * @return
-     */
-    public List<RecordModel> getRecordsByUserId(Context context,String userId);
 }

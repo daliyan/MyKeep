@@ -16,6 +16,7 @@ import akiyama.mykeep.AppContext;
 import akiyama.mykeep.common.Constants;
 import akiyama.mykeep.db.model.BaseColumns;
 import akiyama.mykeep.db.model.ImageColumns;
+import akiyama.mykeep.db.model.LabelCoumnls;
 import akiyama.mykeep.db.model.RecordColumns;
 import akiyama.mykeep.db.model.UserColumns;
 import akiyama.mykeep.util.LogUtil;
@@ -42,6 +43,9 @@ public class DataProvider extends ContentProvider implements IDataProvider{
     public static final int IMAGES=5;
     public static final int IMAGE_ID=6;
 
+    public static final int LABELS=7;//查询全部的标签
+    public static final int LABEL_ID =8;
+
     static{
         sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         sUriMatcher.addURI(Constants.AUTHORITY, UserColumns.TABLE_NAME,USERS);
@@ -52,6 +56,9 @@ public class DataProvider extends ContentProvider implements IDataProvider{
 
         sUriMatcher.addURI(Constants.AUTHORITY,RecordColumns.TABLE_NAME,IMAGES);
         sUriMatcher.addURI(Constants.AUTHORITY,RecordColumns.TABLE_NAME+"/id/*",IMAGE_ID);
+
+        sUriMatcher.addURI(Constants.AUTHORITY,LabelCoumnls.TABLE_NAME,LABELS);
+        sUriMatcher.addURI(Constants.AUTHORITY,LabelCoumnls.TABLE_NAME+"/id/*", LABEL_ID);
     }
 
     @Override
@@ -66,10 +73,12 @@ public class DataProvider extends ContentProvider implements IDataProvider{
             case USERS:
             case RECORDS:
             case IMAGES:
+            case LABELS:
                 return queryAllList(uri, projection, selection, selectionArgs, sortOrder);
             case USER_ID:
             case RECORD_ID:
             case IMAGE_ID:
+            case LABEL_ID:
                 return queryItemById(uri);
             default:
                 throw new IllegalArgumentException("query Unknown URI " + uri);
@@ -91,6 +100,10 @@ public class DataProvider extends ContentProvider implements IDataProvider{
                 return ImageColumns.CONTENT_TYPE;
             case IMAGE_ID:
                 return ImageColumns.CONTENT_ITEM_TYPE;
+            case LABELS:
+                return LabelCoumnls.CONTENT_TYPE;
+            case LABEL_ID:
+                return LabelCoumnls.CONTENT_ITEM_TYPE;
             default:
                 throw new IllegalArgumentException("getType() Unknown URI " + uri);
         }
@@ -102,11 +115,13 @@ public class DataProvider extends ContentProvider implements IDataProvider{
             case USERS:
             case RECORDS:
             case IMAGES:
+            case LABELS:
                 insertItemByUri(uri, values);
                 return uri;
             case USER_ID:
             case RECORD_ID:
             case IMAGE_ID:
+            case LABEL_ID:
             default:
                 throw new IllegalArgumentException("query Unknown URI " + uri);
         }
@@ -142,10 +157,12 @@ public class DataProvider extends ContentProvider implements IDataProvider{
             case USERS:
             case RECORDS:
             case IMAGES:
+            case LABELS:
                 return deleteItemByCondition(uri,selection, selectionArgs);
             case USER_ID:
             case RECORD_ID:
             case IMAGE_ID:
+            case LABEL_ID:
                 return deleteItemByUri(uri);
             default:
                 throw new IllegalArgumentException("query Unknown URI " + uri);
@@ -158,10 +175,12 @@ public class DataProvider extends ContentProvider implements IDataProvider{
             case USERS:
             case RECORDS:
             case IMAGES:
+            case LABELS:
                 return updateItemByCondition(uri,values,selection,selectionArgs);
             case USER_ID:
             case RECORD_ID:
             case IMAGE_ID:
+            case LABEL_ID:
                 return updateItmeByUri(uri,values);
             default:
                 throw new IllegalArgumentException("query Unknown URI " + uri);

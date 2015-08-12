@@ -7,6 +7,7 @@ import android.net.Uri;
 
 import java.util.List;
 
+import akiyama.mykeep.controller.imple.IBaseController;
 import akiyama.mykeep.db.SQLiteHelper;
 import akiyama.mykeep.db.model.BaseModel;
 import akiyama.mykeep.db.model.IModel;
@@ -19,7 +20,7 @@ import akiyama.mykeep.util.LogUtil;
  * @version 1.0
  * @since 2015-07-08  13:54
  */
-public class BaseController implements IBaseController{
+public abstract class BaseController implements IBaseController {
 
     private static final String TAG="BaseController";
     @Override
@@ -37,10 +38,11 @@ public class BaseController implements IBaseController{
             return null;
         }
         Uri uri=model.getContentUri();//获取Content_uri
+        LogUtil.d(TAG,"insert"+uri);
         try{
             return context.getContentResolver().insert(uri,model.values());
         }catch (Exception e){
-            e.printStackTrace();
+            LogUtil.e(TAG,"cause:"+e.getCause()+"\n"+e.getMessage());
         }
         return null;
     }
@@ -120,4 +122,9 @@ public class BaseController implements IBaseController{
         return false;
     }
 
+    /**
+     * 通过对应的用户ID获取对应的数据
+     * @return
+     */
+    public abstract List<? extends BaseModel> getDbByUserId(Context context, String userId);
 }

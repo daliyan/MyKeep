@@ -14,11 +14,40 @@
          android:paddingLeft="15dip"
          android:hint="添加标签"/>
 
-    <ListView
+    <LinearLayout
+        android:id="@+id/add_label_vs"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="50dip"
+        android:background="@drawable/label_select_bg"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/create_label_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_material_add_blue"
+            android:contentDescription="@string/create_new_label_edit_mode"
+            style="@style/LabelEditorIcon" />
+
+        <TextView
+            android:id="@+id/creat_label_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            style="@style/LabelEditorIcon"
+            android:textColor="@color/light_black"
+            android:text="创建"/>
+
+    </LinearLayout>
+
+    <akiyama.mykeep.view.SwipeRecyclerView
         android:id="@+id/search_result_lv"
         android:layout_width="match_parent"
         android:layout_height="0dip"
         android:layout_weight="1"
         android:dividerHeight="0dip"/>
+
 
 </LinearLayout>

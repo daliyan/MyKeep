@@ -7,7 +7,7 @@
     </declare-styleable>
 
 
-    <declare-styleable name="DottedViewLine">
+    <declare-styleable name="DottedLineView">
         <attr name="exampleString" format="string" />
         <attr name="exampleDimension" format="dimension" />
         <attr name="exampleColor" format="color" />

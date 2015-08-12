@@ -1,6 +1,5 @@
 package akiyama.mykeep.widget;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -19,6 +18,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import akiyama.mykeep.R;
+import akiyama.mykeep.task.SaveSingleDbTask;
 import akiyama.mykeep.adapter.SpinnerAdapter;
 import akiyama.mykeep.base.BaseActivity;
 import akiyama.mykeep.controller.RecordController;
@@ -125,7 +125,7 @@ public class AddRecordActivity extends BaseActivity {
                 record.setUpdateTime(String.valueOf(Calendar.getInstance().getTimeInMillis()));
                 record.setAlarmTime(String.valueOf(Calendar.getInstance().getTimeInMillis()));
                 record.setUserId(LoginHelper.getCurrentUser().getObjectId());
-                new SaveRecordTask().execute(record);
+                saveRecordTask(record);
             }else{
                 Toast.makeText(mContext,"必须填写标题和内容哦！",Toast.LENGTH_LONG).show();
             }
@@ -141,39 +141,6 @@ public class AddRecordActivity extends BaseActivity {
         Intent addLabel=new Intent(this,AddLabelActivity.class);
         startActivity(addLabel);
     }
-    private class SaveRecordTask extends AsyncTask<RecordModel,Void,Boolean>{
-
-        private ProgressDialog mProgressBar;
-
-        @Override
-        protected void onPreExecute() {
-            mProgressBar=new ProgressDialog(mContext);
-            mProgressBar.setMessage("正在保存，请稍后......");
-            mProgressBar.show();
-        }
-
-        @Override
-        protected Boolean doInBackground(RecordModel... params) {
-            if(rc.insert(mContext,params[0])!=null){
-                return true;
-            }
-            return false;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean aBoolean) {
-            if(aBoolean){
-                Toast.makeText(mContext,"保存成功！",Toast.LENGTH_LONG).show();
-                Notify.getInstance().NotifyActivity(EventType.EVENT_ADD_RECORD);
-                mTitleEt.setText("");
-                mContentEt.setText("");
-                mProgressBar.dismiss();
-                AddRecordActivity.this.finish();
-            }
-        }
-    }
-
-
 
     private class GetLabelsTask extends AsyncTask<Void,Void,Void>{
         private List<LabelVo> labelVos=new ArrayList<LabelVo>();
@@ -192,4 +159,20 @@ public class AddRecordActivity extends BaseActivity {
             mLabelSp.setAdapter(mSpa);
         }
     }
+
+    private void saveRecordTask(RecordModel record){
+        new SaveSingleDbTask(mContext,rc){
+            @Override
+            public void savePostExecute(Boolean aBoolean) {
+                if(aBoolean){
+                    Toast.makeText(mContext,"保存成功！",Toast.LENGTH_LONG).show();
+                    Notify.getInstance().NotifyActivity(EventType.EVENT_ADD_RECORD);
+                    mTitleEt.setText("");
+                    mContentEt.setText("");
+                    AddRecordActivity.this.finish();
+                }
+            }
+        }.execute(record);
+    }
+
 }
