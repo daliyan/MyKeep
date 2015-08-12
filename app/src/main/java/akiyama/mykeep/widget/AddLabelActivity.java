@@ -5,13 +5,15 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.View;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import akiyama.mykeep.R;
 import akiyama.mykeep.adapter.SearchAdapter;
-import akiyama.mykeep.base.BaseActivity;
+import akiyama.mykeep.base.BaseObserverActivity;
+import akiyama.mykeep.event.EventType;
 import akiyama.mykeep.view.SearchLayout;
 import akiyama.mykeep.vo.SearchVo;
 
@@ -22,7 +24,8 @@ import akiyama.mykeep.vo.SearchVo;
  * @version 1.0
  * @since 2015-07-15  17:22
  */
-public class AddLabelActivity extends BaseActivity{
+public class AddLabelActivity extends BaseObserverActivity {
+
     private SearchLayout mSearchSly;
     private TextWatcher mText;
     private SearchAdapter mSearchAdpter;
@@ -31,6 +34,21 @@ public class AddLabelActivity extends BaseActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_label);
+    }
+
+    @Override
+    protected void onChange(String eventType) {
+        Toast.makeText(mContext, eventType, Toast.LENGTH_SHORT).show();
+        if(eventType.equals(EventType.EVENT_ADD_LABEL_LIST)){
+            mSearchList=mSearchAdpter.getSearchVoList();
+        }
+    }
+
+    @Override
+    protected String[] getObserverEventType() {
+        return new String[]{
+                EventType.EVENT_ADD_LABEL_LIST
+        };
     }
 
     @Override
@@ -62,21 +80,16 @@ public class AddLabelActivity extends BaseActivity{
     @Override
     protected void setOnClick() {
         mText=new TextWatcher() {
-            private List<SearchVo> mQuertListResult=new ArrayList<SearchVo>();
-            private SearchAdapter mQuertSearchAdpter;
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                mQuertListResult=null;
-                mQuertListResult=queryList(s.toString());
-                mQuertSearchAdpter=new SearchAdapter(mContext,mQuertListResult);
                 if(s.length()==0){
-                    mSearchSly.setmAdpter(mSearchAdpter);
+                    mSearchAdpter.refreshDate(mSearchList);
                 }else{
-                    mSearchSly.setmAdpter(mQuertSearchAdpter);
+                    mSearchAdpter.refreshDate(queryList(s.toString()));
                 }
             }
 

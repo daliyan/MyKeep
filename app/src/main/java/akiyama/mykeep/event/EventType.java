@@ -14,13 +14,15 @@ public class EventType {
     private static volatile EventType mEventType;
     private final static Set<String> eventsTypes = new HashSet<String>();
 
-    public final static String EVENT_LOGIN="com.myapp.login";//登录成功
-    public final static String EVENT_LOGINOUT="com.myapp.loginout";//注销登录信息
-    public final static String EVENT_ADD_RECORD="com.myapp.add.record";//添加记录
+    public final static String EVENT_LOGIN="akiyama.mykeep.login";//登录成功
+    public final static String EVENT_LOGINOUT="akiyama.mykeep.loginout";//注销登录信息
+    public final static String EVENT_ADD_RECORD="akiyama.mykeep.add.record";//添加记录
+    public final static String EVENT_ADD_LABEL_LIST="akiyama.mykeep.lable.list";//标签记录发生改变
     private EventType(){
         eventsTypes.add(EVENT_LOGIN);
         eventsTypes.add(EVENT_LOGINOUT);
         eventsTypes.add(EVENT_ADD_RECORD);
+        eventsTypes.add(EVENT_ADD_LABEL_LIST);
     }
 
     public static EventType getInstance(){

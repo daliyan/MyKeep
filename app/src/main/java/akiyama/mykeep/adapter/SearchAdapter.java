@@ -8,9 +8,12 @@ import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import akiyama.mykeep.R;
+import akiyama.mykeep.event.EventType;
+import akiyama.mykeep.event.Notify;
 import akiyama.mykeep.vo.SearchVo;
 
 /**
@@ -45,8 +48,8 @@ public class SearchAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder viewHolder;
+    public View getView(final int position, View convertView, ViewGroup parent) {
+        final ViewHolder viewHolder;
         if(convertView==null){
             convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_search_resultl, parent, false);
             viewHolder=new ViewHolder(convertView);
@@ -59,7 +62,29 @@ public class SearchAdapter extends BaseAdapter {
             viewHolder.mTitleTv.setText(mSearchVoList.get(position).getName());
             viewHolder.mSelectLabelCb.setChecked(mSearchVoList.get(position).getIsCheck());
         }
+
+        convertView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewHolder.mSelectLabelCb.setChecked(!viewHolder.mSelectLabelCb.isChecked());
+                if(viewHolder.mSelectLabelCb.isChecked()){
+                    mSearchVoList.get(position).setIsCheck(true);
+                }else{
+                    mSearchVoList.get(position).setIsCheck(false);
+                }
+                Notify.getInstance().NotifyActivity(EventType.EVENT_ADD_LABEL_LIST);
+            }
+        });
         return convertView;
+    }
+
+    public void refreshDate(List<SearchVo> searchVoList){
+        this.mSearchVoList=searchVoList;
+        notifyDataSetChanged();
+    }
+
+    public List<SearchVo> getSearchVoList() {
+        return mSearchVoList;
     }
 
     public static class ViewHolder  {
