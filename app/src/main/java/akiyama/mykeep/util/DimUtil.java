@@ -10,6 +10,10 @@ import android.content.res.Resources;
  */
 public class DimUtil {
 
+    public static int getScreenWidth(){
+        return Resources.getSystem().getDisplayMetrics().widthPixels;
+    }
+
     public static int pxToDip(int px){
         final float scale = Resources.getSystem().getDisplayMetrics().density;
         return (int) (px / scale + 0.5f);

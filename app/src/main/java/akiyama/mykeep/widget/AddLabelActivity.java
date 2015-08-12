@@ -1,14 +1,12 @@
 package akiyama.mykeep.widget;
-
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.View;
-import android.widget.Toast;
 
 
 import java.util.ArrayList;
@@ -16,7 +14,6 @@ import java.util.Calendar;
 import java.util.List;
 
 import akiyama.mykeep.R;
-import akiyama.mykeep.common.UserLoginConfig;
 import akiyama.mykeep.db.model.BaseModel;
 import akiyama.mykeep.task.QueryByUserDbTask;
 import akiyama.mykeep.task.SaveSingleDbTask;
@@ -25,11 +22,8 @@ import akiyama.mykeep.base.BaseObserverActivity;
 import akiyama.mykeep.controller.LabelController;
 import akiyama.mykeep.db.model.LabelModel;
 import akiyama.mykeep.event.EventType;
-import akiyama.mykeep.util.DimUtil;
 import akiyama.mykeep.util.LoginHelper;
 import akiyama.mykeep.view.SearchLayout;
-import akiyama.mykeep.view.swipemenulistview.SwipeMenu;
-import akiyama.mykeep.view.swipemenulistview.SwipeMenuItem;
 import akiyama.mykeep.vo.SearchVo;
 
 /**
@@ -128,34 +122,6 @@ public class AddLabelActivity extends BaseObserverActivity implements SearchLayo
     @Override
     public void afterTextChanged(Editable s) {
 
-    }
-
-    @Override
-    public void setLabelContextMenu(SwipeMenu menu) {
-        SwipeMenuItem openItem = new SwipeMenuItem(mContext);
-        openItem.setBackground(new ColorDrawable(Color.rgb(0xC9, 0xC9,0xCE)));
-        openItem.setWidth((int) DimUtil.dipToPx(90));
-        openItem.setTitle("编辑");
-        openItem.setTitleSize(18);
-        openItem.setTitleColor(Color.WHITE);
-        menu.addMenuItem(openItem);
-
-        SwipeMenuItem deleteItem = new SwipeMenuItem(mContext);
-        deleteItem.setBackground(new ColorDrawable(Color.rgb(0xF9,0x3F, 0x25)));
-        deleteItem.setWidth((int)DimUtil.dipToPx(90));
-        openItem.setTitle("删除");
-        menu.addMenuItem(deleteItem);
-    }
-
-    @Override
-    public boolean setLabelContextMenuClick(int position, SwipeMenu menu, int index) {
-        switch (index) {
-            case 0:
-                break;
-            case 1:
-                break;
-        }
-        return false;
     }
 
     /**
