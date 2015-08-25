@@ -6,10 +6,8 @@ import android.database.Cursor;
 import java.util.ArrayList;
 import java.util.List;
 
-import akiyama.mykeep.controller.imple.IRecordController;
 import akiyama.mykeep.db.model.BaseColumns;
 import akiyama.mykeep.db.model.BaseModel;
-import akiyama.mykeep.db.model.IModel;
 import akiyama.mykeep.db.model.RecordColumns;
 import akiyama.mykeep.db.model.RecordModel;
 

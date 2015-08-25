@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -22,6 +23,7 @@ import akiyama.mykeep.controller.LabelController;
 import akiyama.mykeep.db.model.LabelModel;
 import akiyama.mykeep.event.EventType;
 import akiyama.mykeep.util.LoginHelper;
+import akiyama.mykeep.util.StringUtil;
 import akiyama.mykeep.view.SearchLayout;
 import akiyama.mykeep.vo.SearchVo;
 
@@ -37,8 +39,8 @@ public class AddLabelActivity extends BaseObserverActivity implements SearchLayo
     private SearchLayout mSearchSly;
     private SearchAdapter mSearchAdpter;
     private List<SearchVo> mSearchList;
-    private List<LabelModel> mSelectLabels;//已经选定的Label标签
-
+    private List<SearchVo> mSelectLabels;//已经选定的Label标签
+    private String mLabels;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,7 +64,7 @@ public class AddLabelActivity extends BaseObserverActivity implements SearchLayo
         setToolBarTitle("增加标签");
         mSearchList = new ArrayList<>();
         mSelectLabels =new ArrayList<>();
-        mSelectLabels = getIntent().getParcelableArrayListExtra(KEY_EXTRA_SELECT_LABEL);
+        initSelectLabel();
         queryLabelFromDb();
         mSearchAdpter=new SearchAdapter(mContext,mSearchList);
     }
@@ -96,7 +98,6 @@ public class AddLabelActivity extends BaseObserverActivity implements SearchLayo
     @Override
     public void setCreatLabelClickEvent() {
         saveLabelToDb();
-        queryLabelFromDb();
     }
 
     @Override
@@ -118,6 +119,7 @@ public class AddLabelActivity extends BaseObserverActivity implements SearchLayo
         }
     }
 
+    @Override
     public void afterTextChanged(Editable s) {
 
     }
@@ -137,7 +139,10 @@ public class AddLabelActivity extends BaseObserverActivity implements SearchLayo
             @Override
             public void savePostExecute(Boolean aBoolean) {
                 if(aBoolean){
+                    mSearchList.add(new SearchVo(mSearchSly.getSearchText(),true));//保存成功后直接添加一个项目到列表中，无需重新刷新
                     mSearchSly.setSearchText("");
+                    InputMethodManager imm=(InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(mSearchSly.getWindowToken(), 0);
                 }
 
             }
@@ -155,23 +160,17 @@ public class AddLabelActivity extends BaseObserverActivity implements SearchLayo
            public void queryPostExecute(List<? extends BaseModel> models) {
                 if(models!=null && models.size()>0){
                     List<LabelModel> labelModels=(ArrayList<LabelModel>) models;
-
                     if(labelModels==null){
                         return;
                     }
 
-                    if(mSelectLabels!=null){
+                    if(mSearchList!=null && mSearchList.size()>0){
                         mSearchList.clear();
-                        for(int i=0;i<labelModels.size();i++){
-                            for(int j=0;j<mSearchList.size();j++){
-                                if(mSearchList.get(j).getName().equals(labelModels.get(i).getName())){
-                                    mSearchList.add(new SearchVo(labelModels.get(i).getName(),true));
-                                    break;
-                                }
-                            }
-                        }
-                    }else{
-                        setSelectVoList(labelModels);
+                    }
+
+                    switchListToVo(labelModels);
+                    if(mSelectLabels!=null){
+                        addSelectVoList();
                     }
                     mSearchAdpter.refreshDate(mSearchList);
                 }
@@ -184,9 +183,23 @@ public class AddLabelActivity extends BaseObserverActivity implements SearchLayo
      * 将LabelModel list数据转换成SearchVo的适配器数据
      * @param labelModelList
      */
-    private void setSelectVoList(List<LabelModel> labelModelList){
+    private void switchListToVo(List<LabelModel> labelModelList){
         for(int i=0;i<labelModelList.size();i++){
             mSearchList.add(new SearchVo(labelModelList.get(i).getName(),false));
+        }
+    }
+
+    /**
+     * 添加已经选定的项目
+     */
+    private void addSelectVoList(){
+        for(int i=0;i<mSelectLabels.size();i++){
+            for(int j=0;j<mSearchList.size();j++){
+                if(mSearchList.get(j).getName().equals(mSelectLabels.get(i).getName())){
+                    mSearchList.set(j,new SearchVo(mSelectLabels.get(i).getName(),true));
+                    break;
+                }
+            }
         }
     }
 
@@ -205,5 +218,17 @@ public class AddLabelActivity extends BaseObserverActivity implements SearchLayo
         return searchs;
     }
 
+    /**
+     * 初始化选择的Label
+     * @return
+     */
+    public void initSelectLabel(){
+        mLabels = getIntent().getStringExtra(KEY_EXTRA_SELECT_LABEL);
+        String[] labels=StringUtil.subStringBySymbol(mLabels,",");
+        if(labels!=null && labels.length > 0){
+            for(int i=0;i < labels.length;i++)
+                mSelectLabels.add(new SearchVo(labels[i],false));
+        }
+    }
 
 }

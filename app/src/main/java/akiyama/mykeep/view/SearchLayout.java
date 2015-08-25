@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 
 import akiyama.mykeep.R;
+import akiyama.swipe.swipeView.SwipeRecyclerView;
 
 /**
  * 搜索标签Layout
@@ -27,7 +28,7 @@ public class SearchLayout extends LinearLayout{
     private static final String TAG="SearchView";
     private Context mContext;
     private EditText mEditTextEt;
-    private RecyclerView mListViewLv;
+    private SwipeRecyclerView mListViewLv;
     private View mView;
     private RecyclerView.Adapter mAdpter=null;
     private LinearLayout mCreatLl;
@@ -53,7 +54,7 @@ public class SearchLayout extends LinearLayout{
         mContext = context;
         mView = LayoutInflater.from(context).inflate(R.layout.layout_search_view, this);
         mEditTextEt = (EditText) mView.findViewById(R.id.search_content_et);
-        mListViewLv = (RecyclerView) mView.findViewById(R.id.search_result_lv);
+        mListViewLv = (SwipeRecyclerView) mView.findViewById(R.id.search_result_lv);
         mCreatLl =(LinearLayout) mView.findViewById(R.id.add_label_vs);
         mCreatLabelTitleTv = (TextView) mView.findViewById(R.id.creat_label_tv);
         mLayoutManager = new LinearLayoutManager(mContext);

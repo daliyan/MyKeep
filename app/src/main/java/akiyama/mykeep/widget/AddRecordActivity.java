@@ -9,7 +9,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 
@@ -19,13 +18,13 @@ import java.util.List;
 
 import akiyama.mykeep.R;
 import akiyama.mykeep.task.SaveSingleDbTask;
-import akiyama.mykeep.adapter.SpinnerAdapter;
 import akiyama.mykeep.base.BaseActivity;
 import akiyama.mykeep.controller.RecordController;
 import akiyama.mykeep.db.model.RecordModel;
 import akiyama.mykeep.event.EventType;
 import akiyama.mykeep.event.Notify;
 import akiyama.mykeep.util.LoginHelper;
+import akiyama.mykeep.view.LabelsLayout;
 import akiyama.mykeep.vo.LabelVo;
 
 /**
@@ -37,13 +36,12 @@ import akiyama.mykeep.vo.LabelVo;
 public class AddRecordActivity extends BaseActivity {
 
     private static final String TAG="AddRecordActivity";
-    private SpinnerAdapter mSpa;
     private List<LabelVo> mLabels;
     private EditText mTitleEt;
     private EditText mContentEt;
     private Button mSaveBtn;
     private Button mGiveUpBtn;
-    private Spinner mLabelSp;
+    private LabelsLayout mLabelLsl;
     private static RecordController rc=new RecordController();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,16 +54,19 @@ public class AddRecordActivity extends BaseActivity {
     protected void findView() {
         mTitleEt=(EditText) findViewById(R.id.record_title_et);
         mContentEt=(EditText) findViewById(R.id.record_content_et);
-        mLabelSp=(Spinner) findViewById(R.id.label_sp);
+        mLabelLsl =(LabelsLayout) findViewById(R.id.label_lsl);
         mSaveBtn=(Button) findViewById(R.id.save_btn);
         mGiveUpBtn=(Button) findViewById(R.id.give_up_btn);
+
+
     }
 
     @Override
     protected void initView() {
         setToolBarTitle("添加记事");
         mLabels=new ArrayList<LabelVo>();
-        new GetLabelsTask().execute();
+        mLabelLsl.addLabel("公司");
+        mLabelLsl.addLabel("个人");
     }
 
     @Override
@@ -120,7 +121,12 @@ public class AddRecordActivity extends BaseActivity {
                 record.setTitle(title);
                 record.setContent(content);
                 record.setLevel(RecordModel.NORMAL);
-                record.setLabelId(mLabels.get(mLabelSp.getSelectedItemPosition()).getLabelName());
+                if(getCurrentLabel()!=null){
+                    /**
+                     * Fix me 此处不应该存储labelId，直接存储labelName
+                     */
+                    record.setLabelId(getCurrentLabel());
+                }
                 record.setCreatTime(String.valueOf(Calendar.getInstance().getTimeInMillis()));
                 record.setUpdateTime(String.valueOf(Calendar.getInstance().getTimeInMillis()));
                 record.setAlarmTime(String.valueOf(Calendar.getInstance().getTimeInMillis()));
@@ -139,25 +145,19 @@ public class AddRecordActivity extends BaseActivity {
 
     private void goAddLabel(){
         Intent addLabel=new Intent(this,AddLabelActivity.class);
+        addLabel.putExtra(AddLabelActivity.KEY_EXTRA_SELECT_LABEL,getCurrentLabel());
         startActivity(addLabel);
     }
 
-    private class GetLabelsTask extends AsyncTask<Void,Void,Void>{
-        private List<LabelVo> labelVos=new ArrayList<LabelVo>();
-        @Override
-        protected Void doInBackground(Void... params) {
-            labelVos.add(new LabelVo("0","家庭"));
-            labelVos.add(new LabelVo("1","工作"));
-            labelVos.add(new LabelVo("2","个人"));
-            return null;
+    /**
+     * 获取当前Label标签组数据
+     * @return
+     */
+    private String getCurrentLabel(){
+        if(mLabelLsl!=null && mLabelLsl.getLabelTextStr()!=null){
+            return mLabelLsl.getLabelTextStr();
         }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            mLabels=labelVos;
-            mSpa=new SpinnerAdapter(mContext,mLabels);
-            mLabelSp.setAdapter(mSpa);
-        }
+        return null;
     }
 
     private void saveRecordTask(RecordModel record){

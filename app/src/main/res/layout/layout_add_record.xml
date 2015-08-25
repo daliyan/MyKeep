@@ -34,11 +34,10 @@
         android:textSize="16sp"
         android:hint="@string/record_content"/>
 
-    <Spinner
-        android:id="@+id/label_sp"
-        android:layout_width="80dip"
+    <akiyama.mykeep.view.LabelsLayout
+        android:id="@+id/label_lsl"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/trans"
         android:padding="10dip"
         android:layout_gravity="right"
         android:gravity="right"/>
