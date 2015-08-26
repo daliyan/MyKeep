@@ -1,5 +1,6 @@
 package akiyama.mykeep.widget;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -15,6 +16,8 @@ import java.util.List;
 
 import akiyama.mykeep.R;
 import akiyama.mykeep.db.model.BaseModel;
+import akiyama.mykeep.event.Notify;
+import akiyama.mykeep.event.NotifyInfo;
 import akiyama.mykeep.task.QueryByUserDbTask;
 import akiyama.mykeep.task.SaveSingleDbTask;
 import akiyama.mykeep.adapter.SearchAdapter;
@@ -34,8 +37,10 @@ import akiyama.mykeep.vo.SearchVo;
  * @since 2015-07-15  17:22
  */
 public class AddLabelActivity extends BaseObserverActivity implements SearchLayout.CreatLabelClickEvent,TextWatcher{
-
-    public static final String KEY_EXTRA_SELECT_LABEL="extra_select_label";//选定的Label标签，从上一个界面传递过来的
+    //选定的Label标签，从上一个界面传递过来的,一般在编辑记录标签的时候会触发
+    public static final String KEY_EXTRA_SELECT_LABEL="extra_select_label";
+    //传递选择后的结果给其它界面
+    public static final String KEY_EXTRA_SELECTED_LABEL="extra_selected_label";
     private SearchLayout mSearchSly;
     private SearchAdapter mSearchAdpter;
     private List<SearchVo> mSearchList;
@@ -77,13 +82,27 @@ public class AddLabelActivity extends BaseObserverActivity implements SearchLayo
     }
 
     @Override
+    protected void setBackEvent() {
+        ArrayList<SearchVo> searchVos=new ArrayList<SearchVo>();
+        for(SearchVo searchVo:mSearchList){
+            if(searchVo.getIsCheck()){
+                searchVos.add(searchVo);
+            }
+        }
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList(KEY_EXTRA_SELECTED_LABEL,searchVos);
+        Notify.getInstance().NotifyActivity(new NotifyInfo(EventType.EVENT_SELECTED_LABEL_LIST,bundle));
+        super.setBackEvent();
+    }
+
+    @Override
     public void onClick(View v) {
 
     }
 
     @Override
-    protected void onChange(String eventType) {
-        if(eventType.equals(EventType.EVENT_ADD_LABEL_LIST)){
+    protected void onChange(NotifyInfo notifyInfo) {
+        if(notifyInfo.getEventType().equals(EventType.EVENT_ADD_LABEL_LIST)){
             mSearchList=mSearchAdpter.getFinalSearchDate();
         }
     }

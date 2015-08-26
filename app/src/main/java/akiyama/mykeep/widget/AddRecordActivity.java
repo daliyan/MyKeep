@@ -17,8 +17,9 @@ import java.util.Calendar;
 import java.util.List;
 
 import akiyama.mykeep.R;
+import akiyama.mykeep.base.BaseObserverActivity;
+import akiyama.mykeep.event.NotifyInfo;
 import akiyama.mykeep.task.SaveSingleDbTask;
-import akiyama.mykeep.base.BaseActivity;
 import akiyama.mykeep.controller.RecordController;
 import akiyama.mykeep.db.model.RecordModel;
 import akiyama.mykeep.event.EventType;
@@ -26,6 +27,7 @@ import akiyama.mykeep.event.Notify;
 import akiyama.mykeep.util.LoginHelper;
 import akiyama.mykeep.view.LabelsLayout;
 import akiyama.mykeep.vo.LabelVo;
+import akiyama.mykeep.vo.SearchVo;
 
 /**
  * 添加一条记录
@@ -33,7 +35,7 @@ import akiyama.mykeep.vo.LabelVo;
  * @version 1.0
  * @since 2015-06-30  09:55
  */
-public class AddRecordActivity extends BaseActivity {
+public class AddRecordActivity extends BaseObserverActivity {
 
     private static final String TAG="AddRecordActivity";
     private List<LabelVo> mLabels;
@@ -49,6 +51,28 @@ public class AddRecordActivity extends BaseActivity {
         setContentView(R.layout.layout_add_record);
     }
 
+    @Override
+    protected void onChange(NotifyInfo notifyInfo) {
+        if(notifyInfo!=null){
+            String eventType = notifyInfo.getEventType();
+            if(eventType.equals(EventType.EVENT_SELECTED_LABEL_LIST)){
+                Bundle bundle = notifyInfo.getBundle();
+                List<SearchVo> searchSelectedVos = new ArrayList<>();
+                if(bundle!=null){
+                    searchSelectedVos =(ArrayList<SearchVo>) bundle.get(AddLabelActivity.KEY_EXTRA_SELECTED_LABEL);
+                    setSelectedLabel(searchSelectedVos);
+                }
+            }
+        }
+    }
+
+    @Override
+    protected String[] getObserverEventType() {
+        return new String[]{
+                EventType.EVENT_SELECTED_LABEL_LIST
+        };
+    }
+
 
     @Override
     protected void findView() {
@@ -57,16 +81,12 @@ public class AddRecordActivity extends BaseActivity {
         mLabelLsl =(LabelsLayout) findViewById(R.id.label_lsl);
         mSaveBtn=(Button) findViewById(R.id.save_btn);
         mGiveUpBtn=(Button) findViewById(R.id.give_up_btn);
-
-
     }
 
     @Override
     protected void initView() {
         setToolBarTitle("添加记事");
         mLabels=new ArrayList<LabelVo>();
-        mLabelLsl.addLabel("公司");
-        mLabelLsl.addLabel("个人");
     }
 
     @Override
@@ -166,7 +186,7 @@ public class AddRecordActivity extends BaseActivity {
             public void savePostExecute(Boolean aBoolean) {
                 if(aBoolean){
                     Toast.makeText(mContext,"保存成功！",Toast.LENGTH_LONG).show();
-                    Notify.getInstance().NotifyActivity(EventType.EVENT_ADD_RECORD);
+                    Notify.getInstance().NotifyActivity(new NotifyInfo(EventType.EVENT_ADD_RECORD));
                     mTitleEt.setText("");
                     mContentEt.setText("");
                     AddRecordActivity.this.finish();
@@ -175,4 +195,17 @@ public class AddRecordActivity extends BaseActivity {
         }.execute(record);
     }
 
+
+    /**
+     * 循环添加Label标签
+     * @param selectedLabels
+     */
+    private void setSelectedLabel(List<SearchVo> selectedLabels){
+        if(selectedLabels!=null){
+            mLabelLsl.removeAllViews();
+            for(SearchVo searchVo:selectedLabels){
+                mLabelLsl.addLabel(searchVo.getName());
+            }
+        }
+    }
 }

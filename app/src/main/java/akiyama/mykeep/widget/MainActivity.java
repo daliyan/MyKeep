@@ -23,6 +23,7 @@ import java.util.List;
 import akiyama.mykeep.R;
 import akiyama.mykeep.adapter.RecyclerAdapter;
 import akiyama.mykeep.base.BaseObserverActivity;
+import akiyama.mykeep.event.NotifyInfo;
 import akiyama.mykeep.util.DateUtil;
 import akiyama.mykeep.vo.ChildRocommendVo;
 import akiyama.mykeep.controller.RecordController;
@@ -140,7 +141,8 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
     }
 
     @Override
-    protected void onChange(String eventType) {
+    protected void onChange(NotifyInfo notifyInfo) {
+        String eventType = notifyInfo.getEventType();
         if(eventType.equals(EventType.EVENT_LOGIN)){
             supportInvalidateOptionsMenu();
             mUserNameTv.setText(LoginHelper.getCurrentUser().getUsername());
@@ -243,7 +245,7 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
             case R.id.action_login:
                 if(LoginHelper.isLogin()){
                     AVUser.logOut();//清除当前缓存的数据
-                    Notify.getInstance().NotifyActivity(EventType.EVENT_LOGINOUT);//通知注销登录信息
+                    Notify.getInstance().NotifyActivity(new NotifyInfo(EventType.EVENT_LOGINOUT));//通知注销登录信息
                     Toast.makeText(this, "注销成功！", Toast.LENGTH_LONG).show();
                 }else{
                     goLogin();

@@ -18,11 +18,13 @@ public class EventType {
     public final static String EVENT_LOGINOUT="akiyama.mykeep.loginout";//注销登录信息
     public final static String EVENT_ADD_RECORD="akiyama.mykeep.add.record";//添加记录
     public final static String EVENT_ADD_LABEL_LIST="akiyama.mykeep.lable.list";//标签记录发生改变
+    public final static String EVENT_SELECTED_LABEL_LIST="akiyama.mykeep.selected.lable.list";//标签页面选择的标签
     private EventType(){
         eventsTypes.add(EVENT_LOGIN);
         eventsTypes.add(EVENT_LOGINOUT);
         eventsTypes.add(EVENT_ADD_RECORD);
         eventsTypes.add(EVENT_ADD_LABEL_LIST);
+        eventsTypes.add(EVENT_SELECTED_LABEL_LIST);
     }
 
     public static EventType getInstance(){

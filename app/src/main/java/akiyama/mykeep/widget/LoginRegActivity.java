@@ -16,6 +16,7 @@ import akiyama.mykeep.R;
 import akiyama.mykeep.base.BaseActivity;
 import akiyama.mykeep.event.EventType;
 import akiyama.mykeep.event.Notify;
+import akiyama.mykeep.event.NotifyInfo;
 
 /**
  * 登录和注册帐号界面
@@ -75,7 +76,7 @@ public class LoginRegActivity extends BaseActivity implements View.OnClickListen
                 AVUser.logInInBackground(userName, password, new LogInCallback() {
                     public void done(AVUser user, AVException e) {
                         if (user != null) {
-                            Notify.getInstance().NotifyActivity(EventType.EVENT_LOGIN);//通知登录成功
+                            Notify.getInstance().NotifyActivity(new NotifyInfo(EventType.EVENT_LOGIN));//通知登录成功
                             finish();
                         } else {
                             Toast.makeText(LoginRegActivity.this, "用户名或密码错误！", Toast.LENGTH_LONG).show();

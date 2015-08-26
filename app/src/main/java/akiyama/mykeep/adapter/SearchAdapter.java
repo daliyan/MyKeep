@@ -24,6 +24,7 @@ import akiyama.mykeep.R;
 import akiyama.mykeep.controller.LabelController;
 import akiyama.mykeep.event.EventType;
 import akiyama.mykeep.event.Notify;
+import akiyama.mykeep.event.NotifyInfo;
 import akiyama.mykeep.util.DimUtil;
 import akiyama.mykeep.util.LogUtil;
 import akiyama.mykeep.vo.SearchVo;
@@ -117,7 +118,7 @@ public class SearchAdapter extends RecyclerViewAdapter<SearchAdapter.ViewHolder>
                     mSearchVoList.get(position).setIsCheck(false);
                     mSearchFilterList.get(position).setIsCheck(false);
                 }
-                Notify.getInstance().NotifyActivity(EventType.EVENT_ADD_LABEL_LIST);
+                Notify.getInstance().NotifyActivity(new NotifyInfo(EventType.EVENT_ADD_LABEL_LIST));
             }
         });
 
