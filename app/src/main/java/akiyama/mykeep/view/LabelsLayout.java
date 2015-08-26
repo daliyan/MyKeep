@@ -61,6 +61,10 @@ public class LabelsLayout extends LinearLayout {
     public String getLabelTextStr(){
         return mLabelStr;
     }
+
+    public void initLabelText(){
+        mLabelStr="";
+    }
 }
 
 

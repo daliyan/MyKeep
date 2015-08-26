@@ -203,6 +203,7 @@ public class AddRecordActivity extends BaseObserverActivity {
     private void setSelectedLabel(List<SearchVo> selectedLabels){
         if(selectedLabels!=null){
             mLabelLsl.removeAllViews();
+            mLabelLsl.initLabelText();
             for(SearchVo searchVo:selectedLabels){
                 mLabelLsl.addLabel(searchVo.getName());
             }
