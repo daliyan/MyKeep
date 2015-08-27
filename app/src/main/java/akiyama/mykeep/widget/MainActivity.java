@@ -23,13 +23,13 @@ import java.util.List;
 import akiyama.mykeep.R;
 import akiyama.mykeep.adapter.RecyclerAdapter;
 import akiyama.mykeep.base.BaseObserverActivity;
+import akiyama.mykeep.common.StatusMode;
 import akiyama.mykeep.event.NotifyInfo;
-import akiyama.mykeep.util.DateUtil;
-import akiyama.mykeep.vo.ChildRocommendVo;
 import akiyama.mykeep.controller.RecordController;
 import akiyama.mykeep.db.model.RecordModel;
 import akiyama.mykeep.event.EventType;
 import akiyama.mykeep.event.Notify;
+import akiyama.mykeep.util.LogUtil;
 import akiyama.mykeep.util.LoginHelper;
 
 
@@ -37,10 +37,10 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
 
     private final static String TAG="MainActivity";
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
+    private RecyclerAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private ProgressBarCircularIndeterminate mProgressBar;
-    private List<ChildRocommendVo> mRecommends;
+    private List<RecordModel> mRecordModels;
 
     private RecordController rc=new RecordController();
     private DrawerLayout mDrawerDl;//侧滑菜单布局控件
@@ -116,10 +116,10 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
     protected void initView(){
         setToolBarTitle("记事");
         mProgressBar.setVisibility(View.GONE);
-        mRecommends=new ArrayList<ChildRocommendVo>();
+        mRecordModels =new ArrayList<RecordModel>();
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new RecyclerAdapter(mRecommends);
+        mAdapter = new RecyclerAdapter(mRecordModels);
         mRecyclerView.setAdapter(mAdapter);
         mRecordView.setBackgroundResource(R.color.light_gray);
         mFiledView.setBackgroundResource(R.color.white);
@@ -134,6 +134,14 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         mRecycleView.setOnClickListener(this);
         mSettingView.setOnClickListener(this);
         mFiledView.setOnClickListener(this);
+        mAdapter.setOnItemClick(new RecyclerAdapter.OnItemClick() {
+            @Override
+            public void onItemClick(View v, int position) {
+                if (mRecordModels != null && mRecordModels.size() > position) {
+                    goEditLabelActivity(mRecordModels.get(position));
+                }
+            }
+        });
     }
 
     @Override
@@ -150,9 +158,8 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         }else if(eventType.equals(EventType.EVENT_LOGINOUT)){
             supportInvalidateOptionsMenu();
             mUserNameTv.setText(getResources().getString(R.string.no_login));
-            mRecommends.clear();
-            mAdapter = new RecyclerAdapter(mRecommends);
-            mRecyclerView.setAdapter(mAdapter);
+            mRecordModels.clear();
+            mAdapter.refreshDate(mRecordModels);
         }else if(eventType.equals(EventType.EVENT_ADD_RECORD)){
             getRecord();
         }
@@ -172,6 +179,13 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         if(LoginHelper.isLogin()){
             new SaveRecordTask().execute(LoginHelper.getCurrentUser().getObjectId());
         }
+    }
+
+    private void goEditLabelActivity(RecordModel recordModel){
+        Intent goEditRecord = new Intent(this,AddRecordActivity.class);
+        goEditRecord.putExtra(AddRecordActivity.KEY_RECORD_MODE, StatusMode.RECORD_EDIT_MODE);
+        goEditRecord.putExtra(AddRecordActivity.KEY_EDIT_RECORD_LIST, recordModel);
+        startActivity(goEditRecord);
     }
 
     /**
@@ -304,14 +318,6 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         startActivity(addRecord);
     }
 
-    private List<ChildRocommendVo> getData(List<RecordModel> records){
-        List<ChildRocommendVo> mainRecylers=new ArrayList<ChildRocommendVo>();
-        for(int i=0;i<records.size();i++){
-            mainRecylers.add(new ChildRocommendVo(records.get(i).getTitle(),records.get(i).getContent(), DateUtil.getDate(records.get(i).getUpdateTime()),R.drawable.me));
-        }
-        return mainRecylers;
-    }
-
     private class SaveRecordTask extends AsyncTask<String,Void,List<RecordModel>> {
 
         @Override
@@ -326,9 +332,8 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         @Override
         protected void onPostExecute(List<RecordModel> recordModels) {
             if(recordModels!=null){
-                mRecommends=getData(recordModels);
-                mAdapter = new RecyclerAdapter(mRecommends);
-                mRecyclerView.setAdapter(mAdapter);
+                mRecordModels =recordModels;
+                mAdapter.refreshDate(mRecordModels);
                 mProgressBar.setVisibility(View.GONE);
             }
         }

@@ -65,6 +65,20 @@ public class LabelsLayout extends LinearLayout {
     public void initLabelText(){
         mLabelStr="";
     }
+
+    /**
+     * 循环添加Label标签
+     * @param labels
+     */
+    public void setLabels(String[] labels){
+        if(labels!=null){
+            removeAllViews();
+            initLabelText();
+            for(String label:labels){
+                addLabel(label);
+            }
+        }
+    }
 }
 
 
