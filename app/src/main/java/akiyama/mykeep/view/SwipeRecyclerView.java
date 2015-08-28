@@ -22,7 +22,7 @@ public class SwipeRecyclerView extends RecyclerView {
     private float mLastY;
     private int mScreenWidth;
     /**
-     * 滑动方向
+     * 当前滑动的状态
      */
     enum RemoveDirection {
         RIGTH,
@@ -48,9 +48,9 @@ public class SwipeRecyclerView extends RecyclerView {
     private void init(Context context){
         mScreenWidth = DimUtil.getScreenWidth();
     }
+
     @Override
     public boolean onTouchEvent(MotionEvent e) {
-
         float x=e.getX();
         float y=e.getY();
         int action=e.getAction();
@@ -64,7 +64,7 @@ public class SwipeRecyclerView extends RecyclerView {
                 float deltaX=mLastX-x;
                 if (deltaX !=0 && mTouchView!=null) {
                     smoothXScrollTo(mTouchView,(int)deltaX);
-                }
+        }
                 break;
         }
 
@@ -85,8 +85,13 @@ public class SwipeRecyclerView extends RecyclerView {
             smoothXScrollToClose(destView,destX);
         }else if(direction==RemoveDirection.RIGTH){
             smoothXScrollToRight(destView,destX,scrollX);
-        }else {
-            smoothXScrollToLeft(destView,destX,scrollX);
+        }else if(direction==RemoveDirection.LEFT){
+            if(destX > 0){
+                smoothXScrollToLeft(destView,destX,scrollX);
+            }else{
+                smoothXScrollToRight(destView,destX,scrollX);
+            }
+
         }
 
     }
@@ -107,7 +112,7 @@ public class SwipeRecyclerView extends RecyclerView {
     }
 
     private void smoothXScrollToRight(View destView, int destX,int scrollX){
-        if(destX <= Math.abs(scrollX)){
+        if(Math.abs(destX) <= Math.abs(scrollX)){
             destView.scrollTo(destX,0);
         }else{
             destView.scrollTo(scrollX,0);

@@ -78,4 +78,8 @@
 
     </LinearLayout>
 
+    <akiyama.mykeep.view.SwipeItenView
+        android:layout_width="match_parent"
+        android:layout_height="50dip"/>
+
 </LinearLayout>

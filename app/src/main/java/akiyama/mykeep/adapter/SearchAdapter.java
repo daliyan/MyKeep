@@ -59,7 +59,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
         mPosition=position;
         holder.mSelectLabelCb.setClickable(false);
 
-     /*   holder.getView().setOnClickListener(new View.OnClickListener() {
+        /*holder.getView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 LogUtil.d("SearchAdapter->OnClick", "" + v.getScaleY());
@@ -76,10 +76,6 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
         });*/
 
 
-    }
-
-    public int getmPosition() {
-        return mPosition;
     }
 
     @Override

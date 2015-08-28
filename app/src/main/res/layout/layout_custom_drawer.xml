@@ -41,12 +41,12 @@
 
             <com.gc.materialdesign.views.ButtonFloat
                 android:id="@+id/buttonFloat"
-                android:layout_width="60dip"
-                android:layout_height="60dip"
-                android:background="#8BC34A"
-                android:layout_marginRight="5dip"
-                android:layout_gravity="bottom|right"
-                materialdesign:animate="true"/>
+            android:layout_width="60dip"
+            android:layout_height="60dip"
+            android:background="#8BC34A"
+            android:layout_marginRight="5dip"
+            android:layout_gravity="bottom|right"
+            materialdesign:animate="true"/>
         </FrameLayout>
 
     </LinearLayout>

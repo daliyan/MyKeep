@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:id="@+id/item_content_ll"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/item_menu_ll"
+        android:layout_width="120dip"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:clickable="true">
+
+        <Button
+            android:id="@+id/delete"
+            android:layout_width="60dip"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:padding="5dip"
+            android:gravity="center"
+            android:background="@color/main_bg"
+            android:clickable="true"
+
+            android:text="删除" />
+
+        <Button
+            android:id="@+id/quxiao"
+            android:layout_width="60dip"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:clickable="true"
+
+            android:padding="5dip"
+            android:gravity="center"
+            android:background="@color/save_btn_press"
+            android:text="取消" />
+
+    </LinearLayout>
+
+</merge>
