@@ -25,6 +25,7 @@ import akiyama.mykeep.controller.RecordController;
 import akiyama.mykeep.db.model.RecordModel;
 import akiyama.mykeep.event.EventType;
 import akiyama.mykeep.event.Notify;
+import akiyama.mykeep.task.UpdateSingleDbTask;
 import akiyama.mykeep.util.DateUtil;
 import akiyama.mykeep.util.LoginHelper;
 import akiyama.mykeep.util.StringUtil;
@@ -45,10 +46,11 @@ public class AddRecordActivity extends BaseObserverActivity {
     private String mMode = StatusMode.RECORD_ADD_MODE;//默认是记录添加模式
     private EditText mTitleEt;
     private EditText mContentEt;
-    private TextView mUpdateTime;
+    private TextView mUpdateTimeTv;
     private Button mSaveBtn;
     private Button mGiveUpBtn;
     private LabelsLayout mLabelLsl;
+    private RecordModel mEditRecordModel;
     private static RecordController rc=new RecordController();
 
     @Override
@@ -64,12 +66,12 @@ public class AddRecordActivity extends BaseObserverActivity {
     private void setInitUiByMode(){
         mMode = getIntent().getStringExtra(KEY_RECORD_MODE);
         if(mMode!=null && mMode.equals(StatusMode.RECORD_EDIT_MODE)){
-            RecordModel recordModel = getIntent().getParcelableExtra(KEY_EDIT_RECORD_LIST);
-            if(recordModel!=null){
-                mTitleEt.setText(recordModel.getTitle());
-                mContentEt.setText(recordModel.getContent());
-                mLabelLsl.setLabels(StringUtil.subStringBySymbol(recordModel.getLabelNames(),","));
-                mUpdateTime.setText(DateUtil.getDate(recordModel.getUpdateTime()));
+            mEditRecordModel = getIntent().getParcelableExtra(KEY_EDIT_RECORD_LIST);
+            if(mEditRecordModel!=null){
+                mTitleEt.setText(mEditRecordModel.getTitle());
+                mContentEt.setText(mEditRecordModel.getContent());
+                mLabelLsl.setLabels(StringUtil.subStringBySymbol(mEditRecordModel.getLabelNames(),","));
+                mUpdateTimeTv.setText("修改时间："+DateUtil.getDate(mEditRecordModel.getUpdateTime()));
             }
         }
     }
@@ -79,7 +81,7 @@ public class AddRecordActivity extends BaseObserverActivity {
         mTitleEt=(EditText) findViewById(R.id.record_title_et);
         mContentEt=(EditText) findViewById(R.id.record_content_et);
         mLabelLsl =(LabelsLayout) findViewById(R.id.label_lsl);
-        mUpdateTime = (TextView) findViewById(R.id.update_time_tv);
+        mUpdateTimeTv = (TextView) findViewById(R.id.record_update_time_tv);
         mSaveBtn=(Button) findViewById(R.id.save_btn);
         mGiveUpBtn=(Button) findViewById(R.id.give_up_btn);
     }
@@ -152,37 +154,33 @@ public class AddRecordActivity extends BaseObserverActivity {
         }
     }
 
+    /**
+     * 保存数据
+     */
     private void saveRecordToDb(){
         String title=mTitleEt.getText().toString();
         String content=mContentEt.getText().toString();
-        if(!LoginHelper.isLogin()){
-            goLogin();
-        }else{
-            if(!TextUtils.isEmpty(title) && !TextUtils.isEmpty(content)){
-                RecordModel record=new RecordModel();
-                record.setTitle(title);
-                record.setContent(content);
-                record.setLevel(RecordModel.NORMAL);
-                if(getCurrentLabel()!=null){
-                    /**
-                     * Fix me 此处不应该存储labelId，直接存储labelName
-                     */
-                    record.setLabelNames(getCurrentLabel());
-                }
-                record.setCreatTime(String.valueOf(Calendar.getInstance().getTimeInMillis()));
-                record.setUpdateTime(String.valueOf(Calendar.getInstance().getTimeInMillis()));
-                record.setAlarmTime(String.valueOf(Calendar.getInstance().getTimeInMillis()));
-                record.setUserId(LoginHelper.getCurrentUser().getObjectId());
-                saveRecordTask(record);
-            }else{
-                Toast.makeText(mContext,"必须填写标题和内容哦！",Toast.LENGTH_LONG).show();
+        if(!TextUtils.isEmpty(title) && !TextUtils.isEmpty(content)){
+            RecordModel record=new RecordModel();
+            record.setTitle(title);
+            record.setContent(content);
+            record.setLevel(RecordModel.NORMAL);
+            if(getCurrentLabel()!=null){
+                record.setLabelNames(getCurrentLabel());
             }
+            record.setCreatTime(String.valueOf(Calendar.getInstance().getTimeInMillis()));
+            record.setUpdateTime(String.valueOf(Calendar.getInstance().getTimeInMillis()));
+            record.setAlarmTime(String.valueOf(Calendar.getInstance().getTimeInMillis()));
+            record.setUserId(LoginHelper.getCurrentUserId());
+            if(mMode.equals(StatusMode.RECORD_ADD_MODE)){
+                saveRecordTask(record);
+            }else if(mMode.equals(StatusMode.RECORD_EDIT_MODE)){
+                record.setId(mEditRecordModel.getId());
+                updateRecordTask(record);
+            }
+        }else{
+            Toast.makeText(mContext,"必须填写标题和内容哦！",Toast.LENGTH_LONG).show();
         }
-    }
-
-    private void goLogin(){
-        Intent login=new Intent(this,LoginRegActivity.class);
-        startActivity(login);
     }
 
     private void goAddLabel(){
@@ -208,7 +206,7 @@ public class AddRecordActivity extends BaseObserverActivity {
             public void savePostExecute(Boolean aBoolean) {
                 if(aBoolean){
                     Toast.makeText(mContext,"保存成功！",Toast.LENGTH_LONG).show();
-                    Notify.getInstance().NotifyActivity(new NotifyInfo(EventType.EVENT_ADD_RECORD));
+                    Notify.getInstance().NotifyActivity(new NotifyInfo(EventType.EVENT_REFRESH_RECORD));
                     mTitleEt.setText("");
                     mContentEt.setText("");
                     AddRecordActivity.this.finish();
@@ -217,6 +215,20 @@ public class AddRecordActivity extends BaseObserverActivity {
         }.execute(record);
     }
 
+    private void updateRecordTask(RecordModel record){
+        new UpdateSingleDbTask(mContext,rc){
+            @Override
+            public void updatePostExecute(Boolean aBoolean) {
+                if(aBoolean){
+                    Toast.makeText(mContext,"更新成功！",Toast.LENGTH_LONG).show();
+                    Notify.getInstance().NotifyActivity(new NotifyInfo(EventType.EVENT_REFRESH_RECORD));
+                    mTitleEt.setText("");
+                    mContentEt.setText("");
+                    AddRecordActivity.this.finish();
+                }
+            }
+        }.execute(record);
+    }
 
     /**
      * 循环添加Label标签

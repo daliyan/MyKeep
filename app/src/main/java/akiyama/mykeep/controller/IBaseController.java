@@ -64,11 +64,9 @@ public interface IBaseController {
     /**
      * 根据ID更新某一条“记录”数据
      * @param context
-     * @param id
-     * @param model
-     * @param tClass
+     * @param model 可以只是包含ID编号
      * @return
      */
-    public boolean updateById(Context context,String id,BaseModel model,Class<? extends BaseModel> tClass);
+    public boolean updateById(Context context,BaseModel model);
 
 }

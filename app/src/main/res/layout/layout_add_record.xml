@@ -24,9 +24,9 @@
     <EditText
         android:id="@+id/record_content_et"
         android:layout_width="match_parent"
-        android:layout_height="50dip"
-        android:layout_margin="15dip"
+        android:layout_height="0dip"
         android:layout_weight="1"
+        android:layout_margin="15dip"
         android:background="#00000000"
         android:text=""
         android:textColor="@color/black"
@@ -43,12 +43,14 @@
         android:gravity="right"/>
 
     <TextView
-        android:id="@+id/update_time_tv"
+        android:id="@+id/record_update_time_tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dip"
-        android:gravity="right"
-        android:text="修改时间"/>
+        android:textColor="@color/grey"
+        android:paddingBottom="10dip"
+        android:paddingLeft="10dip"
+        android:paddingRight="10dip"
+        android:gravity="right"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -76,5 +78,7 @@
             android:text="舍弃"/>
 
     </LinearLayout>
+
+
 
 </LinearLayout>

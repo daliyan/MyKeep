@@ -29,7 +29,6 @@ import akiyama.mykeep.controller.RecordController;
 import akiyama.mykeep.db.model.RecordModel;
 import akiyama.mykeep.event.EventType;
 import akiyama.mykeep.event.Notify;
-import akiyama.mykeep.util.LogUtil;
 import akiyama.mykeep.util.LoginHelper;
 
 
@@ -160,7 +159,7 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
             mUserNameTv.setText(getResources().getString(R.string.no_login));
             mRecordModels.clear();
             mAdapter.refreshDate(mRecordModels);
-        }else if(eventType.equals(EventType.EVENT_ADD_RECORD)){
+        }else if(eventType.equals(EventType.EVENT_REFRESH_RECORD)){
             getRecord();
         }
     }
@@ -170,15 +169,13 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         return new String[]{
                 EventType.EVENT_LOGIN,
                 EventType.EVENT_LOGINOUT,
-                EventType.EVENT_ADD_RECORD
+                EventType.EVENT_REFRESH_RECORD
         };
     }
 
 
     private void getRecord(){
-        if(LoginHelper.isLogin()){
-            new SaveRecordTask().execute(LoginHelper.getCurrentUser().getObjectId());
-        }
+        new SaveRecordTask().execute(LoginHelper.getCurrentUserId());
     }
 
     private void goEditLabelActivity(RecordModel recordModel){
