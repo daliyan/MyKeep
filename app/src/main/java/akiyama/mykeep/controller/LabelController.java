@@ -2,15 +2,17 @@ package akiyama.mykeep.controller;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import akiyama.mykeep.controller.imple.ILabelController;
 import akiyama.mykeep.db.model.BaseColumns;
 import akiyama.mykeep.db.model.BaseModel;
 import akiyama.mykeep.db.model.LabelCoumnls;
 import akiyama.mykeep.db.model.LabelModel;
+import akiyama.mykeep.util.DataProviderHelper;
+import akiyama.mykeep.util.LogUtil;
 
 /**
  * 标签访问数据库
@@ -18,7 +20,9 @@ import akiyama.mykeep.db.model.LabelModel;
  * @version 1.0
  * @since 2015-08-07  10:33
  */
-public class LabelController  extends BaseController implements ILabelController {
+public class LabelController extends BaseController implements ILabelController {
+
+    private static final String TAG="LabelController";
 
     @Override
     public List<? extends BaseModel> getDbByUserId(Context context, String userId) {
@@ -32,5 +36,14 @@ public class LabelController  extends BaseController implements ILabelController
             cursor.close();
         }
         return labelModels;
+    }
+
+    @Override
+    public boolean deleteLabelByName(Context context, String labelName) {
+        int row=context.getContentResolver().delete(LabelCoumnls.CONTENT_URI," name= '"+labelName+"'",null);
+        if(row>0){
+            return true;
+        }
+        return false;
     }
 }

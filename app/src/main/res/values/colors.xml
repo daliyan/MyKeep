@@ -22,4 +22,8 @@
     <!--命名参见https://www.google.com/design/spec/style/color.html#color-color-palette 颜色代码程度值-->
     <color name="grey_2">#F5F5F5</color>
     <color name="grey">#9E9E9E</color>
+    <color name="label_delete_normal">#FD3D2E</color>
+    <color name="label_delete_press">#B71C1C</color>
+    <color name="label_edit_normal">#C5C8CA</color>
+    <color name="label_edit_press">#9E9E9E</color>
 </resources>

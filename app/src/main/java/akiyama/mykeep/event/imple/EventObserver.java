@@ -4,6 +4,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 import akiyama.mykeep.event.IEventObserver;
+import akiyama.mykeep.event.NotifyInfo;
 
 /**
  * 具体的观察者
@@ -20,21 +21,22 @@ public abstract class EventObserver implements IEventObserver {
     }
 
 
-    public abstract void onChange(String eventType);
+    public abstract void onChange(NotifyInfo mNotifyInfo);
 
     @Override
-    public void dispatchChange(String eventType){
-        mHandler.post(new NotificationRunnable(eventType));
+    public void dispatchChange(NotifyInfo notifyInfo){
+        mHandler.post(new NotificationRunnable(notifyInfo));
     }
 
     private final class NotificationRunnable implements Runnable{
-        private String mEventType;
-        public NotificationRunnable(String eventType){
-            this.mEventType=eventType;
+        private NotifyInfo mNotifyInfo;
+        public NotificationRunnable(NotifyInfo notifyInfo){
+            this.mNotifyInfo=notifyInfo;
         }
+
         @Override
         public void run() {
-            EventObserver.this.onChange(mEventType);
+            EventObserver.this.onChange(mNotifyInfo);
         }
     }
 }

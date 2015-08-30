@@ -20,4 +20,5 @@ public interface IModel extends Parcelable {
     public abstract String getTable();
 
     public abstract <T extends BaseModel> T getModel(Cursor cursor);//获取对应的查询结果
+
 }

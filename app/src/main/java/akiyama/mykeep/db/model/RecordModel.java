@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Parcel;
+import android.os.Parcelable;
 
 import akiyama.mykeep.util.DataProviderHelper;
 
@@ -25,7 +26,7 @@ public class RecordModel extends BaseModel{
     private String alarmTime;
     private String level;
     private String userId;
-    private String labelId;
+    private String labelNames;//里面有多条label记录，使用","隔开
 
     public RecordModel(){
 
@@ -38,24 +39,9 @@ public class RecordModel extends BaseModel{
         alarmTime=in.readString();
         level=in.readString();
         userId=in.readString();
-        labelId=in.readString();
+        labelNames =in.readString();
     }
-/*
-    public static RecordModel getRecordModel(Cursor cursor){
-        if(cursor==null){
-            return null;
-        }
-        RecordModel recordModel=new RecordModel();
-        recordModel.id= DataProviderHelper.parseString(cursor,BaseColumns._ID);
-        recordModel.title=DataProviderHelper.parseString(cursor,RecordColumns.TITLE);
-        recordModel.content=DataProviderHelper.parseString(cursor,RecordColumns.CONTENT);
-        recordModel.alarmTime=DataProviderHelper.parseString(cursor,RecordColumns.ALARMTIME);
-        recordModel.level=DataProviderHelper.parseString(cursor,RecordColumns.LEVEL);
-        recordModel.creatTime=DataProviderHelper.parseString(cursor,BaseColumns.CREATAT);
-        recordModel.updateTime=DataProviderHelper.parseString(cursor,BaseColumns.UPDATEAT);
-        recordModel.userId=DataProviderHelper.parseString(cursor,RecordColumns.USERID);
-        return recordModel;
-    }*/
+
     @Override
     public ContentValues values() {
         ContentValues cv=convert();
@@ -64,7 +50,7 @@ public class RecordModel extends BaseModel{
         cv.put(RecordColumns.ALARMTIME,alarmTime);
         cv.put(RecordColumns.LEVEL,level);
         cv.put(RecordColumns.USERID,userId);
-        cv.put(RecordColumns.LABELID,labelId);
+        cv.put(RecordColumns.LABELID, labelNames);
         return cv;
     }
 
@@ -92,7 +78,7 @@ public class RecordModel extends BaseModel{
         recordModel.creatTime=DataProviderHelper.parseString(cursor,BaseColumns.CREATAT);
         recordModel.updateTime=DataProviderHelper.parseString(cursor,BaseColumns.UPDATEAT);
         recordModel.userId=DataProviderHelper.parseString(cursor,RecordColumns.USERID);
-        recordModel.labelId=DataProviderHelper.parseString(cursor,RecordColumns.LABELID);
+        recordModel.labelNames =DataProviderHelper.parseString(cursor,RecordColumns.LABELID);
         return recordModel;
     }
 
@@ -109,8 +95,22 @@ public class RecordModel extends BaseModel{
         dest.writeString(alarmTime);
         dest.writeString(level);
         dest.writeString(userId);
-        dest.writeString(labelId);
+        dest.writeString(labelNames);
     }
+
+    public static final Parcelable.Creator<RecordModel> CREATOR = new Creator(){
+
+        @Override
+        public RecordModel createFromParcel(Parcel source) {
+            RecordModel p = new RecordModel(source);
+            return p;
+        }
+
+        @Override
+        public RecordModel[] newArray(int size) {
+            return new RecordModel[size];
+        }
+    };
 
     public void setTitle(String title) {
         this.title = title;
@@ -152,11 +152,11 @@ public class RecordModel extends BaseModel{
         return userId;
     }
 
-    public void setLabelId(String labelId) {
-        this.labelId = labelId;
+    public void setLabelNames(String labelNames) {
+        this.labelNames = labelNames;
     }
 
-    public String getLabelId() {
-        return labelId;
+    public String getLabelNames() {
+        return labelNames;
     }
 }

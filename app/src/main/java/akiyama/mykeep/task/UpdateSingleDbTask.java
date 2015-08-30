@@ -5,7 +5,9 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import akiyama.mykeep.controller.IBaseController;
+import akiyama.mykeep.db.model.BaseModel;
 import akiyama.mykeep.db.model.IModel;
+import akiyama.mykeep.db.model.RecordModel;
 
 /**
  * 插入保存单条数据的Task
@@ -13,24 +15,24 @@ import akiyama.mykeep.db.model.IModel;
  * @version 1.0
  * @since 2015-08-07  10:43
  */
-public abstract class SaveSingleDbTask extends AsyncTask<IModel,Void,Boolean> {
+public abstract class UpdateSingleDbTask extends AsyncTask<BaseModel,Void,Boolean> {
 
     private IBaseController mBaseController;
     private Context mContext;
     private ProgressDialog mProgressBar;
 
-    public SaveSingleDbTask(Context context,IBaseController baseController){
+    public UpdateSingleDbTask(Context context, IBaseController baseController){
         this.mContext=context;
         this.mBaseController=baseController;
     }
     @Override
     protected void onPreExecute() {
-        savePreExecute();
+        updatePreExecute();
     }
 
     @Override
-    protected Boolean doInBackground(IModel... params) {
-        if(mBaseController.insert(mContext,params[0])!=null){
+    protected Boolean doInBackground(BaseModel... params) {
+        if(mBaseController.updateById(mContext,params[0])){
             return true;
         }
         return false;
@@ -38,7 +40,7 @@ public abstract class SaveSingleDbTask extends AsyncTask<IModel,Void,Boolean> {
 
     @Override
     protected void onPostExecute(Boolean aBoolean) {
-        savePostExecute(aBoolean);
+        updatePostExecute(aBoolean);
         if(mProgressBar!=null){
             mProgressBar.dismiss();
         }
@@ -47,7 +49,7 @@ public abstract class SaveSingleDbTask extends AsyncTask<IModel,Void,Boolean> {
     /**
      * 保存数据前执行的操作
      */
-    protected void savePreExecute(){
+    protected void updatePreExecute(){
         mProgressBar=new ProgressDialog(mContext);
         mProgressBar.setMessage("正在保存，请稍后......");
         mProgressBar.show();
@@ -57,5 +59,5 @@ public abstract class SaveSingleDbTask extends AsyncTask<IModel,Void,Boolean> {
     /**
      * 保存数据成功后执行的操作
      */
-    public abstract void savePostExecute(Boolean aBoolean);
+    public abstract void updatePostExecute(Boolean aBoolean);
 }

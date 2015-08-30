@@ -105,7 +105,7 @@ public abstract class BaseActivity extends ActionBarActivity implements View.OnC
     protected abstract void initView();
 
     /**
-     * 设置监听
+     * 设置点击监听
      */
     protected abstract void setOnClick();
 

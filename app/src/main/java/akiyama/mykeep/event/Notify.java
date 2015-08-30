@@ -22,11 +22,12 @@ public class Notify {
         return mNotify;
     }
 
-    public void NotifyActivity(String eventType){
+    public void NotifyActivity(NotifyInfo notifyInfo){
         EventSubject eventSubject= EventSubject.getInstance();
         EventType eventTypes=EventType.getInstance();
-        if(eventTypes.contains(eventType)){
-            eventSubject.notifyObserver(eventType);
+        if(eventTypes.contains(notifyInfo.getEventType())){
+            eventSubject.notifyObserver(notifyInfo);
         }
     }
+
 }

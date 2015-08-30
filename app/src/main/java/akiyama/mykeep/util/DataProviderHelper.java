@@ -35,6 +35,17 @@ public class DataProviderHelper {
         return Uri.withAppendedPath(baseUri, "user_id/" + userId);
     }
 
+    /**
+     * 获取name的contentUri
+     * @param baseUri
+     * @param labelName
+     * @return
+     */
+    public static Uri withAppendedLabelLabelName(Uri baseUri, String labelName){
+        return Uri.withAppendedPath(baseUri, "name/" + labelName);
+    }
+
+
     public static ContentValues[] getContentValuesByModels(List<? extends BaseModel> models) {
         if (models == null || models.size() == 0) {
             return null;

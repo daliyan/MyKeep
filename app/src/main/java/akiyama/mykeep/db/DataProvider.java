@@ -228,7 +228,7 @@ public class DataProvider extends ContentProvider implements IDataProvider{
         try{
             SQLiteDatabase sqLiteDatabase=dbHelper.getReadableDatabase();
             String tableName=uri.getPathSegments().get(0);
-            count=sqLiteDatabase.delete(tableName,selection,selectionArgs);//插入的行数
+            count=sqLiteDatabase.delete(tableName,selection,selectionArgs);
         }catch (SQLiteException e){
             new Exception(""+e.getMessage());
         }

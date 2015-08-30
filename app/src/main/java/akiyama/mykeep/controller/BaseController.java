@@ -7,7 +7,6 @@ import android.net.Uri;
 
 import java.util.List;
 
-import akiyama.mykeep.controller.imple.IBaseController;
 import akiyama.mykeep.db.SQLiteHelper;
 import akiyama.mykeep.db.model.BaseModel;
 import akiyama.mykeep.db.model.IModel;
@@ -107,17 +106,11 @@ public abstract class BaseController implements IBaseController {
     }
 
     @Override
-    public boolean updateById(Context context, String id, BaseModel model, Class<? extends BaseModel> tClass) {
-        try {
-            Uri uri= DataProviderHelper.withAppendedId(tClass.newInstance().getContentUri(),id);
-            int row=context.getContentResolver().update(uri,model.values(),null,null);
-            if(row!=0){
-                return true;
-            }
-        } catch (InstantiationException e) {
-            LogUtil.e(TAG, "cause:" + e.getCause());
-        } catch (IllegalAccessException e) {
-            LogUtil.e(TAG, "cause:" + e.getCause());
+    public boolean updateById(Context context,BaseModel model) {
+        Uri uri= DataProviderHelper.withAppendedId(model.getContentUri(),model.getId());
+        int row=context.getContentResolver().update(uri,model.values(),null,null);
+        if(row!=0){
+            return true;
         }
         return false;
     }

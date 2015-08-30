@@ -45,7 +45,9 @@ public abstract class QueryByUserDbTask extends AsyncTask<String,Void,List<? ext
     @Override
     protected void onPostExecute(List<? extends BaseModel> models) {
         queryPostExecute(models);
-        mProgressBar.dismiss();
+        if(mProgressBar!=null){
+            mProgressBar.dismiss();
+        }
     }
 
     /**
@@ -59,7 +61,7 @@ public abstract class QueryByUserDbTask extends AsyncTask<String,Void,List<? ext
 
 
     /**
-     * 保存数据成功后执行的操作
+     * 查询数据成功后执行的操作
      */
     public abstract void queryPostExecute(List<? extends BaseModel> models);
 }

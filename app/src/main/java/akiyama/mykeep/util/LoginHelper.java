@@ -35,7 +35,7 @@ public class LoginHelper {
         if(getCurrentUser()!=null){
             return getCurrentUser().getObjectId();
         }else{
-            return UserLoginConfig.DEFAULT_USER_ID;
+            return UserLoginConfig.DEFAULT_USER_ID;//没有登录就返回默认用户名称
         }
     }
 }

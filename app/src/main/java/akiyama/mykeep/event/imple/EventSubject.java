@@ -1,9 +1,12 @@
 package akiyama.mykeep.event.imple;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import akiyama.mykeep.event.IEventSubject;
+import akiyama.mykeep.event.NotifyInfo;
 
 /**
  * FIXME
@@ -13,7 +16,7 @@ import akiyama.mykeep.event.IEventSubject;
  * @since 2015-06-30  14:36
  */
 public class EventSubject implements IEventSubject {
-    private List<EventObserver> mEventObservers=new ArrayList<EventObserver>();
+    private Map<String,ArrayList<EventObserver>> mEventObservers=new HashMap<String,ArrayList<EventObserver>>();
     private static volatile EventSubject mEventSubject;
     private EventSubject(){
 
@@ -27,22 +30,25 @@ public class EventSubject implements IEventSubject {
     }
 
     @Override
-    public void registerObserver(EventObserver observer) {
+    public void registerObserver(String eventType,EventObserver observer) {
         synchronized (mEventObservers){
-            if(observer!=null){
-                if(mEventObservers.contains(observer)){
-                    return;
-                }
-                mEventObservers.add(observer);
+            ArrayList<EventObserver> eventObservers = mEventObservers.get(eventType);
+            if (eventObservers == null) {
+                eventObservers = new ArrayList<EventObserver>();
+                mEventObservers.put(eventType, eventObservers);
             }
+            if(eventObservers.contains(observer)) {
+                return;
+            }
+            eventObservers.add(observer);
         }
 
     }
 
     @Override
-    public void removeObserver(EventObserver observer) {
+    public void removeObserver(String eventType,EventObserver observer) {
         synchronized (mEventObservers){
-            int index = mEventObservers.indexOf(observer);
+            int index = mEventObservers.get(eventType).indexOf(observer);
             if (index >= 0) {
                 mEventObservers.remove(observer);
             }
@@ -50,10 +56,11 @@ public class EventSubject implements IEventSubject {
     }
 
     @Override
-    public void notifyObserver(String eventType) {
-        if(mEventObservers!=null && mEventObservers.size()>0 && eventType!=null){
-            for(EventObserver observer:mEventObservers){
-                observer.dispatchChange(eventType);
+    public void notifyObserver(NotifyInfo notifyInfo) {
+        if(mEventObservers!=null && mEventObservers.size()>0 && notifyInfo!=null){
+            ArrayList<EventObserver> eventObservers=mEventObservers.get(notifyInfo.getEventType());
+            for(EventObserver observer:eventObservers){
+                observer.dispatchChange(notifyInfo);
             }
         }
 

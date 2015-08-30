@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 
 import akiyama.mykeep.R;
+import akiyama.swipe.swipeView.SwipeRecyclerView;
 
 /**
  * 搜索标签Layout

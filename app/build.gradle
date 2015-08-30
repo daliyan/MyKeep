@@ -38,4 +38,5 @@ dependencies {
     compile 'com.android.support:support-v4:21.0.3'
     //avoscloud-sdk 为 LeanCloud基础包
     compile 'cn.leancloud.android:avoscloud-sdk:v3.3+'
+    compile 'akiyama.swipe:library:2.1'
 }

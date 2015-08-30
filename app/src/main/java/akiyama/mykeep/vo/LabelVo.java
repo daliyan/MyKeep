@@ -1,5 +1,8 @@
 package akiyama.mykeep.vo;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * FIXME
  *
@@ -7,7 +10,7 @@ package akiyama.mykeep.vo;
  * @version 1.0
  * @since 2015-07-10  15:54
  */
-public class LabelVo {
+public class LabelVo  {
 
     private String labelId;
     private String labelName;

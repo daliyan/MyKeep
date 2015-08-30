@@ -23,12 +23,14 @@ import java.util.List;
 import akiyama.mykeep.R;
 import akiyama.mykeep.adapter.RecyclerAdapter;
 import akiyama.mykeep.base.BaseObserverActivity;
-import akiyama.mykeep.util.DateUtil;
-import akiyama.mykeep.vo.ChildRocommendVo;
+import akiyama.mykeep.common.StatusMode;
+import akiyama.mykeep.db.model.BaseModel;
+import akiyama.mykeep.event.NotifyInfo;
 import akiyama.mykeep.controller.RecordController;
 import akiyama.mykeep.db.model.RecordModel;
 import akiyama.mykeep.event.EventType;
 import akiyama.mykeep.event.Notify;
+import akiyama.mykeep.task.QueryByUserDbTask;
 import akiyama.mykeep.util.LoginHelper;
 
 
@@ -36,10 +38,10 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
 
     private final static String TAG="MainActivity";
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
+    private RecyclerAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private ProgressBarCircularIndeterminate mProgressBar;
-    private List<ChildRocommendVo> mRecommends;
+    private List<RecordModel> mRecordModels;
 
     private RecordController rc=new RecordController();
     private DrawerLayout mDrawerDl;//侧滑菜单布局控件
@@ -73,7 +75,7 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         setContentView(R.layout.activity_main);
         setDrawer();
         setUserInfo();
-        getRecord();
+        queryRecord();
     }
 
 
@@ -115,10 +117,10 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
     protected void initView(){
         setToolBarTitle("记事");
         mProgressBar.setVisibility(View.GONE);
-        mRecommends=new ArrayList<ChildRocommendVo>();
+        mRecordModels =new ArrayList<RecordModel>();
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new RecyclerAdapter(mRecommends);
+        mAdapter = new RecyclerAdapter(mRecordModels);
         mRecyclerView.setAdapter(mAdapter);
         mRecordView.setBackgroundResource(R.color.light_gray);
         mFiledView.setBackgroundResource(R.color.white);
@@ -133,6 +135,14 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         mRecycleView.setOnClickListener(this);
         mSettingView.setOnClickListener(this);
         mFiledView.setOnClickListener(this);
+        mAdapter.setOnItemClick(new RecyclerAdapter.OnItemClick() {
+            @Override
+            public void onItemClick(View v, int position) {
+                if (mRecordModels != null && mRecordModels.size() > position) {
+                    goEditLabelActivity(mRecordModels.get(position));
+                }
+            }
+        });
     }
 
     @Override
@@ -140,19 +150,19 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
     }
 
     @Override
-    protected void onChange(String eventType) {
+    protected void onChange(NotifyInfo notifyInfo) {
+        String eventType = notifyInfo.getEventType();
         if(eventType.equals(EventType.EVENT_LOGIN)){
             supportInvalidateOptionsMenu();
             mUserNameTv.setText(LoginHelper.getCurrentUser().getUsername());
-            getRecord();
+            queryRecord();
         }else if(eventType.equals(EventType.EVENT_LOGINOUT)){
             supportInvalidateOptionsMenu();
             mUserNameTv.setText(getResources().getString(R.string.no_login));
-            mRecommends.clear();
-            mAdapter = new RecyclerAdapter(mRecommends);
-            mRecyclerView.setAdapter(mAdapter);
-        }else if(eventType.equals(EventType.EVENT_ADD_RECORD)){
-            getRecord();
+            mRecordModels.clear();
+            mAdapter.refreshDate(mRecordModels);
+        }else if(eventType.equals(EventType.EVENT_REFRESH_RECORD)){
+            queryRecord();
         }
     }
 
@@ -161,15 +171,8 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         return new String[]{
                 EventType.EVENT_LOGIN,
                 EventType.EVENT_LOGINOUT,
-                EventType.EVENT_ADD_RECORD
+                EventType.EVENT_REFRESH_RECORD
         };
-    }
-
-
-    private void getRecord(){
-        if(LoginHelper.isLogin()){
-            new SaveRecordTask().execute(LoginHelper.getCurrentUser().getObjectId());
-        }
     }
 
     /**
@@ -243,7 +246,7 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
             case R.id.action_login:
                 if(LoginHelper.isLogin()){
                     AVUser.logOut();//清除当前缓存的数据
-                    Notify.getInstance().NotifyActivity(EventType.EVENT_LOGINOUT);//通知注销登录信息
+                    Notify.getInstance().NotifyActivity(new NotifyInfo(EventType.EVENT_LOGINOUT));//通知注销登录信息
                     Toast.makeText(this, "注销成功！", Toast.LENGTH_LONG).show();
                 }else{
                     goLogin();
@@ -299,36 +302,41 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
 
     private void goAddRcord(){
         Intent addRecord=new Intent(this,AddRecordActivity.class);
+        addRecord.putExtra(AddRecordActivity.KEY_RECORD_MODE, StatusMode.RECORD_ADD_MODE);
         startActivity(addRecord);
     }
 
-    private List<ChildRocommendVo> getData(List<RecordModel> records){
-        List<ChildRocommendVo> mainRecylers=new ArrayList<ChildRocommendVo>();
-        for(int i=0;i<records.size();i++){
-            mainRecylers.add(new ChildRocommendVo(records.get(i).getTitle(),records.get(i).getContent(), DateUtil.getDate(records.get(i).getUpdateTime()),R.drawable.me));
-        }
-        return mainRecylers;
+    private void goEditLabelActivity(RecordModel recordModel){
+        Intent goEditRecord = new Intent(this,AddRecordActivity.class);
+        goEditRecord.putExtra(AddRecordActivity.KEY_RECORD_MODE, StatusMode.RECORD_EDIT_MODE);
+        goEditRecord.putExtra(AddRecordActivity.KEY_EDIT_RECORD_LIST, recordModel);
+        startActivity(goEditRecord);
     }
 
-    private class SaveRecordTask extends AsyncTask<String,Void,List<RecordModel>> {
-
-        @Override
-        protected List<RecordModel> doInBackground(String... params) {
-            List<RecordModel> models=new ArrayList<RecordModel>();
-            if(params[0]!=null){
-                models=(List<RecordModel>)rc.getDbByUserId(mContext, params[0]);
+    /**
+     * 查询记录数据
+     */
+    private void queryRecord(){
+        new QueryByUserDbTask(mContext, rc) {
+            @Override
+            protected void queryPreExecute() {
+                //super.queryPreExecute();
             }
-            return models;
-        }
 
-        @Override
-        protected void onPostExecute(List<RecordModel> recordModels) {
-            if(recordModels!=null){
-                mRecommends=getData(recordModels);
-                mAdapter = new RecyclerAdapter(mRecommends);
-                mRecyclerView.setAdapter(mAdapter);
-                mProgressBar.setVisibility(View.GONE);
+            /**
+             * 查询数据成功后执行的操作
+             *
+             * @param models
+             */
+            @Override
+            public void queryPostExecute(List<? extends BaseModel> models) {
+                if(models!=null){
+                    mRecordModels =(List<RecordModel>) models;
+                    mAdapter.refreshDate(mRecordModels);
+                    mProgressBar.setVisibility(View.GONE);
+                }
             }
-        }
+        }.execute(LoginHelper.getCurrentUserId());
     }
+
 }
