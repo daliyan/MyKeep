@@ -45,7 +45,6 @@ public class SearchAdapter extends RecyclerViewAdapter<SearchAdapter.ViewHolder>
     private List<SearchVo> mSearchVoList;
     private List<SearchVo> mSearchFilterList=new ArrayList<>();
     private Context mContext;
-    private int mPosition;
 
     public SearchAdapter(Context context,List<SearchVo> searchVoList){
         this.mContext=context;
@@ -101,7 +100,6 @@ public class SearchAdapter extends RecyclerViewAdapter<SearchAdapter.ViewHolder>
             holder.mTitleTv.setText(mSearchVoList.get(position).getName());
             holder.mSelectLabelCb.setChecked(mSearchVoList.get(position).getIsCheck());
         }
-        mPosition=position;
         holder.mSelectLabelCb.setClickable(false);
 
         /**

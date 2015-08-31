@@ -1,12 +1,12 @@
 package akiyama.mykeep.widget;
 
 import android.content.Intent;
-import android.os.AsyncTask;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,34 +15,30 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.avos.avoscloud.AVUser;
-import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import akiyama.mykeep.R;
-import akiyama.mykeep.adapter.RecyclerAdapter;
+import akiyama.mykeep.adapter.RecordByLabelAdapter;
 import akiyama.mykeep.base.BaseObserverActivity;
 import akiyama.mykeep.common.StatusMode;
+import akiyama.mykeep.controller.LabelController;
 import akiyama.mykeep.db.model.BaseModel;
+import akiyama.mykeep.db.model.LabelModel;
 import akiyama.mykeep.event.NotifyInfo;
 import akiyama.mykeep.controller.RecordController;
-import akiyama.mykeep.db.model.RecordModel;
 import akiyama.mykeep.event.EventType;
 import akiyama.mykeep.event.Notify;
 import akiyama.mykeep.task.QueryByUserDbTask;
+import akiyama.mykeep.util.DimUtil;
 import akiyama.mykeep.util.LoginHelper;
+import akiyama.mykeep.view.PagerSlidingTabStripView;
 
 
 public class MainActivity extends BaseObserverActivity implements View.OnClickListener{
 
     private final static String TAG="MainActivity";
-    private RecyclerView mRecyclerView;
-    private RecyclerAdapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
-    private ProgressBarCircularIndeterminate mProgressBar;
-    private List<RecordModel> mRecordModels;
-
     private RecordController rc=new RecordController();
     private DrawerLayout mDrawerDl;//侧滑菜单布局控件
     private ActionBarDrawerToggle mDrawerToggle;
@@ -69,23 +65,25 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
     private ImageView mHelpIv;
     private TextView mUserNameTv;
 
+    private ViewPager mRecordVp;
+    private PagerSlidingTabStripView mPagerSlidingStripTsv;
+    private RecordByLabelAdapter mRecordLabelAdapter;
+    private List<LabelModel> mLabelList;
+    private LabelController mLc = new LabelController();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setDrawer();
         setUserInfo();
-        queryRecord();
+        queryLabeles();
     }
 
 
     @Override
     protected void findView(){
-        mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
-        mProgressBar=(ProgressBarCircularIndeterminate) findViewById(R.id.progressBarCircularIndeterminate);
         mDrawerDl=(DrawerLayout)findViewById(R.id.left_menu_dl);
-        mLayoutManager = new LinearLayoutManager(this);
-
         mRecordView= findViewById(R.id.item_menu_1);
         mRecordTv =(TextView) mRecordView.findViewById(R.id.title_tv);
         mRecordIv =(ImageView) mRecordView.findViewById(R.id.title_iv);
@@ -111,22 +109,45 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         mHelpIv=(ImageView) mHelpView.findViewById(R.id.title_iv);
 
         mUserNameTv =(TextView) findViewById(R.id.username_tv);
+
+        mRecordVp = (ViewPager) findViewById(R.id.content_vp);
+        mPagerSlidingStripTsv = (PagerSlidingTabStripView) findViewById(R.id.pager_strip_tsv);
     }
 
     @Override
     protected void initView(){
         setToolBarTitle("记事");
-        mProgressBar.setVisibility(View.GONE);
-        mRecordModels =new ArrayList<RecordModel>();
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new RecyclerAdapter(mRecordModels);
-        mRecyclerView.setAdapter(mAdapter);
+        mLabelList = new ArrayList<>();
         mRecordView.setBackgroundResource(R.color.light_gray);
         mFiledView.setBackgroundResource(R.color.white);
         mRecycleView.setBackgroundResource(R.color.white);
         mSettingView.setBackgroundResource(R.color.white);
         setLeftMenuItem();
+        mRecordLabelAdapter = new RecordByLabelAdapter(getFragmentManager(),mLabelList);
+        mRecordVp.setAdapter(mRecordLabelAdapter);
+        mPagerSlidingStripTsv.setViewPager(mRecordVp);
+        initPagerSliding();
+    }
+
+    private void initPagerSliding(){
+        // 设置Tab是自动填充满屏幕的
+        mPagerSlidingStripTsv.setShouldExpand(true);
+        // 设置Tab的分割线是透明的
+        mPagerSlidingStripTsv.setDividerColor(Color.TRANSPARENT);
+        // 设置底部线条的高度
+        mPagerSlidingStripTsv.setIndicatorHeight((int)DimUtil.dipToPx(2));
+        mPagerSlidingStripTsv.setLineBottomHeight((int)DimUtil.dipToPx(3));
+        mPagerSlidingStripTsv.setLineLeftAndRightPading((int)DimUtil.dipToPx(5));
+        // 设置Tab标题文字的大小
+        mPagerSlidingStripTsv.setTextSize((int)DimUtil.dipToPx(18));
+        // 字体颜色设置
+        mPagerSlidingStripTsv.setTextColorResource(R.color.white);
+        mPagerSlidingStripTsv.setSelectedTextColorResource(R.color.white);
+        // 底部线条的颜色
+        mPagerSlidingStripTsv.setIndicatorColorResource(R.color.white);
+        //底部容器线条
+        mPagerSlidingStripTsv.setUnderlineColor(Color.TRANSPARENT);
+        mPagerSlidingStripTsv.setAllCaps(false);
     }
 
     @Override
@@ -135,14 +156,6 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         mRecycleView.setOnClickListener(this);
         mSettingView.setOnClickListener(this);
         mFiledView.setOnClickListener(this);
-        mAdapter.setOnItemClick(new RecyclerAdapter.OnItemClick() {
-            @Override
-            public void onItemClick(View v, int position) {
-                if (mRecordModels != null && mRecordModels.size() > position) {
-                    goEditLabelActivity(mRecordModels.get(position));
-                }
-            }
-        });
     }
 
     @Override
@@ -155,14 +168,14 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         if(eventType.equals(EventType.EVENT_LOGIN)){
             supportInvalidateOptionsMenu();
             mUserNameTv.setText(LoginHelper.getCurrentUser().getUsername());
-            queryRecord();
+            //queryRecord();
         }else if(eventType.equals(EventType.EVENT_LOGINOUT)){
             supportInvalidateOptionsMenu();
             mUserNameTv.setText(getResources().getString(R.string.no_login));
-            mRecordModels.clear();
-            mAdapter.refreshDate(mRecordModels);
+            //mRecordModels.clear();
+            //mAdapter.refreshDate(mRecordModels);
         }else if(eventType.equals(EventType.EVENT_REFRESH_RECORD)){
-            queryRecord();
+            //queryRecord();
         }
     }
 
@@ -306,37 +319,24 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         startActivity(addRecord);
     }
 
-    private void goEditLabelActivity(RecordModel recordModel){
-        Intent goEditRecord = new Intent(this,AddRecordActivity.class);
-        goEditRecord.putExtra(AddRecordActivity.KEY_RECORD_MODE, StatusMode.RECORD_EDIT_MODE);
-        goEditRecord.putExtra(AddRecordActivity.KEY_EDIT_RECORD_LIST, recordModel);
-        startActivity(goEditRecord);
-    }
-
     /**
-     * 查询记录数据
+     * 查询当前用户的所有标签
      */
-    private void queryRecord(){
-        new QueryByUserDbTask(mContext, rc) {
+    private void queryLabeles(){
+        new QueryByUserDbTask(mContext, mLc) {
             @Override
             protected void queryPreExecute() {
                 //super.queryPreExecute();
             }
 
-            /**
-             * 查询数据成功后执行的操作
-             *
-             * @param models
-             */
             @Override
             public void queryPostExecute(List<? extends BaseModel> models) {
                 if(models!=null){
-                    mRecordModels =(List<RecordModel>) models;
-                    mAdapter.refreshDate(mRecordModels);
-                    mProgressBar.setVisibility(View.GONE);
+                    mLabelList =(List<LabelModel>) models;
+                    mRecordLabelAdapter.refreshList(mLabelList);
+                    mPagerSlidingStripTsv.notifyDataSetChanged();
                 }
             }
         }.execute(LoginHelper.getCurrentUserId());
     }
-
 }

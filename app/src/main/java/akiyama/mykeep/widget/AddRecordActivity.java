@@ -48,7 +48,8 @@ public class AddRecordActivity extends BaseObserverActivity {
     private TextView mUpdateTimeTv;
     private LabelsLayout mLabelLsl;
     private RecordModel mEditRecordModel;
-    private static RecordController rc=new RecordController();
+    private RecordModel mStartRecord = new RecordModel();//刚刚进入添加记录页面的时候的数据，为了比较数据是否发生改变
+    private RecordController rc=new RecordController();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,12 +65,17 @@ public class AddRecordActivity extends BaseObserverActivity {
         mMode = getIntent().getStringExtra(KEY_RECORD_MODE);
         if(mMode!=null && mMode.equals(StatusMode.RECORD_EDIT_MODE)){
             mEditRecordModel = getIntent().getParcelableExtra(KEY_EDIT_RECORD_LIST);
+            mStartRecord = mEditRecordModel;
             if(mEditRecordModel!=null){
                 mTitleEt.setText(mEditRecordModel.getTitle());
                 mContentEt.setText(mEditRecordModel.getContent());
                 mLabelLsl.setLabels(StringUtil.subStringBySymbol(mEditRecordModel.getLabelNames(),","));
                 mUpdateTimeTv.setText("修改时间："+DateUtil.getDate(mEditRecordModel.getUpdateTime()));
             }
+        }else if(mMode!=null && mMode.equals(StatusMode.RECORD_ADD_MODE)){
+            mStartRecord.setContent("");
+            mStartRecord.setTitle("");
+            mStartRecord.setLabelNames("");
         }
     }
 
@@ -103,7 +109,7 @@ public class AddRecordActivity extends BaseObserverActivity {
             String eventType = notifyInfo.getEventType();
             if(eventType.equals(EventType.EVENT_SELECTED_LABEL_LIST)){
                 Bundle bundle = notifyInfo.getBundle();
-                List<SearchVo> searchSelectedVos = new ArrayList<>();
+                List<SearchVo> searchSelectedVos = new ArrayList<SearchVo>();
                 if(bundle!=null){
                     searchSelectedVos =(ArrayList<SearchVo>) bundle.get(AddLabelActivity.KEY_EXTRA_SELECTED_LABEL);
                     setSelectedLabel(searchSelectedVos);
@@ -124,7 +130,7 @@ public class AddRecordActivity extends BaseObserverActivity {
         int id=item.getItemId();
         switch (id){
             case R.id.action_add_label:
-                goAddLabel();
+                goAddLabelActivity();
                 break;
             case R.id.action_share_content:
                 break;
@@ -139,7 +145,7 @@ public class AddRecordActivity extends BaseObserverActivity {
         int id=v.getId();
         switch (id){
             case R.id.label_lsl:
-                goAddLabel();
+                goAddLabelActivity();
                 break;
             default:
                 break;
@@ -148,7 +154,7 @@ public class AddRecordActivity extends BaseObserverActivity {
 
     @Override
     protected void setBackEvent() {
-        saveOrUpdateRecordToDb();
+        saveOrUpdateRecordToDb();//返回的时候直接保存
         super.setBackEvent();
     }
 
@@ -158,6 +164,13 @@ public class AddRecordActivity extends BaseObserverActivity {
     private void saveOrUpdateRecordToDb(){
         String title=mTitleEt.getText().toString();
         String content=mContentEt.getText().toString();
+        String labelNames=getCurrentLabel();
+        if(mStartRecord!=null && mStartRecord.getTitle().equals(title)
+                && mStartRecord.getContent().equals(content)
+                && mStartRecord.getLabelNames().equals(labelNames)){
+            return;//内容没有发生改变，直接返回
+        }
+
         if(!TextUtils.isEmpty(title) && !TextUtils.isEmpty(content)){
             RecordModel record=new RecordModel();
             record.setTitle(title);
@@ -176,12 +189,12 @@ public class AddRecordActivity extends BaseObserverActivity {
                 record.setId(mEditRecordModel.getId());
                 updateRecordTask(record);
             }
-        }else{
-            Toast.makeText(mContext,"必须填写标题和内容哦！",Toast.LENGTH_LONG).show();
         }
+
+
     }
 
-    private void goAddLabel(){
+    private void goAddLabelActivity(){
         Intent addLabel=new Intent(this,AddLabelActivity.class);
         addLabel.putExtra(AddLabelActivity.KEY_EXTRA_SELECT_LABEL,getCurrentLabel());
         startActivity(addLabel);
