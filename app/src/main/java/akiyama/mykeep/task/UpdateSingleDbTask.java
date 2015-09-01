@@ -20,10 +20,11 @@ public abstract class UpdateSingleDbTask extends AsyncTask<BaseModel,Void,Boolea
     private IBaseController mBaseController;
     private Context mContext;
     private ProgressDialog mProgressBar;
-
-    public UpdateSingleDbTask(Context context, IBaseController baseController){
+    private boolean mIsShowPregressBar;
+    public UpdateSingleDbTask(Context context, IBaseController baseController,boolean isShowPregressBar){
         this.mContext=context;
         this.mBaseController=baseController;
+        this.mIsShowPregressBar = isShowPregressBar;
     }
     @Override
     protected void onPreExecute() {
@@ -50,9 +51,11 @@ public abstract class UpdateSingleDbTask extends AsyncTask<BaseModel,Void,Boolea
      * 保存数据前执行的操作
      */
     protected void updatePreExecute(){
-        mProgressBar=new ProgressDialog(mContext);
-        mProgressBar.setMessage("正在保存，请稍后......");
-        mProgressBar.show();
+        if(mIsShowPregressBar){
+            mProgressBar=new ProgressDialog(mContext);
+            mProgressBar.setMessage("正在更新，请稍后......");
+            mProgressBar.show();
+        }
     }
 
 

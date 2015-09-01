@@ -2,7 +2,6 @@ package akiyama.mykeep.widget;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -29,7 +28,7 @@ import akiyama.mykeep.db.model.LabelModel;
 import akiyama.mykeep.event.NotifyInfo;
 import akiyama.mykeep.controller.RecordController;
 import akiyama.mykeep.event.EventType;
-import akiyama.mykeep.event.Notify;
+import akiyama.mykeep.event.helper.KeepNotifyCenterHelper;
 import akiyama.mykeep.task.QueryByUserDbTask;
 import akiyama.mykeep.util.DimUtil;
 import akiyama.mykeep.util.LoginHelper;
@@ -125,6 +124,7 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         setLeftMenuItem();
         mRecordLabelAdapter = new RecordByLabelAdapter(getFragmentManager(),mLabelList);
         mRecordVp.setAdapter(mRecordLabelAdapter);
+        mRecordVp.setOffscreenPageLimit(0);
         mPagerSlidingStripTsv.setViewPager(mRecordVp);
         initPagerSliding();
     }
@@ -168,14 +168,13 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         if(eventType.equals(EventType.EVENT_LOGIN)){
             supportInvalidateOptionsMenu();
             mUserNameTv.setText(LoginHelper.getCurrentUser().getUsername());
-            //queryRecord();
+            queryLabeles();
         }else if(eventType.equals(EventType.EVENT_LOGINOUT)){
             supportInvalidateOptionsMenu();
             mUserNameTv.setText(getResources().getString(R.string.no_login));
-            //mRecordModels.clear();
-            //mAdapter.refreshDate(mRecordModels);
-        }else if(eventType.equals(EventType.EVENT_REFRESH_RECORD)){
-            //queryRecord();
+            queryLabeles();
+        }else if(eventType.equals(EventType.EVENT_CHANGE_LABEL)){
+            queryLabeles();//标签发生改变，刷新标签记录
         }
     }
 
@@ -184,7 +183,7 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         return new String[]{
                 EventType.EVENT_LOGIN,
                 EventType.EVENT_LOGINOUT,
-                EventType.EVENT_REFRESH_RECORD
+                EventType.EVENT_CHANGE_LABEL
         };
     }
 
@@ -259,7 +258,7 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
             case R.id.action_login:
                 if(LoginHelper.isLogin()){
                     AVUser.logOut();//清除当前缓存的数据
-                    Notify.getInstance().NotifyActivity(new NotifyInfo(EventType.EVENT_LOGINOUT));//通知注销登录信息
+                    KeepNotifyCenterHelper.getInstance().notifyLoginout();//通知注销登录信息
                     Toast.makeText(this, "注销成功！", Toast.LENGTH_LONG).show();
                 }else{
                     goLogin();
@@ -323,16 +322,12 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
      * 查询当前用户的所有标签
      */
     private void queryLabeles(){
-        new QueryByUserDbTask(mContext, mLc) {
-            @Override
-            protected void queryPreExecute() {
-                //super.queryPreExecute();
-            }
-
+        new QueryByUserDbTask(mContext, mLc,false) {
             @Override
             public void queryPostExecute(List<? extends BaseModel> models) {
                 if(models!=null){
                     mLabelList =(List<LabelModel>) models;
+                    mLabelList.add(0,new LabelModel(getString(R.string.all_label),LoginHelper.getCurrentUserId()));
                     mRecordLabelAdapter.refreshList(mLabelList);
                     mPagerSlidingStripTsv.notifyDataSetChanged();
                 }

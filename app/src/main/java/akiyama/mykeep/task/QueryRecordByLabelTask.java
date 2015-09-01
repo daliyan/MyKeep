@@ -8,24 +8,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 import akiyama.mykeep.controller.BaseController;
+import akiyama.mykeep.controller.RecordController;
 import akiyama.mykeep.db.model.BaseModel;
-import akiyama.mykeep.db.model.IModel;
+import akiyama.mykeep.db.model.RecordModel;
 
 /**
- * 通过用户ID查询所有数据的Task
+ * 通过用户ID和标签分类查询数据的Task
  * @author zhiwu_yan
  * @version 1.0
  * @since 2015-08-07  10:43
  */
-public abstract class QueryByUserDbTask extends AsyncTask<String,Void,List<? extends BaseModel>> {
+public abstract class QueryRecordByLabelTask extends AsyncTask<String,Void,List<RecordModel>> {
 
-    private BaseController mBaseController;
+    private RecordController mRecordController;
     private Context mContext;
     private ProgressDialog mProgressBar;
     private boolean mIsShowProgressBar;
-    public QueryByUserDbTask(Context context, BaseController baseController,boolean isShowProgressBar){
+    public QueryRecordByLabelTask(Context context, RecordController recordController,boolean isShowProgressBar){
         this.mContext = context;
-        this.mBaseController = baseController;
+        this.mRecordController = recordController;
         this.mIsShowProgressBar = isShowProgressBar;
     }
 
@@ -35,16 +36,16 @@ public abstract class QueryByUserDbTask extends AsyncTask<String,Void,List<? ext
     }
 
     @Override
-    protected List<? extends BaseModel> doInBackground(String... params) {
-        List<? extends BaseModel> models=new ArrayList<BaseModel>();
+    protected List<RecordModel> doInBackground(String... params) {
+        List<RecordModel> models=new ArrayList<RecordModel>();
         if(params[0]!=null){
-            models=mBaseController.getDbByUserId(mContext, params[0]);
+            models=mRecordController.getRecodrByUserAndLabel(mContext,params[0],params[1]);
         }
         return models;
     }
 
     @Override
-    protected void onPostExecute(List<? extends BaseModel> models) {
+    protected void onPostExecute(List<RecordModel> models) {
         queryPostExecute(models);
         if(mProgressBar!=null){
             mProgressBar.dismiss();

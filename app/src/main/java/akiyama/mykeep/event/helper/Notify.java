@@ -1,5 +1,7 @@
-package akiyama.mykeep.event;
+package akiyama.mykeep.event.helper;
 
+import akiyama.mykeep.event.EventType;
+import akiyama.mykeep.event.NotifyInfo;
 import akiyama.mykeep.event.imple.EventSubject;
 
 /**

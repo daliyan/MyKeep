@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 
 import akiyama.mykeep.R;
+import akiyama.mykeep.common.DbConfig;
 import akiyama.mykeep.util.DimUtil;
 
 /**
@@ -54,7 +55,7 @@ public class LabelsLayout extends LinearLayout {
             labelTv.setPadding(mLabelPadding,mLabelPadding,mLabelPadding,mLabelPadding);
             labelTv.setBackgroundResource(R.drawable.corners_bg);
             this.addView(labelTv);
-            mLabelStr += labelName + ",";
+            mLabelStr += labelName + DbConfig.LABEL_SPLIT_SYMBOL;
         }
     }
 

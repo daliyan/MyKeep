@@ -1,6 +1,5 @@
 package akiyama.mykeep.base;
 
-import android.app.Activity;
 import android.os.Bundle;
 
 import java.lang.ref.WeakReference;
@@ -10,7 +9,7 @@ import akiyama.mykeep.event.imple.EventObserver;
 import akiyama.mykeep.event.imple.EventSubject;
 
 /**
- * FIXME
+ * 带观察者模式的fragment
  *
  * @author zhiwu_yan
  * @version 1.0

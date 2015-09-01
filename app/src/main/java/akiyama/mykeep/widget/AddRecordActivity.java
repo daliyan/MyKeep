@@ -8,7 +8,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 import java.util.ArrayList;
@@ -17,13 +16,14 @@ import java.util.List;
 
 import akiyama.mykeep.R;
 import akiyama.mykeep.base.BaseObserverActivity;
+import akiyama.mykeep.common.DbConfig;
 import akiyama.mykeep.common.StatusMode;
 import akiyama.mykeep.event.NotifyInfo;
+import akiyama.mykeep.event.helper.KeepNotifyCenterHelper;
 import akiyama.mykeep.task.SaveSingleDbTask;
 import akiyama.mykeep.controller.RecordController;
 import akiyama.mykeep.db.model.RecordModel;
 import akiyama.mykeep.event.EventType;
-import akiyama.mykeep.event.Notify;
 import akiyama.mykeep.task.UpdateSingleDbTask;
 import akiyama.mykeep.util.DateUtil;
 import akiyama.mykeep.util.LoginHelper;
@@ -69,7 +69,7 @@ public class AddRecordActivity extends BaseObserverActivity {
             if(mEditRecordModel!=null){
                 mTitleEt.setText(mEditRecordModel.getTitle());
                 mContentEt.setText(mEditRecordModel.getContent());
-                mLabelLsl.setLabels(StringUtil.subStringBySymbol(mEditRecordModel.getLabelNames(),","));
+                mLabelLsl.setLabels(StringUtil.subStringBySymbol(mEditRecordModel.getLabelNames(), DbConfig.LABEL_SPLIT_SYMBOL));
                 mUpdateTimeTv.setText("修改时间："+DateUtil.getDate(mEditRecordModel.getUpdateTime()));
             }
         }else if(mMode!=null && mMode.equals(StatusMode.RECORD_ADD_MODE)){
@@ -212,16 +212,11 @@ public class AddRecordActivity extends BaseObserverActivity {
     }
 
     private void saveRecordTask(RecordModel record){
-        new SaveSingleDbTask(mContext,rc){
-            @Override
-            protected void savePreExecute() {
-               // super.savePreExecute();
-            }
-
+        new SaveSingleDbTask(mContext,rc,false){
             @Override
             public void savePostExecute(Boolean aBoolean) {
                 if(aBoolean){
-                    Notify.getInstance().NotifyActivity(new NotifyInfo(EventType.EVENT_REFRESH_RECORD));
+                    KeepNotifyCenterHelper.getInstance().notifyRefreshRecord();
                     mTitleEt.setText("");
                     mContentEt.setText("");
                     AddRecordActivity.this.finish();
@@ -231,16 +226,11 @@ public class AddRecordActivity extends BaseObserverActivity {
     }
 
     private void updateRecordTask(RecordModel record){
-        new UpdateSingleDbTask(mContext,rc){
-            @Override
-            protected void updatePreExecute() {
-                //super.updatePreExecute();
-            }
-
+        new UpdateSingleDbTask(mContext,rc,false){
             @Override
             public void updatePostExecute(Boolean aBoolean) {
                 if(aBoolean){
-                    Notify.getInstance().NotifyActivity(new NotifyInfo(EventType.EVENT_REFRESH_RECORD));
+                    KeepNotifyCenterHelper.getInstance().notifyRefreshRecord();
                     mTitleEt.setText("");
                     mContentEt.setText("");
                     AddRecordActivity.this.finish();

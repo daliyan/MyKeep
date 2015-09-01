@@ -1,8 +1,5 @@
 package akiyama.mykeep.widget;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -15,8 +12,9 @@ import java.util.Calendar;
 import java.util.List;
 
 import akiyama.mykeep.R;
+import akiyama.mykeep.common.DbConfig;
 import akiyama.mykeep.db.model.BaseModel;
-import akiyama.mykeep.event.Notify;
+import akiyama.mykeep.event.helper.KeepNotifyCenterHelper;
 import akiyama.mykeep.event.NotifyInfo;
 import akiyama.mykeep.task.QueryByUserDbTask;
 import akiyama.mykeep.task.SaveSingleDbTask;
@@ -42,7 +40,7 @@ public class AddLabelActivity extends BaseObserverActivity implements SearchLayo
     //传递选择后的结果给其它界面
     public static final String KEY_EXTRA_SELECTED_LABEL="extra_selected_label";
     private SearchLayout mSearchSly;
-    private SearchAdapter mSearchAdpter;
+    private SearchAdapter mSearchAdapter;
     private List<SearchVo> mSearchList;
     private List<SearchVo> mSelectLabels;//已经选定的Label标签
     private String mLabels;
@@ -71,18 +69,23 @@ public class AddLabelActivity extends BaseObserverActivity implements SearchLayo
         mSelectLabels =new ArrayList<>();
         initSelectLabel();
         queryLabelFromDb();
-        mSearchAdpter=new SearchAdapter(mContext,mSearchList);
+        mSearchAdapter =new SearchAdapter(mContext,mSearchList);
     }
 
     @Override
     protected void setOnClick() {
         mSearchSly.setCreatLabelClickEvent(this);
         mSearchSly.setInputChangeListener(this);
-        mSearchSly.setmAdpter(mSearchAdpter);
+        mSearchSly.setmAdpter(mSearchAdapter);
     }
 
     @Override
     protected void setBackEvent() {
+        notifySelectedLabels();
+        super.setBackEvent();
+    }
+
+    private void notifySelectedLabels(){
         ArrayList<SearchVo> searchVos=new ArrayList<SearchVo>();
         for(SearchVo searchVo:mSearchList){
             if(searchVo.getIsCheck()){
@@ -91,8 +94,7 @@ public class AddLabelActivity extends BaseObserverActivity implements SearchLayo
         }
         Bundle bundle = new Bundle();
         bundle.putParcelableArrayList(KEY_EXTRA_SELECTED_LABEL,searchVos);
-        Notify.getInstance().NotifyActivity(new NotifyInfo(EventType.EVENT_SELECTED_LABEL_LIST,bundle));
-        super.setBackEvent();
+        KeepNotifyCenterHelper.getInstance().notifyLabelSelect(bundle);
     }
 
     @Override
@@ -103,14 +105,14 @@ public class AddLabelActivity extends BaseObserverActivity implements SearchLayo
     @Override
     protected void onChange(NotifyInfo notifyInfo) {
         if(notifyInfo.getEventType().equals(EventType.EVENT_ADD_LABEL_LIST)){
-            mSearchList=mSearchAdpter.getFinalSearchDate();
+            mSearchList= mSearchAdapter.getFinalSearchDate();
         }
     }
 
     @Override
     protected String[] getObserverEventType() {
         return new String[]{
-                EventType.EVENT_ADD_LABEL_LIST
+                EventType.EVENT_ADD_LABEL_LIST,
         };
     }
 
@@ -128,10 +130,10 @@ public class AddLabelActivity extends BaseObserverActivity implements SearchLayo
     public void onTextChanged(CharSequence s, int start, int before, int count) {
         mSearchSly.setHideCreatLayout();
         if(s.length()==0){
-            mSearchAdpter.refreshDate(mSearchAdpter.getFinalSearchDate());
+            mSearchAdapter.refreshDate(mSearchAdapter.getFinalSearchDate());
         }else{
             List<SearchVo> queryList=queryList(s.toString());
-            mSearchAdpter.refreshDate(queryList);
+            mSearchAdapter.refreshDate(queryList);
             if(queryList.size()==0 && !TextUtils.isEmpty(mSearchSly.getSearchText())){
                 mSearchSly.setShowCreatLayout("创建“"+mSearchSly.getSearchText()+"”");
             }
@@ -149,12 +151,11 @@ public class AddLabelActivity extends BaseObserverActivity implements SearchLayo
     private void saveLabelToDb(){
         LabelController labelController=new LabelController();
         LabelModel labelModel=new LabelModel();
-        labelModel.setName(mSearchSly.getSearchText());//无需非NULL判断，因为能到这一步说明mSearchSly.getSearchText()一定不是null
+        labelModel.setName(mSearchSly.getSearchText().replace(" ",""));//移除所有的空格
         labelModel.setCreatTime(String.valueOf(Calendar.getInstance().getTimeInMillis()));
         labelModel.setUpdateTime(String.valueOf(Calendar.getInstance().getTimeInMillis()));
         labelModel.setUserId(LoginHelper.getCurrentUserId());
-        new SaveSingleDbTask(mContext,labelController){
-
+        new SaveSingleDbTask(mContext,labelController,false){
             @Override
             public void savePostExecute(Boolean aBoolean) {
                 if(aBoolean){
@@ -162,6 +163,7 @@ public class AddLabelActivity extends BaseObserverActivity implements SearchLayo
                     mSearchSly.setSearchText("");
                     InputMethodManager imm=(InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(mSearchSly.getWindowToken(), 0);
+                    KeepNotifyCenterHelper.getInstance().notifyLabelChange();
                 }
 
             }
@@ -173,7 +175,7 @@ public class AddLabelActivity extends BaseObserverActivity implements SearchLayo
      */
    private void queryLabelFromDb(){
        final LabelController labelController=new LabelController();
-       new QueryByUserDbTask(mContext,labelController){
+       new QueryByUserDbTask(mContext,labelController,false){
 
            @Override
            public void queryPostExecute(List<? extends BaseModel> models) {
@@ -191,7 +193,7 @@ public class AddLabelActivity extends BaseObserverActivity implements SearchLayo
                     if(mSelectLabels!=null){
                         addSelectVoList();
                     }
-                    mSearchAdpter.refreshDate(mSearchList);
+                    mSearchAdapter.refreshDate(mSearchList);
                 }
            }
 
@@ -243,7 +245,7 @@ public class AddLabelActivity extends BaseObserverActivity implements SearchLayo
      */
     public void initSelectLabel(){
         mLabels = getIntent().getStringExtra(KEY_EXTRA_SELECT_LABEL);
-        String[] labels=StringUtil.subStringBySymbol(mLabels,",");
+        String[] labels=StringUtil.subStringBySymbol(mLabels, DbConfig.LABEL_SPLIT_SYMBOL);
         if(labels!=null && labels.length > 0){
             for(int i=0;i < labels.length;i++)
                 mSelectLabels.add(new SearchVo(labels[i],false));

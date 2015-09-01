@@ -2,18 +2,11 @@ package akiyama.mykeep.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.VelocityTracker;
 import android.view.View;
-import android.view.ViewConfiguration;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.Scroller;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,15 +15,11 @@ import java.util.List;
 
 import akiyama.mykeep.R;
 import akiyama.mykeep.controller.LabelController;
-import akiyama.mykeep.event.EventType;
-import akiyama.mykeep.event.Notify;
-import akiyama.mykeep.event.NotifyInfo;
+import akiyama.mykeep.event.helper.KeepNotifyCenterHelper;
 import akiyama.mykeep.util.DimUtil;
-import akiyama.mykeep.util.LogUtil;
 import akiyama.mykeep.vo.SearchVo;
 import akiyama.swipe.adapter.RecyclerViewAdapter;
 import akiyama.swipe.swipe.SwipeItemLayout;
-import akiyama.swipe.swipe.SwipeMenuItem;
 
 /**
  * 标签查询、添加、删除、编辑适配器
@@ -116,7 +105,7 @@ public class SearchAdapter extends RecyclerViewAdapter<SearchAdapter.ViewHolder>
                     mSearchVoList.get(position).setIsCheck(false);
                     mSearchFilterList.get(position).setIsCheck(false);
                 }
-                Notify.getInstance().NotifyActivity(new NotifyInfo(EventType.EVENT_ADD_LABEL_LIST));
+                KeepNotifyCenterHelper.getInstance().notifyLabelStatusChange();
             }
         });
 
@@ -131,6 +120,7 @@ public class SearchAdapter extends RecyclerViewAdapter<SearchAdapter.ViewHolder>
                         if(isDelete){
                             mSearchVoList.remove(mSearchVoList.get(position));
                             notifyDataSetChanged();
+                            KeepNotifyCenterHelper.getInstance().notifyLabelChange();
                         }else {
                             Toast.makeText(mContext,"删除失败，请重试！",Toast.LENGTH_SHORT).show();
                         }

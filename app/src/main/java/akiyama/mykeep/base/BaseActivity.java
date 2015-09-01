@@ -95,6 +95,15 @@ public abstract class BaseActivity extends ActionBarActivity implements View.OnC
     }
 
     /**
+     * 获取字符串资源
+     * @param resId
+     * @return
+     */
+    public String getResString(int resId) {
+        return getResources().getString(resId);
+    }
+
+    /**
      * 获取布局控件
      */
     protected abstract void findView();

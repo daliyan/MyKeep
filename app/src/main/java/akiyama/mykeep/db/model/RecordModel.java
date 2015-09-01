@@ -50,7 +50,7 @@ public class RecordModel extends BaseModel{
         cv.put(RecordColumns.ALARMTIME,alarmTime);
         cv.put(RecordColumns.LEVEL,level);
         cv.put(RecordColumns.USERID,userId);
-        cv.put(RecordColumns.LABELID, labelNames);
+        cv.put(RecordColumns.LABELNAMES, labelNames);
         return cv;
     }
 
@@ -78,7 +78,7 @@ public class RecordModel extends BaseModel{
         recordModel.creatTime=DataProviderHelper.parseString(cursor,BaseColumns.CREATAT);
         recordModel.updateTime=DataProviderHelper.parseString(cursor,BaseColumns.UPDATEAT);
         recordModel.userId=DataProviderHelper.parseString(cursor,RecordColumns.USERID);
-        recordModel.labelNames =DataProviderHelper.parseString(cursor,RecordColumns.LABELID);
+        recordModel.labelNames =DataProviderHelper.parseString(cursor,RecordColumns.LABELNAMES);
         return recordModel;
     }
 

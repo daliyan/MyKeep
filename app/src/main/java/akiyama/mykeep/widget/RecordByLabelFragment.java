@@ -14,11 +14,17 @@ import java.util.List;
 import akiyama.mykeep.R;
 import akiyama.mykeep.adapter.RecyclerAdapter;
 import akiyama.mykeep.base.BaseFragment;
+import akiyama.mykeep.base.BaseObserverActivity;
+import akiyama.mykeep.base.BaseObserverFragment;
 import akiyama.mykeep.common.StatusMode;
 import akiyama.mykeep.controller.RecordController;
 import akiyama.mykeep.db.model.BaseModel;
 import akiyama.mykeep.db.model.RecordModel;
+import akiyama.mykeep.event.EventType;
+import akiyama.mykeep.event.NotifyInfo;
 import akiyama.mykeep.task.QueryByUserDbTask;
+import akiyama.mykeep.task.QueryRecordByLabelTask;
+import akiyama.mykeep.util.LogUtil;
 import akiyama.mykeep.util.LoginHelper;
 
 /**
@@ -28,9 +34,10 @@ import akiyama.mykeep.util.LoginHelper;
  * @version 1.0
  * @since 2015-08-31  14:01
  */
-public class RecordByLabelFragment extends BaseFragment{
+public class RecordByLabelFragment extends BaseObserverFragment {
 
-    private static final String KEY_LABEL_NAME="key_label_name";//标签名称KEY值
+    public static final String TAG="RecordByLabelFragment";
+    public static final String KEY_LABEL_NAME="key_label_name";//标签名称KEY值
     private RecyclerView mRecyclerView;
     private RecyclerAdapter mAdapter;
     private List<RecordModel> mRecordModels;
@@ -56,17 +63,17 @@ public class RecordByLabelFragment extends BaseFragment{
     public void initView() {
         mProgressBar.setVisibility(View.GONE);
         mProgressBar.setVisibility(View.GONE);
-        mRecordModels =new ArrayList<RecordModel>();
+        mRecordModels =new ArrayList<>();
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new RecyclerAdapter(mRecordModels);
         mRecyclerView.setAdapter(mAdapter);
+        mLabelName = getArguments().getString(KEY_LABEL_NAME);//获取需要加载的标签分类名称
     }
 
     @Override
     public void initDate() {
-        //mLabelName = getArguments().getString(KEY_LABEL_NAME);//获取需要加载的标签分类名称
-        queryRecord();
+        queryRecordByLabel();
     }
 
 
@@ -77,6 +84,8 @@ public class RecordByLabelFragment extends BaseFragment{
             public void onItemClick(View v, int position) {
                 if (mRecordModels != null && mRecordModels.size() > position) {
                     goEditLabelActivity(mRecordModels.get(position));
+                }else {
+                    LogUtil.e(TAG,"setOnItemClick position is NV");
                 }
             }
         });
@@ -91,28 +100,47 @@ public class RecordByLabelFragment extends BaseFragment{
         Intent goEditRecord = new Intent(mContext,AddRecordActivity.class);
         goEditRecord.putExtra(AddRecordActivity.KEY_RECORD_MODE, StatusMode.RECORD_EDIT_MODE);
         goEditRecord.putExtra(AddRecordActivity.KEY_EDIT_RECORD_LIST, recordModel);
-        startActivity(goEditRecord);
+        mContext.startActivity(goEditRecord);
     }
 
     /**
-     * 查询记录数据
+     * 通过标签查询记录数据
      */
-    private void queryRecord(){
-        new QueryByUserDbTask(mContext, rc) {
-            @Override
-            protected void queryPreExecute() {
-                //super.queryPreExecute();
-            }
+    private void queryRecordByLabel(){
+        if(mLabelName.equals(mContext.getString(R.string.all_label))){
+            queryAllRecord();
+        }else {
+            queryLabelRecord();
+        }
+    }
 
-            /**
-             * 查询数据成功后执行的操作
-             *
-             * @param models
-             */
+    /**
+     * 查询对应标签的记录
+     */
+    private void queryLabelRecord(){
+        new QueryRecordByLabelTask(mContext, rc,false) {
             @Override
             public void queryPostExecute(List<? extends BaseModel> models) {
                 if(models!=null){
-                    mRecordModels =(List<RecordModel>) models;
+                    mRecordModels.clear();
+                    mRecordModels.addAll((List<RecordModel>) models);
+                    mAdapter.refreshDate(mRecordModels);
+                    mProgressBar.setVisibility(View.GONE);
+                }
+            }
+        }.execute(LoginHelper.getCurrentUserId(),mLabelName);
+    }
+
+    /**
+     * 查询所有的记录数据
+     */
+    private void queryAllRecord(){
+        new QueryByUserDbTask(mContext, rc,false) {
+            @Override
+            public void queryPostExecute(List<? extends BaseModel> models) {
+                if(models!=null){
+                    mRecordModels.clear();
+                    mRecordModels.addAll((List<RecordModel>) models);
                     mAdapter.refreshDate(mRecordModels);
                     mProgressBar.setVisibility(View.GONE);
                 }
@@ -120,4 +148,29 @@ public class RecordByLabelFragment extends BaseFragment{
         }.execute(LoginHelper.getCurrentUserId());
     }
 
+    @Override
+    protected void onChange(NotifyInfo notifyInfo) {
+        String eventType = notifyInfo.getEventType();
+        if(eventType.equals(EventType.EVENT_LOGIN)){
+            queryRecordByLabel();
+        }else if(eventType.equals(EventType.EVENT_LOGINOUT)){
+            mRecordModels.clear();
+            mAdapter.refreshDate(mRecordModels);
+        }else if(eventType.equals(EventType.EVENT_REFRESH_RECORD)){
+            queryRecordByLabel();
+        }
+    }
+
+    @Override
+    protected String[] getObserverEventType() {
+        return new String[]{
+                EventType.EVENT_LOGIN,
+                EventType.EVENT_LOGINOUT,
+                EventType.EVENT_REFRESH_RECORD
+        };
+    }
+
+    public String getLabelName() {
+        return mLabelName;
+    }
 }
