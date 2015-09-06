@@ -10,6 +10,7 @@ import android.widget.TextView;
 import akiyama.mykeep.R;
 import akiyama.mykeep.common.DbConfig;
 import akiyama.mykeep.util.DimUtil;
+import akiyama.mykeep.util.ResUtil;
 
 /**
  * 标签组
@@ -54,6 +55,7 @@ public class LabelsLayout extends LinearLayout {
             labelTv.setLayoutParams(params);
             labelTv.setPadding(mLabelPadding,mLabelPadding,mLabelPadding,mLabelPadding);
             labelTv.setBackgroundResource(R.drawable.corners_bg);
+            ResUtil.setRobotoSlabTypeface(labelTv, ResUtil.ROBOTOSLAB_LIGHR);
             this.addView(labelTv);
             mLabelStr += labelName + DbConfig.LABEL_SPLIT_SYMBOL;
         }

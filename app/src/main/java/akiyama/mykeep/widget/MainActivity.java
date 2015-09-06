@@ -2,6 +2,7 @@ package akiyama.mykeep.widget;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -18,6 +19,7 @@ import com.avos.avoscloud.AVUser;
 import java.util.ArrayList;
 import java.util.List;
 
+import akiyama.mykeep.AppContext;
 import akiyama.mykeep.R;
 import akiyama.mykeep.adapter.RecordByLabelAdapter;
 import akiyama.mykeep.base.BaseObserverActivity;
@@ -124,7 +126,6 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         setLeftMenuItem();
         mRecordLabelAdapter = new RecordByLabelAdapter(getFragmentManager(),mLabelList);
         mRecordVp.setAdapter(mRecordLabelAdapter);
-        mRecordVp.setOffscreenPageLimit(0);
         mPagerSlidingStripTsv.setViewPager(mRecordVp);
         initPagerSliding();
     }
@@ -140,6 +141,7 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         mPagerSlidingStripTsv.setLineLeftAndRightPading((int)DimUtil.dipToPx(5));
         // 设置Tab标题文字的大小
         mPagerSlidingStripTsv.setTextSize((int)DimUtil.dipToPx(18));
+        mPagerSlidingStripTsv.setTypeface(Typeface.createFromAsset(AppContext.getInstance().getAssets(), "fonts/RobotoSlab/RobotoSlab-Light.ttf"));
         // 字体颜色设置
         mPagerSlidingStripTsv.setTextColorResource(R.color.white);
         mPagerSlidingStripTsv.setSelectedTextColorResource(R.color.white);

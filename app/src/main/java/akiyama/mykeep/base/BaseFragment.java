@@ -2,6 +2,7 @@ package akiyama.mykeep.base;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.os.Debug;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,6 +45,11 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
             initDate();
             mIsInitDate = true;
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 
     @Override

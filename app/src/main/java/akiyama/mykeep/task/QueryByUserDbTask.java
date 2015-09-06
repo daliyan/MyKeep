@@ -20,7 +20,7 @@ import akiyama.mykeep.db.model.IModel;
 public abstract class QueryByUserDbTask extends AsyncTask<String,Void,List<? extends BaseModel>> {
 
     private BaseController mBaseController;
-    private Context mContext;
+    private volatile Context mContext;
     private ProgressDialog mProgressBar;
     private boolean mIsShowProgressBar;
     public QueryByUserDbTask(Context context, BaseController baseController,boolean isShowProgressBar){

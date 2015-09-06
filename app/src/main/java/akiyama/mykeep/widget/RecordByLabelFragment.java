@@ -2,6 +2,8 @@ package akiyama.mykeep.widget;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -9,6 +11,7 @@ import android.view.View;
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import akiyama.mykeep.R;
@@ -16,6 +19,8 @@ import akiyama.mykeep.adapter.RecyclerAdapter;
 import akiyama.mykeep.base.BaseFragment;
 import akiyama.mykeep.base.BaseObserverActivity;
 import akiyama.mykeep.base.BaseObserverFragment;
+import akiyama.mykeep.common.Constants;
+import akiyama.mykeep.common.DbConfig;
 import akiyama.mykeep.common.StatusMode;
 import akiyama.mykeep.controller.RecordController;
 import akiyama.mykeep.db.model.BaseModel;
@@ -24,8 +29,10 @@ import akiyama.mykeep.event.EventType;
 import akiyama.mykeep.event.NotifyInfo;
 import akiyama.mykeep.task.QueryByUserDbTask;
 import akiyama.mykeep.task.QueryRecordByLabelTask;
+import akiyama.mykeep.util.DateUtil;
 import akiyama.mykeep.util.LogUtil;
 import akiyama.mykeep.util.LoginHelper;
+import akiyama.mykeep.util.StringUtil;
 
 /**
  * 通过标签分类显示记录信息
@@ -73,7 +80,10 @@ public class RecordByLabelFragment extends BaseObserverFragment {
 
     @Override
     public void initDate() {
-        queryRecordByLabel();
+        final long startTime=System.currentTimeMillis();   //获取开始时间
+        queryRecordByLabel(false);
+        long endTime1=System.currentTimeMillis(); //获取结束时间
+        LogUtil.e(TAG,mLabelName +" 执行耗时："+ (endTime1 - startTime)+"ms");
     }
 
 
@@ -106,26 +116,30 @@ public class RecordByLabelFragment extends BaseObserverFragment {
     /**
      * 通过标签查询记录数据
      */
-    private void queryRecordByLabel(){
+    private void queryRecordByLabel(boolean isShowProgress){
         if(mLabelName.equals(mContext.getString(R.string.all_label))){
-            queryAllRecord();
+            queryAllRecord(isShowProgress);
         }else {
-            queryLabelRecord();
+            queryLabelRecord(isShowProgress);
         }
     }
 
     /**
      * 查询对应标签的记录
      */
-    private void queryLabelRecord(){
-        new QueryRecordByLabelTask(mContext, rc,false) {
+    private void queryLabelRecord(boolean isShowProgress){
+        final long startTime=System.currentTimeMillis();   //获取开始时间
+        new QueryRecordByLabelTask(mContext, rc,isShowProgress) {
             @Override
             public void queryPostExecute(List<? extends BaseModel> models) {
                 if(models!=null){
+                    long endTime=System.currentTimeMillis(); //获取结束时间
+                    //LogUtil.e(TAG,this.hashCode()+ mLabelName +" queryLabelRecord() "+models.size());
                     mRecordModels.clear();
                     mRecordModels.addAll((List<RecordModel>) models);
                     mAdapter.refreshDate(mRecordModels);
                     mProgressBar.setVisibility(View.GONE);
+                    LogUtil.e(TAG,mLabelName +" 查询耗时："+ (endTime - startTime)+"ms");
                 }
             }
         }.execute(LoginHelper.getCurrentUserId(),mLabelName);
@@ -134,8 +148,8 @@ public class RecordByLabelFragment extends BaseObserverFragment {
     /**
      * 查询所有的记录数据
      */
-    private void queryAllRecord(){
-        new QueryByUserDbTask(mContext, rc,false) {
+    private void queryAllRecord(boolean isShowProgress){
+        new QueryByUserDbTask(mContext, rc,isShowProgress) {
             @Override
             public void queryPostExecute(List<? extends BaseModel> models) {
                 if(models!=null){
@@ -152,12 +166,19 @@ public class RecordByLabelFragment extends BaseObserverFragment {
     protected void onChange(NotifyInfo notifyInfo) {
         String eventType = notifyInfo.getEventType();
         if(eventType.equals(EventType.EVENT_LOGIN)){
-            queryRecordByLabel();
+            queryRecordByLabel(false);
         }else if(eventType.equals(EventType.EVENT_LOGINOUT)){
             mRecordModels.clear();
             mAdapter.refreshDate(mRecordModels);
         }else if(eventType.equals(EventType.EVENT_REFRESH_RECORD)){
-            queryRecordByLabel();
+            String labels = notifyInfo.getBundleString(Constants.KEY_LABEL_NAMES);
+            if(labels!=null){
+               String[] labelNames = StringUtil.subStringBySymbol(labels, DbConfig.LABEL_SPLIT_SYMBOL);
+                //“全部”标签组或者需要刷新的标签组刷新数据
+               if(StringUtil.isContains(labelNames,mLabelName) || mLabelName.equals(getString(R.string.all_label))){
+                   queryRecordByLabel(false);
+               }
+            }
         }
     }
 

@@ -50,8 +50,8 @@ public class KeepNotifyCenterHelper {
     /**
      * 刷新记录信息
      */
-    public void notifyRefreshRecord(){
-        notifyObserver(new NotifyInfo(EventType.EVENT_REFRESH_RECORD));
+    public void notifyRefreshRecord(Bundle bundle){
+        notifyObserver(new NotifyInfo(EventType.EVENT_REFRESH_RECORD,bundle));
     }
 
     /**

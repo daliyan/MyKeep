@@ -23,4 +23,21 @@ public class StringUtil {
         }
         return null;
     }
+
+    /**
+     * 判断字符串数组是否包含特定的字符
+     * @param strs
+     * @param values
+     * @return
+     */
+    public static boolean isContains(String[] strs,String values){
+        if(strs!=null && strs.length>0){
+            for(String str:strs){
+                if(str.equals(values)){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }

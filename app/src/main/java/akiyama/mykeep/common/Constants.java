@@ -10,4 +10,6 @@ public class Constants {
 
    public final static String PACKAGE_NAME="akiyama.mykeep";
    public final static String AUTHORITY = Constants.PACKAGE_NAME+ ".provider";
+
+   public static final String KEY_LABEL_NAMES="key_label_names";//标签names的key
 }

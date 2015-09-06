@@ -1,6 +1,7 @@
 package akiyama.mykeep.widget;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -16,6 +17,7 @@ import java.util.List;
 
 import akiyama.mykeep.R;
 import akiyama.mykeep.base.BaseObserverActivity;
+import akiyama.mykeep.common.Constants;
 import akiyama.mykeep.common.DbConfig;
 import akiyama.mykeep.common.StatusMode;
 import akiyama.mykeep.event.NotifyInfo;
@@ -27,6 +29,7 @@ import akiyama.mykeep.event.EventType;
 import akiyama.mykeep.task.UpdateSingleDbTask;
 import akiyama.mykeep.util.DateUtil;
 import akiyama.mykeep.util.LoginHelper;
+import akiyama.mykeep.util.ResUtil;
 import akiyama.mykeep.util.StringUtil;
 import akiyama.mykeep.view.LabelsLayout;
 import akiyama.mykeep.vo.SearchVo;
@@ -90,6 +93,9 @@ public class AddRecordActivity extends BaseObserverActivity {
     @Override
     protected void initView() {
         setToolBarTitle("添加记事");
+        ResUtil.setRobotoSlabTypeface(mTitleEt,ResUtil.ROBOTOSLAB_BOLD);
+        ResUtil.setRobotoSlabTypeface(mContentEt,ResUtil.ROBOTOSLAB_LIGHR);
+        ResUtil.setRobotoSlabTypeface(mUpdateTimeTv,ResUtil.ROBOTOSLAB_LIGHR);
     }
 
     @Override
@@ -211,12 +217,13 @@ public class AddRecordActivity extends BaseObserverActivity {
         return null;
     }
 
-    private void saveRecordTask(RecordModel record){
+    private void saveRecordTask(final RecordModel record){
+        final String labelName = record.getLabelNames();
         new SaveSingleDbTask(mContext,rc,false){
             @Override
             public void savePostExecute(Boolean aBoolean) {
                 if(aBoolean){
-                    KeepNotifyCenterHelper.getInstance().notifyRefreshRecord();
+                    notifyRecordChange(labelName);
                     mTitleEt.setText("");
                     mContentEt.setText("");
                     AddRecordActivity.this.finish();
@@ -226,11 +233,12 @@ public class AddRecordActivity extends BaseObserverActivity {
     }
 
     private void updateRecordTask(RecordModel record){
+        final String labelName = record.getLabelNames();
         new UpdateSingleDbTask(mContext,rc,false){
             @Override
             public void updatePostExecute(Boolean aBoolean) {
                 if(aBoolean){
-                    KeepNotifyCenterHelper.getInstance().notifyRefreshRecord();
+                    notifyRecordChange(labelName);
                     mTitleEt.setText("");
                     mContentEt.setText("");
                     AddRecordActivity.this.finish();
@@ -239,6 +247,12 @@ public class AddRecordActivity extends BaseObserverActivity {
         }.execute(record);
     }
 
+
+    private void notifyRecordChange(String labelNames){
+        Bundle bundle = new Bundle();
+        bundle.putString(Constants.KEY_LABEL_NAMES,labelNames);
+        KeepNotifyCenterHelper.getInstance().notifyRefreshRecord(bundle);
+    }
     /**
      * 循环添加Label标签
      * @param selectedLabels

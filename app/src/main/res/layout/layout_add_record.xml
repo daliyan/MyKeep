@@ -18,7 +18,6 @@
         android:textSize="20sp"
         android:textColor="@color/black"
         android:textStyle="bold"
-        android:typeface="monospace"
         android:hint="@string/record_title"/>
 
     <EditText
@@ -32,6 +31,7 @@
         android:textColor="@color/black"
         android:gravity="top"
         android:textSize="16sp"
+        android:lineSpacingExtra="2dip"
         android:hint="@string/record_content"/>
 
     <akiyama.mykeep.view.LabelsLayout

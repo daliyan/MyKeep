@@ -36,4 +36,11 @@ public class NotifyInfo {
     public void setEventType(String eventType) {
         this.eventType = eventType;
     }
+
+    public String getBundleString(String key){
+        if(bundle!=null){
+            return bundle.getString(key);
+        }
+        return null;
+    }
 }

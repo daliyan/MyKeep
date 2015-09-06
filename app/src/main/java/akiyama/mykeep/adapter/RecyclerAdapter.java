@@ -2,24 +2,21 @@ package akiyama.mykeep.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 
 import akiyama.mykeep.R;
 import akiyama.mykeep.db.model.RecordModel;
 import akiyama.mykeep.util.DateUtil;
-import akiyama.mykeep.vo.ChildRocommendVo;
+import akiyama.mykeep.util.ResUtil;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
 
    private List<RecordModel> mDataset;
-   private static OnItemClick mOnItemClick;
+   private OnItemClick mOnItemClick;
    public RecyclerAdapter(List<RecordModel> mDataset){
        this.mDataset=mDataset;
    }
@@ -27,7 +24,15 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     @Override
     public RecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_main_list, parent, false);
-        ViewHolder vh = new ViewHolder(v);
+        final ViewHolder vh = new ViewHolder(v);
+        v.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mOnItemClick != null) {
+                    mOnItemClick.onItemClick(v, vh.getPosition());
+                }
+            }
+        });
         return vh;
     }
 
@@ -38,7 +43,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             if(recordModel!=null){
                 holder.mTitleTv.setText(recordModel.getTitle());
                 holder.mSubTitleTv.setText(recordModel.getContent());
-                holder.mUpdateView.setText(DateUtil.getDate(recordModel.getUpdateTime()));
+                holder.mUpdateTv.setText(DateUtil.getDate(recordModel.getUpdateTime()));
             }
         }
 
@@ -52,21 +57,15 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView mTitleTv;
         public TextView mSubTitleTv;
-        public TextView mUpdateView;
+        public TextView mUpdateTv;
         public ViewHolder(View v) {
             super(v);
             mTitleTv =(TextView) v.findViewById(R.id.title);
             mSubTitleTv =(TextView) v.findViewById(R.id.subtitle);
-            mUpdateView=(TextView) v.findViewById(R.id.update_time_tv);
-
-            v.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mOnItemClick != null) {
-                        mOnItemClick.onItemClick(v, getPosition());
-                    }
-                }
-            });
+            mUpdateTv =(TextView) v.findViewById(R.id.update_time_tv);
+            ResUtil.setRobotoSlabTypeface(mTitleTv, ResUtil.ROBOTOSLAB_BOLD);
+            ResUtil.setRobotoSlabTypeface(mSubTitleTv, ResUtil.ROBOTOSLAB_REGULAR);
+            ResUtil.setRobotoSlabTypeface(mUpdateTv, ResUtil.ROBOTOSLAB_REGULAR);
         }
     }
 

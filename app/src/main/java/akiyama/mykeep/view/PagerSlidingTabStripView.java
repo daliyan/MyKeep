@@ -78,9 +78,7 @@ public class PagerSlidingTabStripView extends HorizontalScrollView {
     private int tabTextSize = 12;
     private int tabTextColor = 0xFF666666;
     private int selectedTabTextColor = 0xFF666666;
-    private Typeface tabTypeface = null;
-    private int tabTypefaceStyle = Typeface.BOLD;
-
+    private Typeface mTabTypeface = null;
     private int lastScrollX = 0;
 
     private int tabBackgroundResId = R.drawable.pagerstrip_background_tab;
@@ -219,6 +217,10 @@ public class PagerSlidingTabStripView extends HorizontalScrollView {
         addTab(position, tab);
     }
 
+    public void setTabTypeface(Typeface tabTypeface){
+        this.mTabTypeface = tabTypeface;
+        updateTabStyles();
+    }
     private void addIconTab(final int position, int resId) {
         ImageButton tab = new ImageButton(getContext());
         tab.setImageResource(resId);
@@ -231,7 +233,7 @@ public class PagerSlidingTabStripView extends HorizontalScrollView {
         tab.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                pager.setCurrentItem(position);
+                pager.setCurrentItem(position,true);
             }
         });
 
@@ -245,7 +247,7 @@ public class PagerSlidingTabStripView extends HorizontalScrollView {
             if (v instanceof TextView) {
                 TextView tab = (TextView) v;
                 tab.setTextSize(TypedValue.COMPLEX_UNIT_PX, tabTextSize);
-                tab.setTypeface(tabTypeface, Typeface.NORMAL);
+                tab.setTypeface(mTabTypeface);
                 tab.setTextColor(tabTextColor);
                 tab.setTag(i);
                 if (textAllCaps) {
@@ -258,7 +260,7 @@ public class PagerSlidingTabStripView extends HorizontalScrollView {
 
                 if (i == selectedPosition) {
                     tab.setTextColor(selectedTabTextColor);
-                    tab.setTypeface(tabTypeface, tabTypefaceStyle);
+                    tab.setTypeface(mTabTypeface);
                     tab.getPaint().setFakeBoldText(true);
                 }else{
                     tab.getPaint().setFakeBoldText(false);
@@ -491,9 +493,8 @@ public class PagerSlidingTabStripView extends HorizontalScrollView {
         return tabTextColor;
     }
 
-    public void setTypeface(Typeface typeface, int style) {
-        this.tabTypeface = typeface;
-        this.tabTypefaceStyle = style;
+    public void setTypeface(Typeface typeface) {
+        this.mTabTypeface = typeface;
         updateTabStyles();
     }
 

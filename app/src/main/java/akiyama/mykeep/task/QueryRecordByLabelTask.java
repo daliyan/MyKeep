@@ -21,7 +21,7 @@ import akiyama.mykeep.db.model.RecordModel;
 public abstract class QueryRecordByLabelTask extends AsyncTask<String,Void,List<RecordModel>> {
 
     private RecordController mRecordController;
-    private Context mContext;
+    private volatile Context mContext;
     private ProgressDialog mProgressBar;
     private boolean mIsShowProgressBar;
     public QueryRecordByLabelTask(Context context, RecordController recordController,boolean isShowProgressBar){
