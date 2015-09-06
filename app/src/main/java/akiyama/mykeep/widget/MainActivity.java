@@ -126,13 +126,12 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         setLeftMenuItem();
         mRecordLabelAdapter = new RecordByLabelAdapter(getFragmentManager(),mLabelList);
         mRecordVp.setAdapter(mRecordLabelAdapter);
+        mRecordVp.setOffscreenPageLimit(0);
         mPagerSlidingStripTsv.setViewPager(mRecordVp);
         initPagerSliding();
     }
 
     private void initPagerSliding(){
-        // 设置Tab是自动填充满屏幕的
-        mPagerSlidingStripTsv.setShouldExpand(true);
         // 设置Tab的分割线是透明的
         mPagerSlidingStripTsv.setDividerColor(Color.TRANSPARENT);
         // 设置底部线条的高度
@@ -140,7 +139,7 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         mPagerSlidingStripTsv.setLineBottomHeight((int)DimUtil.dipToPx(3));
         mPagerSlidingStripTsv.setLineLeftAndRightPading((int)DimUtil.dipToPx(5));
         // 设置Tab标题文字的大小
-        mPagerSlidingStripTsv.setTextSize((int)DimUtil.dipToPx(18));
+        mPagerSlidingStripTsv.setTextSize((int)DimUtil.dipToPx(16));
         mPagerSlidingStripTsv.setTypeface(Typeface.createFromAsset(AppContext.getInstance().getAssets(), "fonts/RobotoSlab/RobotoSlab-Light.ttf"));
         // 字体颜色设置
         mPagerSlidingStripTsv.setTextColorResource(R.color.white);

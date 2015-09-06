@@ -1,6 +1,7 @@
 package akiyama.mykeep.util;
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.graphics.Typeface;
 import android.widget.TextView;
 
@@ -25,14 +26,15 @@ public class ResUtil {
      * @param type 设置字体的类型
      */
     public static void setRobotoSlabTypeface(TextView view,String type){
+        AssetManager assetManager = AppContext.getInstance().getAssets();
         if(type.equals(ROBOTOSLAB_BOLD)){
-            view.setTypeface(Typeface.createFromAsset(AppContext.getInstance().getAssets(), "fonts/RobotoSlab/RobotoSlab-Bold.ttf"));
+            view.setTypeface(Typeface.createFromAsset(assetManager, "fonts/RobotoSlab/RobotoSlab-Bold.ttf"));
         }else if(type.equals(ROBOTOSLAB_LIGHR)){
-            view.setTypeface(Typeface.createFromAsset(AppContext.getInstance().getAssets(), "fonts/RobotoSlab/RobotoSlab-Light.ttf"));
+            view.setTypeface(Typeface.createFromAsset(assetManager, "fonts/RobotoSlab/RobotoSlab-Light.ttf"));
         }else if(type.equals(ROBOTOSLAB_REGULAR)){
-            view.setTypeface(Typeface.createFromAsset(AppContext.getInstance().getAssets(), "fonts/RobotoSlab/RobotoSlab-Regular.ttf"));
+            view.setTypeface(Typeface.createFromAsset(assetManager, "fonts/RobotoSlab/RobotoSlab-Regular.ttf"));
         }else if(type.equals(ROBOTOSLAB_THIN)){
-            view.setTypeface(Typeface.createFromAsset(AppContext.getInstance().getAssets(), "fonts/RobotoSlab/RobotoSlab-Thin.ttf"));
+            view.setTypeface(Typeface.createFromAsset(assetManager, "fonts/RobotoSlab/RobotoSlab-Thin.ttf"));
         }
     }
 }

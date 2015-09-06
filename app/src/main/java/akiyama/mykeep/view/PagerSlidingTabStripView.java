@@ -17,6 +17,7 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
@@ -210,10 +211,8 @@ public class PagerSlidingTabStripView extends HorizontalScrollView {
 
     private void addTextTab(final int position, String title) {
         TextView tab = new TextView(getContext());
-        String tmp = title.replace("\\n","\n");
-        tab.setText(tmp);
+        tab.setText(title);
         tab.setGravity(Gravity.CENTER);
-        tab.setMaxLines(2);
         addTab(position, tab);
     }
 

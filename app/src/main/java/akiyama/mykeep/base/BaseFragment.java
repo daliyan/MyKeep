@@ -44,6 +44,7 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
         if(!mIsInitDate){
             initDate();
             mIsInitDate = true;
+            LogUtil.e("onActivityCreated",this.hashCode()+"onActivityCreated 执行");
         }
     }
 

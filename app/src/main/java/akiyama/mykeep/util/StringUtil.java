@@ -31,7 +31,7 @@ public class StringUtil {
      * @return
      */
     public static boolean isContains(String[] strs,String values){
-        if(strs!=null && strs.length>0){
+        if(values!=null && strs!=null && strs.length>0){
             for(String str:strs){
                 if(str.equals(values)){
                     return true;

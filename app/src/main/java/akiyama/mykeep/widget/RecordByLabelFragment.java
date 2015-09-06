@@ -134,9 +134,7 @@ public class RecordByLabelFragment extends BaseObserverFragment {
             public void queryPostExecute(List<? extends BaseModel> models) {
                 if(models!=null){
                     long endTime=System.currentTimeMillis(); //获取结束时间
-                    //LogUtil.e(TAG,this.hashCode()+ mLabelName +" queryLabelRecord() "+models.size());
-                    mRecordModels.clear();
-                    mRecordModels.addAll((List<RecordModel>) models);
+                    mRecordModels =(List<RecordModel>) models;
                     mAdapter.refreshDate(mRecordModels);
                     mProgressBar.setVisibility(View.GONE);
                     LogUtil.e(TAG,mLabelName +" 查询耗时："+ (endTime - startTime)+"ms");
@@ -174,10 +172,12 @@ public class RecordByLabelFragment extends BaseObserverFragment {
             String labels = notifyInfo.getBundleString(Constants.KEY_LABEL_NAMES);
             if(labels!=null){
                String[] labelNames = StringUtil.subStringBySymbol(labels, DbConfig.LABEL_SPLIT_SYMBOL);
-                //“全部”标签组或者需要刷新的标签组刷新数据
-               if(StringUtil.isContains(labelNames,mLabelName) || mLabelName.equals(getString(R.string.all_label))){
-                   queryRecordByLabel(false);
-               }
+                if(mLabelName!=null){
+                    //“全部”标签组或者需要刷新的标签组刷新数据
+                    if(StringUtil.isContains(labelNames,mLabelName) || mLabelName.equals(getString(R.string.all_label))){
+                        queryRecordByLabel(false);
+                    }
+                }
             }
         }
     }

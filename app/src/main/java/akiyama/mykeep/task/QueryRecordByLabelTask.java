@@ -39,7 +39,7 @@ public abstract class QueryRecordByLabelTask extends AsyncTask<String,Void,List<
     protected List<RecordModel> doInBackground(String... params) {
         List<RecordModel> models=new ArrayList<RecordModel>();
         if(params[0]!=null){
-            models=mRecordController.getRecodrByUserAndLabel(mContext,params[0],params[1]);
+           models=mRecordController.getRecodrByUserAndLabel(mContext,params[0],params[1]);
         }
         return models;
     }
