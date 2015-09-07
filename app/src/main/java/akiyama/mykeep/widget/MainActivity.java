@@ -2,8 +2,8 @@ package akiyama.mykeep.widget;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -19,7 +19,6 @@ import com.avos.avoscloud.AVUser;
 import java.util.ArrayList;
 import java.util.List;
 
-import akiyama.mykeep.AppContext;
 import akiyama.mykeep.R;
 import akiyama.mykeep.adapter.RecordByLabelAdapter;
 import akiyama.mykeep.base.BaseObserverActivity;
@@ -32,9 +31,7 @@ import akiyama.mykeep.controller.RecordController;
 import akiyama.mykeep.event.EventType;
 import akiyama.mykeep.event.helper.KeepNotifyCenterHelper;
 import akiyama.mykeep.task.QueryByUserDbTask;
-import akiyama.mykeep.util.DimUtil;
 import akiyama.mykeep.util.LoginHelper;
-import akiyama.mykeep.view.PagerSlidingTabStripView;
 
 
 public class MainActivity extends BaseObserverActivity implements View.OnClickListener{
@@ -67,7 +64,8 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
     private TextView mUserNameTv;
 
     private ViewPager mRecordVp;
-    private PagerSlidingTabStripView mPagerSlidingStripTsv;
+    //private PagerSlidingTabStripView mPagerSlidingStripTsv;
+    private TabLayout mTabLy;
     private RecordByLabelAdapter mRecordLabelAdapter;
     private List<LabelModel> mLabelList;
     private LabelController mLc = new LabelController();
@@ -112,7 +110,7 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         mUserNameTv =(TextView) findViewById(R.id.username_tv);
 
         mRecordVp = (ViewPager) findViewById(R.id.content_vp);
-        mPagerSlidingStripTsv = (PagerSlidingTabStripView) findViewById(R.id.pager_strip_tsv);
+        mTabLy = (TabLayout) findViewById(R.id.pager_strip_tsv);
     }
 
     @Override
@@ -127,29 +125,11 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         mRecordLabelAdapter = new RecordByLabelAdapter(getFragmentManager(),mLabelList);
         mRecordVp.setAdapter(mRecordLabelAdapter);
         mRecordVp.setOffscreenPageLimit(0);
-        mPagerSlidingStripTsv.setViewPager(mRecordVp);
-        initPagerSliding();
+        mTabLy.setTabsFromPagerAdapter(mRecordLabelAdapter);
+        mRecordVp.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLy));
+        mTabLy.setupWithViewPager(mRecordVp);
     }
 
-    private void initPagerSliding(){
-        // 设置Tab的分割线是透明的
-        mPagerSlidingStripTsv.setDividerColor(Color.TRANSPARENT);
-        // 设置底部线条的高度
-        mPagerSlidingStripTsv.setIndicatorHeight((int)DimUtil.dipToPx(2));
-        mPagerSlidingStripTsv.setLineBottomHeight((int)DimUtil.dipToPx(3));
-        mPagerSlidingStripTsv.setLineLeftAndRightPading((int)DimUtil.dipToPx(5));
-        // 设置Tab标题文字的大小
-        mPagerSlidingStripTsv.setTextSize((int)DimUtil.dipToPx(16));
-        mPagerSlidingStripTsv.setTypeface(Typeface.createFromAsset(AppContext.getInstance().getAssets(), "fonts/RobotoSlab/RobotoSlab-Light.ttf"));
-        // 字体颜色设置
-        mPagerSlidingStripTsv.setTextColorResource(R.color.white);
-        mPagerSlidingStripTsv.setSelectedTextColorResource(R.color.white);
-        // 底部线条的颜色
-        mPagerSlidingStripTsv.setIndicatorColorResource(R.color.white);
-        //底部容器线条
-        mPagerSlidingStripTsv.setUnderlineColor(Color.TRANSPARENT);
-        mPagerSlidingStripTsv.setAllCaps(false);
-    }
 
     @Override
     protected void setOnClick(){
@@ -330,7 +310,7 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
                     mLabelList =(List<LabelModel>) models;
                     mLabelList.add(0,new LabelModel(getString(R.string.all_label),LoginHelper.getCurrentUserId()));
                     mRecordLabelAdapter.refreshList(mLabelList);
-                    mPagerSlidingStripTsv.notifyDataSetChanged();
+                    mTabLy.setTabsFromPagerAdapter(mRecordLabelAdapter);
                 }
             }
         }.execute(LoginHelper.getCurrentUserId());

@@ -39,7 +39,6 @@
         android:layout_below="@+id/password_et"
         android:textColor="@color/white"
         android:layout_margin="16dip"
-        android:fontFamily="sans-serif"
         android:text="登录"/>
 
     <TextView

@@ -16,7 +16,7 @@ import akiyama.mykeep.db.model.IModel;
 public abstract class SaveSingleDbTask extends AsyncTask<IModel,Void,Boolean> {
 
     private IBaseController mBaseController;
-    private volatile Context mContext;
+    private Context mContext;
     private ProgressDialog mProgressBar;
     private boolean mIsShowPregressBar;
     public SaveSingleDbTask(Context context,IBaseController baseController,boolean isShowPregressBar){

@@ -1,5 +1,6 @@
 package akiyama.mykeep.task;
 
+import android.app.Application;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -7,6 +8,7 @@ import android.os.AsyncTask;
 import java.util.ArrayList;
 import java.util.List;
 
+import akiyama.mykeep.AppContext;
 import akiyama.mykeep.controller.BaseController;
 import akiyama.mykeep.db.model.BaseModel;
 import akiyama.mykeep.db.model.IModel;
@@ -20,7 +22,7 @@ import akiyama.mykeep.db.model.IModel;
 public abstract class QueryByUserDbTask extends AsyncTask<String,Void,List<? extends BaseModel>> {
 
     private BaseController mBaseController;
-    private volatile Context mContext;
+    private Context mContext;
     private ProgressDialog mProgressBar;
     private boolean mIsShowProgressBar;
     public QueryByUserDbTask(Context context, BaseController baseController,boolean isShowProgressBar){
@@ -38,7 +40,7 @@ public abstract class QueryByUserDbTask extends AsyncTask<String,Void,List<? ext
     protected List<? extends BaseModel> doInBackground(String... params) {
         List<? extends BaseModel> models=new ArrayList<BaseModel>();
         if(params[0]!=null){
-            models=mBaseController.getDbByUserId(mContext, params[0]);
+            models=mBaseController.getDbByUserId(AppContext.getInstance(), params[0]);
         }
         return models;
     }

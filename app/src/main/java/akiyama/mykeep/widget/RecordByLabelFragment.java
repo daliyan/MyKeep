@@ -2,22 +2,17 @@ package akiyama.mykeep.widget;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
 
-import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import akiyama.mykeep.R;
 import akiyama.mykeep.adapter.RecyclerAdapter;
-import akiyama.mykeep.base.BaseFragment;
-import akiyama.mykeep.base.BaseObserverActivity;
 import akiyama.mykeep.base.BaseObserverFragment;
 import akiyama.mykeep.common.Constants;
 import akiyama.mykeep.common.DbConfig;
@@ -29,7 +24,6 @@ import akiyama.mykeep.event.EventType;
 import akiyama.mykeep.event.NotifyInfo;
 import akiyama.mykeep.task.QueryByUserDbTask;
 import akiyama.mykeep.task.QueryRecordByLabelTask;
-import akiyama.mykeep.util.DateUtil;
 import akiyama.mykeep.util.LogUtil;
 import akiyama.mykeep.util.LoginHelper;
 import akiyama.mykeep.util.StringUtil;
@@ -45,11 +39,12 @@ public class RecordByLabelFragment extends BaseObserverFragment {
 
     public static final String TAG="RecordByLabelFragment";
     public static final String KEY_LABEL_NAME="key_label_name";//标签名称KEY值
+    private View mEmptyView;
+    private ImageView mEmptyIv;
     private RecyclerView mRecyclerView;
     private RecyclerAdapter mAdapter;
     private List<RecordModel> mRecordModels;
     private RecyclerView.LayoutManager mLayoutManager;
-    private ProgressBarCircularIndeterminate mProgressBar;
     private String mLabelName="";
     private Context mContext;
     private RecordController rc=new RecordController();
@@ -62,14 +57,13 @@ public class RecordByLabelFragment extends BaseObserverFragment {
     public void findView(View view) {
         mContext = getActivity();
         mRecyclerView = (RecyclerView) view.findViewById(R.id.record_rv);
-        mProgressBar=(ProgressBarCircularIndeterminate) view.findViewById(R.id.progressBarCircularIndeterminate);
+        mEmptyView = view.findViewById(R.id.empty_include);
+        mEmptyIv = (ImageView) mEmptyView.findViewById(R.id.empty_iv);
         mLayoutManager = new LinearLayoutManager(mContext);
     }
 
     @Override
     public void initView() {
-        mProgressBar.setVisibility(View.GONE);
-        mProgressBar.setVisibility(View.GONE);
         mRecordModels =new ArrayList<>();
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -80,10 +74,7 @@ public class RecordByLabelFragment extends BaseObserverFragment {
 
     @Override
     public void initDate() {
-        final long startTime=System.currentTimeMillis();   //获取开始时间
         queryRecordByLabel(false);
-        long endTime1=System.currentTimeMillis(); //获取结束时间
-        LogUtil.e(TAG,mLabelName +" 执行耗时："+ (endTime1 - startTime)+"ms");
     }
 
 
@@ -128,16 +119,19 @@ public class RecordByLabelFragment extends BaseObserverFragment {
      * 查询对应标签的记录
      */
     private void queryLabelRecord(boolean isShowProgress){
-        final long startTime=System.currentTimeMillis();   //获取开始时间
         new QueryRecordByLabelTask(mContext, rc,isShowProgress) {
             @Override
             public void queryPostExecute(List<? extends BaseModel> models) {
                 if(models!=null){
-                    long endTime=System.currentTimeMillis(); //获取结束时间
                     mRecordModels =(List<RecordModel>) models;
                     mAdapter.refreshDate(mRecordModels);
-                    mProgressBar.setVisibility(View.GONE);
-                    LogUtil.e(TAG,mLabelName +" 查询耗时："+ (endTime - startTime)+"ms");
+                    //设置空状态下的视图
+                    if(models.size() >0){
+                        mEmptyView.setVisibility(View.GONE);
+
+                    }else{
+                        mEmptyView.setVisibility(View.VISIBLE);
+                    }
                 }
             }
         }.execute(LoginHelper.getCurrentUserId(),mLabelName);
@@ -154,7 +148,12 @@ public class RecordByLabelFragment extends BaseObserverFragment {
                     mRecordModels.clear();
                     mRecordModels.addAll((List<RecordModel>) models);
                     mAdapter.refreshDate(mRecordModels);
-                    mProgressBar.setVisibility(View.GONE);
+                    //设置空状态下的视图
+                    if(models.size() >0){
+                        mEmptyView.setVisibility(View.GONE);
+                    }else{
+                        mEmptyView.setVisibility(View.VISIBLE);
+                    }
                 }
             }
         }.execute(LoginHelper.getCurrentUserId());
@@ -170,13 +169,11 @@ public class RecordByLabelFragment extends BaseObserverFragment {
             mAdapter.refreshDate(mRecordModels);
         }else if(eventType.equals(EventType.EVENT_REFRESH_RECORD)){
             String labels = notifyInfo.getBundleString(Constants.KEY_LABEL_NAMES);
-            if(labels!=null){
-               String[] labelNames = StringUtil.subStringBySymbol(labels, DbConfig.LABEL_SPLIT_SYMBOL);
-                if(mLabelName!=null){
-                    //“全部”标签组或者需要刷新的标签组刷新数据
-                    if(StringUtil.isContains(labelNames,mLabelName) || mLabelName.equals(getString(R.string.all_label))){
-                        queryRecordByLabel(false);
-                    }
+            String[] labelNames = StringUtil.subStringBySymbol(labels, DbConfig.LABEL_SPLIT_SYMBOL);
+            if(mLabelName!=null){
+                //“全部”标签组或者需要刷新的标签组刷新数据
+                if(StringUtil.isContains(labelNames,mLabelName) || mLabelName.equals(mContext.getString(R.string.all_label))){
+                    queryRecordByLabel(false);
                 }
             }
         }

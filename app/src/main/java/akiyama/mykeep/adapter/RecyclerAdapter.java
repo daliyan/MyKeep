@@ -44,12 +44,13 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
                 holder.mTitleTv.setText(recordModel.getTitle());
                 holder.mSubTitleTv.setText(recordModel.getContent());
                 holder.mUpdateTv.setText(DateUtil.getDate(recordModel.getUpdateTime()));
-                //不要将设置字体的代码放在这里，否则会让加载数据很慢，甚至卡住主线程
-                /*ResUtil.setRobotoSlabTypeface(holder.mTitleTv, ResUtil.ROBOTOSLAB_BOLD);
+                /*//不要将设置字体的代码放在这里，否则会让加载数据很慢，甚至卡住主线程
+                ResUtil.setRobotoSlabTypeface(holder.mTitleTv, ResUtil.ROBOTOSLAB_BOLD);
                 ResUtil.setRobotoSlabTypeface(holder.mSubTitleTv, ResUtil.ROBOTOSLAB_REGULAR);
                 ResUtil.setRobotoSlabTypeface(holder.mUpdateTv, ResUtil.ROBOTOSLAB_REGULAR);*/
             }
         }
+
 
     }
 

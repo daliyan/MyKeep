@@ -18,7 +18,7 @@ import akiyama.mykeep.db.model.RecordModel;
 public abstract class UpdateSingleDbTask extends AsyncTask<BaseModel,Void,Boolean> {
 
     private IBaseController mBaseController;
-    private volatile Context mContext;
+    private Context mContext;
     private ProgressDialog mProgressBar;
     private boolean mIsShowPregressBar;
     public UpdateSingleDbTask(Context context, IBaseController baseController,boolean isShowPregressBar){
