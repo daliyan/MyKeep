@@ -35,8 +35,7 @@ import akiyama.mykeep.util.LoginHelper;
 
 
 public class MainActivity extends BaseObserverActivity implements View.OnClickListener{
-
-    private final static String TAG="MainActivity";
+    private static final  String TAG="MainActivity";
     private RecordController rc=new RecordController();
     private DrawerLayout mDrawerDl;//侧滑菜单布局控件
     private ActionBarDrawerToggle mDrawerToggle;
@@ -64,7 +63,6 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
     private TextView mUserNameTv;
 
     private ViewPager mRecordVp;
-    //private PagerSlidingTabStripView mPagerSlidingStripTsv;
     private TabLayout mTabLy;
     private RecordByLabelAdapter mRecordLabelAdapter;
     private List<LabelModel> mLabelList;

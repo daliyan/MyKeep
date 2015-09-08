@@ -20,9 +20,25 @@ android {
     }
 
     //为了解决部分第三方库重复打包了META-INF的问题
-    packagingOptions{
+    packagingOptions {
         exclude 'META-INF/LICENSE.txt'
         exclude 'META-INF/NOTICE.txt'
+    }
+
+    sourceSets {
+        main {
+            res.srcDirs =
+                    [
+                            'src/main/res',
+                            'src/main/res/layouts',
+                            'src/main/res/layouts/main',
+                            'src/main/res/layouts/label',
+                            'src/main/res/layouts/record',
+                            'src/main/res/layouts/login',
+                            'src/main/res/layouts/common',
+                            'src/main/res/layouts/custom_view'
+                    ]
+        }
     }
 }
 

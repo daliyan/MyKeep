@@ -52,4 +52,8 @@
         android:paddingRight="10dip"
         android:gravity="right"/>
 
+    <akiyama.mykeep.view.RecordListView
+        android:layout_height="match_parent"
+        android:layout_width="wrap_content"/>
+
 </LinearLayout>

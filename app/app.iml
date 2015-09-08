@@ -18,7 +18,7 @@
         <option name="ALLOW_USER_CONFIGURATION" value="false" />
         <option name="MANIFEST_FILE_RELATIVE_PATH" value="/src/main/AndroidManifest.xml" />
         <option name="RES_FOLDER_RELATIVE_PATH" value="/src/main/res" />
-        <option name="RES_FOLDERS_RELATIVE_PATH" value="file://$MODULE_DIR$/src/main/res" />
+        <option name="RES_FOLDERS_RELATIVE_PATH" value="file://$MODULE_DIR$/src/main/res/layouts/custom_view;file://$MODULE_DIR$/src/main/res;file://$MODULE_DIR$/src/main/res/layouts/label;file://$MODULE_DIR$/src/main/res/layouts/common;file://$MODULE_DIR$/src/main/res/layouts/record;file://$MODULE_DIR$/src/main/res/layouts/login;file://$MODULE_DIR$/src/main/res/layouts/main;file://$MODULE_DIR$/src/main/res/layouts" />
         <option name="ASSETS_FOLDER_RELATIVE_PATH" value="/src/main/assets" />
       </configuration>
     </facet>
@@ -48,6 +48,13 @@
       <sourceFolder url="file://$MODULE_DIR$/src/debug/jni" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/debug/rs" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/main/res" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/res/layouts" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/res/layouts/main" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/res/layouts/label" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/res/layouts/record" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/res/layouts/login" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/res/layouts/common" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/res/layouts/custom_view" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/main/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/main/assets" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/main/aidl" isTestSource="false" />
