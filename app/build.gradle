@@ -56,4 +56,5 @@ dependencies {
     //avoscloud-sdk 为 LeanCloud基础包
     compile 'cn.leancloud.android:avoscloud-sdk:v3.3+'
     compile 'akiyama.swipe:library:2.1'
+    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-SNAPSHOT'
 }

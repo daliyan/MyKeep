@@ -21,5 +21,10 @@ allprojects {
         maven {
             url "http://mvn.leancloud.cn/nexus/content/repositories/releases"
         }
+
+        mavenCentral()
+        maven {
+            url 'https://oss.sonatype.org/content/repositories/snapshots/'
+        }
     }
 }

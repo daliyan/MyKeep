@@ -15,7 +15,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import akiyama.mykeep.AppContext;
 import akiyama.mykeep.R;
+import akiyama.mykeep.util.LogUtil;
 
 /**
  * 记录清单列表View
@@ -26,11 +28,12 @@ import akiyama.mykeep.R;
  */
 public class RecordListView extends LinearLayout implements View.OnClickListener{
 
-    private static final String TAG_CONTENT="tag_content";
+    private static final String TAG_NOTICK_CONTENT="tag_NO_tick_content";
+    private static final String TAG_TICK_CONTENT="tag_tick_content";
     private View mView;
     private Context mContext;
-    private Map<View,String> mNoTick;//未打勾的列表数据
-    private Map<View,String> mTick;//打勾的列表数据
+    private List<String> mNoTick;//未打勾的列表数据
+    private List<String> mTick;//打勾的列表数据
     private LinearLayout mNoTickLl;
     private LinearLayout mTickLl;
     private LinearLayout mAddListLl;
@@ -51,8 +54,8 @@ public class RecordListView extends LinearLayout implements View.OnClickListener
 
     private void init(Context context){
         this.mContext = context;
-        mNoTick = new HashMap<>();
-        mTick = new HashMap<>();
+        mNoTick = new ArrayList<>();
+        mTick = new ArrayList<>();
         setOrientation(VERTICAL);
         mView = LayoutInflater.from(context).inflate(R.layout.layout_recordlist_view, this);
         mNoTickLl = (LinearLayout) mView.findViewById(R.id.record_list_noTick_ll);
@@ -66,9 +69,10 @@ public class RecordListView extends LinearLayout implements View.OnClickListener
      */
     private void addNoTickView(String message){
         View itemView = LayoutInflater.from(mContext).inflate(R.layout.item_recordlist_no_tick_view, mNoTickLl, false);
-        ImageView cancelIv = (ImageView)itemView.findViewById(R.id.cancel_iv);
-        CheckBox checkBox =(CheckBox) itemView.findViewById(R.id.select_cb);
-        EditText contentEt = (EditText) itemView.findViewById(R.id.content_message_et);
+        ImageView cancelIv = (ImageView)itemView.findViewById(R.id.no_tick_cancel_iv);
+        CheckBox checkBox =(CheckBox) itemView.findViewById(R.id.no_tick_select_cb);
+        EditText contentEt = (EditText) itemView.findViewById(R.id.no_tick_content_message_et);
+        contentEt.setTypeface(AppContext.getRobotoSlabLight());
         if(message!=null){
             contentEt.setText(message);
         }
@@ -76,9 +80,10 @@ public class RecordListView extends LinearLayout implements View.OnClickListener
         checkBox.setOnClickListener(this);
         cancelIv.setOnClickListener(this);
         //给当前添加的View设置一个TAG，便于后面删除的时候移除
-        itemView.setTag(cancelIv.getId());
-        checkBox.setTag(cancelIv.getId());
-        contentEt.setTag(TAG_CONTENT);
+        itemView.setTag(cancelIv.hashCode());
+        checkBox.setTag(cancelIv.hashCode());
+        LogUtil.d(""+cancelIv.hashCode());
+        contentEt.setTag(TAG_NOTICK_CONTENT);
         mNoTickLl.addView(itemView);
     }
 
@@ -90,16 +95,18 @@ public class RecordListView extends LinearLayout implements View.OnClickListener
         ImageView cancelIv = (ImageView)itemView.findViewById(R.id.tick_cancel_iv);
         CheckBox checkBox =(CheckBox) itemView.findViewById(R.id.tick_select_cb);
         TextView contentTv = (TextView) itemView.findViewById(R.id.tick_content_tv);
+        contentTv.setTypeface(AppContext.getRobotoSlabLight());
         if(message!=null){
             contentTv.setText(message);
         }
         checkBox.setChecked(true);
         checkBox.setOnClickListener(this);
         cancelIv.setOnClickListener(this);
-        //给当前添加的View设置一个TAG，便于后面删除的时候移除
-        itemView.setTag(cancelIv.getId());
-        checkBox.setTag(cancelIv.getId());
-        contentTv.setTag(TAG_CONTENT);
+        //给当前添加的View设置一个TAG，便于后面删除的时候移除,使用cancelIv.hashCode()来标识唯一的一个TAG
+        itemView.setTag(cancelIv.hashCode());
+        checkBox.setTag(cancelIv.hashCode());
+        LogUtil.d(""+cancelIv.hashCode());
+        contentTv.setTag(TAG_TICK_CONTENT);
         mTickLl.addView(itemView);
     }
 
@@ -111,23 +118,98 @@ public class RecordListView extends LinearLayout implements View.OnClickListener
             case R.id.add_list_item_ll:
                 addNoTickView(null);
                 break;
-            case R.id.cancel_iv:
-                mNoTickLl.removeView(mNoTickLl.findViewWithTag(id));
+            case R.id.no_tick_cancel_iv:
+                mNoTickLl.removeView(mNoTickLl.findViewWithTag(v.hashCode()));
+                break;
+            case R.id.no_tick_select_cb:
+                View notickView =mNoTickLl.findViewWithTag(v.getTag());
+                LogUtil.d(""+v.getTag());
+                mNoTickLl.removeView(notickView);
+                addTickView(((EditText)(notickView.findViewWithTag(TAG_NOTICK_CONTENT))).getText().toString());
                 break;
             case R.id.tick_cancel_iv:
-                mTickLl.removeView(mNoTickLl.findViewWithTag(id));
+                mTickLl.removeView(mTickLl.findViewWithTag(v.hashCode()));
                 break;
             case R.id.tick_select_cb:
                 View tickView =mTickLl.findViewWithTag(v.getTag());
                 mTickLl.removeView(tickView);
-                addNoTickView(((EditText)(tickView.findViewWithTag(TAG_CONTENT))).getText().toString());
-                break;
-            case R.id.select_cb:
-                View notickView =mNoTickLl.findViewWithTag(v.getTag());
-                mNoTickLl.removeView(notickView);
-                addTickView(((TextView)(notickView.findViewWithTag(TAG_CONTENT))).getText().toString());
+                addNoTickView(((TextView)(tickView.findViewWithTag(TAG_TICK_CONTENT))).getText().toString());
                 break;
         }
+    }
+
+    /**
+     * 获取未打勾的数据项
+     * @return
+     */
+    public List<String> getNoTickStrs(){
+        mNoTick.clear();
+        int child = mNoTickLl.getChildCount();
+        for(int i=0;i<child;i++){
+            View childView = mNoTickLl.getChildAt(i);
+            String tickRecordStr=((EditText)(childView.findViewWithTag(TAG_NOTICK_CONTENT))).getText().toString();
+            mNoTick.add(tickRecordStr);
+        }
+        return mNoTick;
+    }
+
+    /**
+     * 获取打勾的数据项
+     * @return
+     */
+    public List<String> getTickStrs(){
+        mTick.clear();
+        int child = mTickLl.getChildCount();
+        for(int i=0;i<child;i++){
+            View childView = mTickLl.getChildAt(i);
+            String tickRecordStr=((TextView)(childView.findViewWithTag(TAG_TICK_CONTENT))).getText().toString();
+            mTick.add(tickRecordStr);
+        }
+        return mTick;
+    }
+
+    /**
+     * 获取格式化后的字符数据
+     * @return
+     */
+    public String getFormatText(){
+        StringBuffer str=new StringBuffer("");
+        List<String> noTickStrs=getNoTickStrs();
+        List<String> tickStrs=getTickStrs();
+        for(int i=0;i<noTickStrs.size();i++){
+            if(i==noTickStrs.size()-1 && tickStrs.size()==0){
+                str.append("未完成："+noTickStrs.get(i).toString());
+            }else{
+                str.append("未完成："+noTickStrs.get(i).toString()+"\n");
+            }
+        }
+
+        for(int j=0;j<tickStrs.size();j++){
+            if(j==tickStrs.size()-1){
+                str.append("完成："+tickStrs.get(j).toString());
+            }else {
+                str.append("完成："+tickStrs.get(j).toString()+"\n");
+            }
+
+        }
+
+        return str.toString();
+    }
+
+    public void setFormatText(List<String> tickStrs,List<String> noTickStrs){
+        for(int i=0;i<noTickStrs.size();i++){
+            addNoTickView(noTickStrs.get(i).toString());
+        }
+
+        for(int j=0;j<tickStrs.size();j++){
+            addTickView(tickStrs.get(j).toString());
+        }
+
+    }
+
+    public void initList(){
+        mNoTickLl.removeAllViews();
+        mTickLl.removeAllViews();
     }
 
 }

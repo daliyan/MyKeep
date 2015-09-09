@@ -19,7 +19,7 @@
         android:textColor="@color/black"
         android:textStyle="bold"
         android:hint="@string/record_title"/>
-
+<!--
     <EditText
         android:id="@+id/record_content_et"
         android:layout_width="match_parent"
@@ -32,7 +32,14 @@
         android:gravity="top"
         android:textSize="16sp"
         android:lineSpacingExtra="2dip"
-        android:hint="@string/record_content"/>
+        android:hint="@string/record_content"/>-->
+
+    <akiyama.mykeep.view.RecordListView
+        android:id="@+id/record_content_rlv"
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        android:layout_margin="15dip"/>
 
     <akiyama.mykeep.view.LabelsLayout
         android:id="@+id/label_lsl"
@@ -51,9 +58,5 @@
         android:paddingLeft="10dip"
         android:paddingRight="10dip"
         android:gravity="right"/>
-
-    <akiyama.mykeep.view.RecordListView
-        android:layout_height="match_parent"
-        android:layout_width="wrap_content"/>
 
 </LinearLayout>

@@ -27,7 +27,6 @@ import akiyama.mykeep.controller.LabelController;
 import akiyama.mykeep.db.model.BaseModel;
 import akiyama.mykeep.db.model.LabelModel;
 import akiyama.mykeep.event.NotifyInfo;
-import akiyama.mykeep.controller.RecordController;
 import akiyama.mykeep.event.EventType;
 import akiyama.mykeep.event.helper.KeepNotifyCenterHelper;
 import akiyama.mykeep.task.QueryByUserDbTask;
@@ -36,7 +35,6 @@ import akiyama.mykeep.util.LoginHelper;
 
 public class MainActivity extends BaseObserverActivity implements View.OnClickListener{
     private static final  String TAG="MainActivity";
-    private RecordController rc=new RecordController();
     private DrawerLayout mDrawerDl;//侧滑菜单布局控件
     private ActionBarDrawerToggle mDrawerToggle;
 

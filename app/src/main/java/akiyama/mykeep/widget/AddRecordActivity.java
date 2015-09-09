@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import akiyama.mykeep.AppContext;
 import akiyama.mykeep.R;
 import akiyama.mykeep.base.BaseObserverActivity;
 import akiyama.mykeep.common.Constants;
@@ -32,6 +33,7 @@ import akiyama.mykeep.util.LoginHelper;
 import akiyama.mykeep.util.ResUtil;
 import akiyama.mykeep.util.StringUtil;
 import akiyama.mykeep.view.LabelsLayout;
+import akiyama.mykeep.view.RecordListView;
 import akiyama.mykeep.vo.SearchVo;
 
 /**
@@ -47,7 +49,8 @@ public class AddRecordActivity extends BaseObserverActivity {
     public static final String KEY_EDIT_RECORD_LIST="ket_edit_record_list";//编辑模式下带的参数
     private String mMode = StatusMode.RECORD_ADD_MODE;//默认是记录添加模式
     private EditText mTitleEt;
-    private EditText mContentEt;
+    //private EditText mContentEt;
+    private RecordListView mContentRlv;
     private TextView mUpdateTimeTv;
     private LabelsLayout mLabelLsl;
     private RecordModel mEditRecordModel;
@@ -71,7 +74,7 @@ public class AddRecordActivity extends BaseObserverActivity {
             mStartRecord = mEditRecordModel;
             if(mEditRecordModel!=null){
                 mTitleEt.setText(mEditRecordModel.getTitle());
-                mContentEt.setText(mEditRecordModel.getContent());
+                //mContentEt.setText(mEditRecordModel.getContent());
                 mLabelLsl.setLabels(StringUtil.subStringBySymbol(mEditRecordModel.getLabelNames(), DbConfig.LABEL_SPLIT_SYMBOL));
                 mUpdateTimeTv.setText("修改时间："+DateUtil.getDate(mEditRecordModel.getUpdateTime()));
             }
@@ -85,7 +88,8 @@ public class AddRecordActivity extends BaseObserverActivity {
     @Override
     protected void findView() {
         mTitleEt=(EditText) findViewById(R.id.record_title_et);
-        mContentEt=(EditText) findViewById(R.id.record_content_et);
+        //mContentEt=(EditText) findViewById(R.id.record_content_et);
+        mContentRlv = (RecordListView) findViewById(R.id.record_content_rlv);
         mLabelLsl =(LabelsLayout) findViewById(R.id.label_lsl);
         mUpdateTimeTv = (TextView) findViewById(R.id.record_update_time_tv);
     }
@@ -93,9 +97,8 @@ public class AddRecordActivity extends BaseObserverActivity {
     @Override
     protected void initView() {
         setToolBarTitle("添加记事");
-        ResUtil.setRobotoSlabTypeface(mTitleEt,ResUtil.ROBOTOSLAB_BOLD);
-        ResUtil.setRobotoSlabTypeface(mContentEt,ResUtil.ROBOTOSLAB_LIGHR);
-        ResUtil.setRobotoSlabTypeface(mUpdateTimeTv,ResUtil.ROBOTOSLAB_LIGHR);
+        mTitleEt.setTypeface(AppContext.getRobotoSlabLight());
+        mUpdateTimeTv.setTypeface(AppContext.getRobotoSlabLight());
     }
 
     @Override
@@ -169,7 +172,8 @@ public class AddRecordActivity extends BaseObserverActivity {
      */
     private void saveOrUpdateRecordToDb(){
         String title=mTitleEt.getText().toString();
-        String content=mContentEt.getText().toString();
+        //String content=mContentEt.getText().toString();
+        String content = mContentRlv.getFormatText();
         String labelNames=getCurrentLabel();
         if(mStartRecord!=null && mStartRecord.getTitle().equals(title)
                 && mStartRecord.getContent().equals(content)
@@ -196,8 +200,6 @@ public class AddRecordActivity extends BaseObserverActivity {
                 updateRecordTask(record);
             }
         }
-
-
     }
 
     private void goAddLabelActivity(){
@@ -225,7 +227,8 @@ public class AddRecordActivity extends BaseObserverActivity {
                 if(aBoolean){
                     notifyRecordChange(labelName);
                     mTitleEt.setText("");
-                    mContentEt.setText("");
+                    //mContentEt.setText("");
+                    mContentRlv.initList();
                     AddRecordActivity.this.finish();
                 }
             }
@@ -240,7 +243,8 @@ public class AddRecordActivity extends BaseObserverActivity {
                 if(aBoolean){
                     notifyRecordChange(labelName);
                     mTitleEt.setText("");
-                    mContentEt.setText("");
+                    //mContentEt.setText("");
+                    mContentRlv.initList();
                     AddRecordActivity.this.finish();
                 }
             }

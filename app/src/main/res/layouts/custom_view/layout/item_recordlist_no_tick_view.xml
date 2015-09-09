@@ -13,12 +13,12 @@
         android:padding="5dip"/>
 
     <CheckBox
-        android:id="@+id/select_cb"
+        android:id="@+id/no_tick_select_cb"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
     <EditText
-        android:id="@+id/content_message_et"
+        android:id="@+id/no_tick_content_message_et"
         android:layout_width="0dip"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -32,7 +32,7 @@
         android:hint="@string/record_list_hint"/>
 
     <ImageView
-        android:id="@+id/cancel_iv"
+        android:id="@+id/no_tick_cancel_iv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_cancel_black_24dp"
