@@ -245,7 +245,7 @@ public class AddLabelActivity extends BaseObserverActivity implements SearchLayo
      */
     public void initSelectLabel(){
         mLabels = getIntent().getStringExtra(KEY_EXTRA_SELECT_LABEL);
-        String[] labels=StringUtil.subStringBySymbol(mLabels, DbConfig.LABEL_SPLIT_SYMBOL);
+        String[] labels=StringUtil.subStringBySymbol(mLabels, DbConfig.SPLIT_SYMBOL);
         if(labels!=null && labels.length > 0){
             for(int i=0;i < labels.length;i++)
                 mSelectLabels.add(new SearchVo(labels[i],false));

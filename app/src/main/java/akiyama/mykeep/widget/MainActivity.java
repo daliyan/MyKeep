@@ -1,8 +1,8 @@
 package akiyama.mykeep.widget;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.avos.avoscloud.AVUser;
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,7 @@ import akiyama.mykeep.common.StatusMode;
 import akiyama.mykeep.controller.LabelController;
 import akiyama.mykeep.db.model.BaseModel;
 import akiyama.mykeep.db.model.LabelModel;
+import akiyama.mykeep.db.model.RecordModel;
 import akiyama.mykeep.event.NotifyInfo;
 import akiyama.mykeep.event.EventType;
 import akiyama.mykeep.event.helper.KeepNotifyCenterHelper;
@@ -59,6 +61,10 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
     private ImageView mSyncIv;
     private ImageView mHelpIv;
     private TextView mUserNameTv;
+
+    private FloatingActionsMenu mAddRecordMenuFam;//记事菜单
+    private FloatingActionButton mAddNormalRecordFab;//增加普通计事
+    private FloatingActionButton mAddListRecordFab;//添加列表数据
 
     private ViewPager mRecordVp;
     private TabLayout mTabLy;
@@ -107,17 +113,23 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
 
         mRecordVp = (ViewPager) findViewById(R.id.content_vp);
         mTabLy = (TabLayout) findViewById(R.id.pager_strip_tsv);
+
+        mAddRecordMenuFam = (FloatingActionsMenu) findViewById(R.id.add_record_fam);
+        mAddNormalRecordFab = (FloatingActionButton) findViewById(R.id.add_normal_record_fab);
+        mAddListRecordFab = (FloatingActionButton) findViewById(R.id.add_list_record_fab);
     }
 
     @Override
     protected void initView(){
         setToolBarTitle("记事");
+
         mLabelList = new ArrayList<>();
         mRecordView.setBackgroundResource(R.color.light_gray);
         mFiledView.setBackgroundResource(R.color.white);
         mRecycleView.setBackgroundResource(R.color.white);
         mSettingView.setBackgroundResource(R.color.white);
         setLeftMenuItem();
+
         mRecordLabelAdapter = new RecordByLabelAdapter(getFragmentManager(),mLabelList);
         mRecordVp.setAdapter(mRecordLabelAdapter);
         mRecordVp.setOffscreenPageLimit(0);
@@ -133,10 +145,19 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         mRecycleView.setOnClickListener(this);
         mSettingView.setOnClickListener(this);
         mFiledView.setOnClickListener(this);
-    }
+        mAddListRecordFab.setOnClickListener(this);
+        mAddNormalRecordFab.setOnClickListener(this);
+        mAddRecordMenuFam.setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu.OnFloatingActionsMenuUpdateListener() {
+            @Override
+            public void onMenuExpanded() {
 
-    @Override
-    protected void setBackListener() {
+            }
+
+            @Override
+            public void onMenuCollapsed() {
+
+            }
+        });
     }
 
     @Override
@@ -242,7 +263,7 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
                 }
                 break;
             case R.id.action_add:
-                goAddRcord();
+                //goAddRcord(StatusMode.ADD_RECORD_MODE,StatusMode.);
                 break;
             default:
                 break;
@@ -279,19 +300,34 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
                 mRecycleView.setBackgroundResource(R.color.white);
                 mSettingView.setBackgroundResource(R.color.light_gray);
                 break;
+            case R.id.add_normal_record_fab:
+                goAddRcord(StatusMode.ADD_RECORD_MODE,RecordModel.RECORD_TYPE_NORMAL);
+                break;
+            case R.id.add_list_record_fab:
+                goAddRcord(StatusMode.ADD_RECORD_MODE,RecordModel.RECORD_TYPE_LIST);
+                break;
             default:
                 break;
         }
     }
 
+    /**
+     *  去登录
+     */
     private void goLogin(){
         Intent login=new Intent(this,LoginRegActivity.class);
         startActivity(login);
     }
 
-    private void goAddRcord(){
+    /**
+     * 跳转到添加记录界面
+     * @param recordMode 设置当前增加记事的模式：添加或者编辑
+     * @param recordType 设置当前记事的类型，如清单列表型、普通模式
+     */
+    private void goAddRcord(String recordMode,int recordType){
         Intent addRecord=new Intent(this,AddRecordActivity.class);
-        addRecord.putExtra(AddRecordActivity.KEY_RECORD_MODE, StatusMode.RECORD_ADD_MODE);
+        addRecord.putExtra(AddRecordActivity.KEY_RECORD_MODE, recordMode);
+        addRecord.putExtra(AddRecordActivity.KEY_ADD_RECORD_TYPE, recordType);
         startActivity(addRecord);
     }
 
@@ -311,4 +347,5 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
             }
         }.execute(LoginHelper.getCurrentUserId());
     }
+
 }

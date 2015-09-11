@@ -41,7 +41,7 @@ public class RecordController extends BaseController implements IRecordControlle
         List<RecordModel> labelReords=new ArrayList<>();
         if(recordModels!=null &&recordModels.size() >0){
             for(RecordModel recordModel:recordModels){
-                String[] labelNames = StringUtil.subStringBySymbol(recordModel.getLabelNames(), DbConfig.LABEL_SPLIT_SYMBOL);
+                String[] labelNames = StringUtil.subStringBySymbol(recordModel.getLabelNames(), DbConfig.SPLIT_SYMBOL);
                 if(labelNames!=null){
                     for(String label:labelNames){
                         if(label.equals(labelName)){

@@ -2,7 +2,6 @@ package akiyama.mykeep.view;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -11,7 +10,6 @@ import akiyama.mykeep.AppContext;
 import akiyama.mykeep.R;
 import akiyama.mykeep.common.DbConfig;
 import akiyama.mykeep.util.DimUtil;
-import akiyama.mykeep.util.ResUtil;
 
 /**
  * 标签组
@@ -58,7 +56,7 @@ public class LabelsLayout extends LinearLayout {
             labelTv.setBackgroundResource(R.drawable.corners_bg);
             labelTv.setTypeface(AppContext.getRobotoSlabLight());
             this.addView(labelTv);
-            mLabelStr.append(labelName + DbConfig.LABEL_SPLIT_SYMBOL) ;
+            mLabelStr.append(labelName + DbConfig.SPLIT_SYMBOL) ;
         }
     }
 

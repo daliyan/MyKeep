@@ -17,7 +17,9 @@ import java.util.Map;
 
 import akiyama.mykeep.AppContext;
 import akiyama.mykeep.R;
+import akiyama.mykeep.common.DbConfig;
 import akiyama.mykeep.util.LogUtil;
+import akiyama.mykeep.util.StringUtil;
 
 /**
  * 记录清单列表View
@@ -179,9 +181,15 @@ public class RecordListView extends LinearLayout implements View.OnClickListener
         for(int i=0;i<noTickStrs.size();i++){
             if(i==noTickStrs.size()-1 && tickStrs.size()==0){
                 str.append("未完成："+noTickStrs.get(i).toString());
+            }else if(i==noTickStrs.size()-1){
+                str.append("未完成："+noTickStrs.get(i).toString()+DbConfig.SPLIT_SYMBOL);
             }else{
                 str.append("未完成："+noTickStrs.get(i).toString()+"\n");
             }
+        }
+
+        if(noTickStrs.size()==0){
+            str.append(DbConfig.SPLIT_SYMBOL);
         }
 
         for(int j=0;j<tickStrs.size();j++){
@@ -190,20 +198,37 @@ public class RecordListView extends LinearLayout implements View.OnClickListener
             }else {
                 str.append("完成："+tickStrs.get(j).toString()+"\n");
             }
-
+        }
+        if(tickStrs.size()==0){
+            str.append(DbConfig.SPLIT_SYMBOL);
         }
 
         return str.toString();
     }
 
-    public void setFormatText(List<String> tickStrs,List<String> noTickStrs){
-        for(int i=0;i<noTickStrs.size();i++){
-            addNoTickView(noTickStrs.get(i).toString());
+    /**
+     * 根据{link getFormatText()} 规则设置对应的控件数据
+     * @param content
+     */
+    public void setFormatText(String content){
+        String[] contents = StringUtil.subStringBySymbol(content,DbConfig.SPLIT_SYMBOL);
+        if(content!=null){
+            String[] noTicks = StringUtil.subStringBySymbol(contents[0],DbConfig.SPLIT_SYMBOL);
+            String[] ticks = StringUtil.subStringBySymbol(contents[1],DbConfig.SPLIT_SYMBOL);
+
+            if(noTicks!=null){
+                for(int i=0;i<noTicks.length;i++){
+                    addNoTickView(noTicks[i]);
+                }
+            }
+
+            if(ticks!=null){
+                for(int j=0;j<ticks.length;j++){
+                    addTickView(ticks[j]);
+                }
+            }
         }
 
-        for(int j=0;j<tickStrs.size();j++){
-            addTickView(tickStrs.get(j).toString());
-        }
 
     }
 

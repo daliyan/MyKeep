@@ -84,7 +84,7 @@ public class RecordByLabelFragment extends BaseObserverFragment {
             @Override
             public void onItemClick(View v, int position) {
                 if (mRecordModels != null && mRecordModels.size() > position) {
-                    goEditLabelActivity(mRecordModels.get(position));
+                    goEditRecordActivity(mRecordModels.get(position));
                 }else {
                     LogUtil.e(TAG,"setOnItemClick position is NV");
                 }
@@ -97,9 +97,13 @@ public class RecordByLabelFragment extends BaseObserverFragment {
 
     }
 
-    private void goEditLabelActivity(RecordModel recordModel){
+    /**
+     * 去编辑该条记录
+     * @param recordModel
+     */
+    private void goEditRecordActivity(RecordModel recordModel){
         Intent goEditRecord = new Intent(mContext,AddRecordActivity.class);
-        goEditRecord.putExtra(AddRecordActivity.KEY_RECORD_MODE, StatusMode.RECORD_EDIT_MODE);
+        goEditRecord.putExtra(AddRecordActivity.KEY_RECORD_MODE, StatusMode.EDIT_RECORD_MODE);
         goEditRecord.putExtra(AddRecordActivity.KEY_EDIT_RECORD_LIST, recordModel);
         mContext.startActivity(goEditRecord);
     }
@@ -169,7 +173,7 @@ public class RecordByLabelFragment extends BaseObserverFragment {
             mAdapter.refreshDate(mRecordModels);
         }else if(eventType.equals(EventType.EVENT_REFRESH_RECORD)){
             String labels = notifyInfo.getBundleString(Constants.KEY_LABEL_NAMES);
-            String[] labelNames = StringUtil.subStringBySymbol(labels, DbConfig.LABEL_SPLIT_SYMBOL);
+            String[] labelNames = StringUtil.subStringBySymbol(labels, DbConfig.SPLIT_SYMBOL);
             if(mLabelName!=null){
                 //“全部”标签组或者需要刷新的标签组刷新数据
                 if(StringUtil.isContains(labelNames,mLabelName) || mLabelName.equals(mContext.getString(R.string.all_label))){

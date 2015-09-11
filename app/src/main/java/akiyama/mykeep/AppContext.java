@@ -28,12 +28,12 @@ import akiyama.mykeep.util.LogUtil;
 public class AppContext extends Application{
 
     public final static boolean DEBUG=BuildConfig.DEBUG;
-    public final static String TAG="AppContext";
+    private final static String TAG="AppContext";
     private static AppContext mInstance;
     private static int mVersionCode;
-    public static String mVersionName;
-    public static String mPackageName;
-    public static PackageInfo mInfo;
+    private static String mVersionName;
+    private static String mPackageName;
+    private static PackageInfo mInfo;
     private static HashMap<String, WeakReference<Activity>> mContexts = new HashMap<String, WeakReference<Activity>>();
     private static Typeface mRobotoSlabBold = null;
     private static Typeface mRobotoSlabLight = null;
@@ -43,7 +43,6 @@ public class AppContext extends Application{
     @Override
     public void onCreate() {
         super.onCreate();
-        AVOSCloud.initialize(this,"0t6l98r6429fu5z6pde2f6zn9r8ykm5itbrmuxzormpuifva","1aw548nzzzhxetq0b8yxgbdjpatr9pvj8m8zttebl1z2t73l");
         init();
         initAppInfo();
         deviceInfo();
@@ -57,7 +56,9 @@ public class AppContext extends Application{
 
     private void init(){
         this.mInstance=this;
-       // LeakCanary.install(this);
+        AVOSCloud.initialize(this,"0t6l98r6429fu5z6pde2f6zn9r8ykm5itbrmuxzormpuifva",
+                "1aw548nzzzhxetq0b8yxgbdjpatr9pvj8m8zttebl1z2t73l");
+       //LeakCanary.install(this);
     }
 
     private void initAppInfo(){
@@ -148,4 +149,5 @@ public class AppContext extends Application{
     public static Typeface getRobotoSlabThin() {
         return mRobotoSlabThin;
     }
+
 }
