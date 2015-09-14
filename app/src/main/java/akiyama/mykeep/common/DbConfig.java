@@ -12,4 +12,6 @@ public class DbConfig {
     public static final String SPLIT_SYMBOL ="&";//分割符号，用于存储在数据库中的多个组的分割，存储和解析作用
     public static final String REPLACE_SYMBOL ="& ";//转义字符串，碰到  "&"转义成"& "
 
+    public static final String SMAIL_SPLIT_SYMBOL="&";
+    public static final String BIG_SPLIT_SYMBOL=",";//分割符号，用于存储在数据库中的多个组的分割，存储和解析作用
 }

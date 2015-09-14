@@ -1,14 +1,18 @@
 package akiyama.mykeep.view;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,8 +34,10 @@ import akiyama.mykeep.util.StringUtil;
  */
 public class RecordListView extends LinearLayout implements View.OnClickListener{
 
-    private static final String TAG_NOTICK_CONTENT="tag_NO_tick_content";
+    private static final String TAG_NOTICK_CONTENT="tag_no_tick_content";
     private static final String TAG_TICK_CONTENT="tag_tick_content";
+    private static final String TAG_NOTICK_VALUE="□ ";
+    private static final String TAG_TICK_VALUE="▣ ";
     private View mView;
     private Context mContext;
     private List<String> mNoTick;//未打勾的列表数据
@@ -39,6 +45,7 @@ public class RecordListView extends LinearLayout implements View.OnClickListener
     private LinearLayout mNoTickLl;
     private LinearLayout mTickLl;
     private LinearLayout mAddListLl;
+    private InputMethodManager mImm;
     public RecordListView(Context context) {
         super(context);
         init(context);
@@ -64,6 +71,7 @@ public class RecordListView extends LinearLayout implements View.OnClickListener
         mTickLl = (LinearLayout) mView.findViewById(R.id.record_list_tick_ll);
         mAddListLl = (LinearLayout) mView.findViewById(R.id.add_list_item_ll);
         mAddListLl.setOnClickListener(this);
+        mImm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
     }
 
     /**
@@ -87,6 +95,10 @@ public class RecordListView extends LinearLayout implements View.OnClickListener
         LogUtil.d(""+cancelIv.hashCode());
         contentEt.setTag(TAG_NOTICK_CONTENT);
         mNoTickLl.addView(itemView);
+        contentEt.requestFocus();
+        if(!mImm.isActive()){
+            mImm.showSoftInput(contentEt,InputMethodManager.RESULT_UNCHANGED_SHOWN);
+        }
     }
 
     /**
@@ -144,13 +156,15 @@ public class RecordListView extends LinearLayout implements View.OnClickListener
      * 获取未打勾的数据项
      * @return
      */
-    public List<String> getNoTickStrs(){
+    public List<String> getNoTicks(){
         mNoTick.clear();
         int child = mNoTickLl.getChildCount();
         for(int i=0;i<child;i++){
             View childView = mNoTickLl.getChildAt(i);
-            String tickRecordStr=((EditText)(childView.findViewWithTag(TAG_NOTICK_CONTENT))).getText().toString();
-            mNoTick.add(tickRecordStr);
+            String noTickRecordStr=((EditText)(childView.findViewWithTag(TAG_NOTICK_CONTENT))).getText().toString();
+            if(!TextUtils.isEmpty(noTickRecordStr)){
+                mNoTick.add(noTickRecordStr);
+            }
         }
         return mNoTick;
     }
@@ -159,48 +173,54 @@ public class RecordListView extends LinearLayout implements View.OnClickListener
      * 获取打勾的数据项
      * @return
      */
-    public List<String> getTickStrs(){
+    public List<String> getTicks(){
         mTick.clear();
         int child = mTickLl.getChildCount();
         for(int i=0;i<child;i++){
             View childView = mTickLl.getChildAt(i);
             String tickRecordStr=((TextView)(childView.findViewWithTag(TAG_TICK_CONTENT))).getText().toString();
-            mTick.add(tickRecordStr);
+            if(!TextUtils.isEmpty(tickRecordStr)){
+                mTick.add(tickRecordStr);
+            }
         }
         return mTick;
     }
 
     /**
      * 获取格式化后的字符数据
+     * <br>格式化规则 1&2&3&4,6&7&8
+     * <br>如果有一个项目为空则格式化成：2&3&4&5,
      * @return
      */
     public String getFormatText(){
         StringBuffer str=new StringBuffer("");
-        List<String> noTickStrs=getNoTickStrs();
-        List<String> tickStrs=getTickStrs();
+        List<String> noTickStrs=getNoTicks();
+        List<String> tickStrs=getTicks();
+
         for(int i=0;i<noTickStrs.size();i++){
             if(i==noTickStrs.size()-1 && tickStrs.size()==0){
-                str.append("未完成："+noTickStrs.get(i).toString());
+                str.append(TAG_NOTICK_VALUE+noTickStrs.get(i)+DbConfig.SMAIL_SPLIT_SYMBOL);
             }else if(i==noTickStrs.size()-1){
-                str.append("未完成："+noTickStrs.get(i).toString()+DbConfig.SPLIT_SYMBOL);
+                str.append(TAG_NOTICK_VALUE+noTickStrs.get(i)+DbConfig.SMAIL_SPLIT_SYMBOL+DbConfig.BIG_SPLIT_SYMBOL+"\n");
             }else{
-                str.append("未完成："+noTickStrs.get(i).toString()+"\n");
+                str.append(TAG_NOTICK_VALUE+noTickStrs.get(i)+DbConfig.SMAIL_SPLIT_SYMBOL+"\n");
             }
         }
 
         if(noTickStrs.size()==0){
-            str.append(DbConfig.SPLIT_SYMBOL);
+            str.append(" "+DbConfig.BIG_SPLIT_SYMBOL);
         }
 
         for(int j=0;j<tickStrs.size();j++){
             if(j==tickStrs.size()-1){
-                str.append("完成："+tickStrs.get(j).toString());
+                str.append(TAG_TICK_VALUE+tickStrs.get(j)+DbConfig.SMAIL_SPLIT_SYMBOL+DbConfig.BIG_SPLIT_SYMBOL);
             }else {
-                str.append("完成："+tickStrs.get(j).toString()+"\n");
+                str.append(TAG_TICK_VALUE+tickStrs.get(j)+DbConfig.SMAIL_SPLIT_SYMBOL+"\n");
             }
         }
+
         if(tickStrs.size()==0){
-            str.append(DbConfig.SPLIT_SYMBOL);
+            str.append(DbConfig.BIG_SPLIT_SYMBOL+" ");
         }
 
         return str.toString();
@@ -211,20 +231,27 @@ public class RecordListView extends LinearLayout implements View.OnClickListener
      * @param content
      */
     public void setFormatText(String content){
-        String[] contents = StringUtil.subStringBySymbol(content,DbConfig.SPLIT_SYMBOL);
+        content = content.replace("\n","");
+        content = content.replace(TAG_NOTICK_VALUE,"");
+        content = content.replace(TAG_TICK_VALUE,"");
+        String[] contents = StringUtil.subStringBySymbol(content,DbConfig.BIG_SPLIT_SYMBOL);
         if(content!=null){
-            String[] noTicks = StringUtil.subStringBySymbol(contents[0],DbConfig.SPLIT_SYMBOL);
-            String[] ticks = StringUtil.subStringBySymbol(contents[1],DbConfig.SPLIT_SYMBOL);
+            String[] noTicks = StringUtil.subStringBySymbol(contents[0],DbConfig.SMAIL_SPLIT_SYMBOL);
+            String[] ticks = StringUtil.subStringBySymbol(contents[1],DbConfig.SMAIL_SPLIT_SYMBOL);
 
             if(noTicks!=null){
                 for(int i=0;i<noTicks.length;i++){
-                    addNoTickView(noTicks[i]);
+                    if(!TextUtils.isEmpty(noTicks[i].trim())){
+                        addNoTickView(noTicks[i]);
+                    }
                 }
             }
 
             if(ticks!=null){
                 for(int j=0;j<ticks.length;j++){
-                    addTickView(ticks[j]);
+                    if(!TextUtils.isEmpty(ticks[j].trim())){
+                        addTickView(ticks[j]);
+                    }
                 }
             }
         }
