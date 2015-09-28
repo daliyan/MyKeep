@@ -208,7 +208,7 @@ public class RecordListView extends LinearLayout implements View.OnClickListener
         }
 
         if(noTickStrs.size()==0){
-            str.append(" "+DbConfig.BIG_SPLIT_SYMBOL);
+            str.append(DbConfig.BIG_SPLIT_SYMBOL);
         }
 
         for(int j=0;j<tickStrs.size();j++){

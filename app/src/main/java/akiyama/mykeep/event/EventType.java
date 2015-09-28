@@ -20,6 +20,7 @@ public class EventType {
     public final static String EVENT_ADD_LABEL_LIST="akiyama.mykeep.lable.list";//标签记录发生改变
     public final static String EVENT_SELECTED_LABEL_LIST="akiyama.mykeep.selected.lable.list";//标签页面选择的标签
     public final static String EVENT_CHANGE_LABEL="akiyama.mykeep.change.label";//标签数据发生改变，删除、修改和添加
+    public final static String EVENT_CHANGE_MAIN_MENU="akiyama.mykeep.change.menu";//通知主页切换菜单
     private EventType(){
         eventsTypes.add(EVENT_LOGIN);
         eventsTypes.add(EVENT_LOGINOUT);
@@ -27,6 +28,7 @@ public class EventType {
         eventsTypes.add(EVENT_ADD_LABEL_LIST);
         eventsTypes.add(EVENT_SELECTED_LABEL_LIST);
         eventsTypes.add(EVENT_CHANGE_LABEL);
+        eventsTypes.add(EVENT_CHANGE_MAIN_MENU);
     }
 
     public static EventType getInstance(){

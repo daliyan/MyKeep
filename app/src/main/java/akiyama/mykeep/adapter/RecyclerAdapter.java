@@ -6,6 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import akiyama.mykeep.AppContext;
@@ -17,35 +19,28 @@ import akiyama.mykeep.util.LogUtil;
 import akiyama.mykeep.util.ResUtil;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
-
-    private static final String TAG="RecyclerAdapter";
+   private static final String TAG="RecyclerAdapter";
    private List<RecordModel> mDataset;
    private OnItemClick mOnItemClick;
+   private OnLongItemClick mOnLongItemClick;
    public RecyclerAdapter(List<RecordModel> mDataset){
        this.mDataset=mDataset;
    }
 
     @Override
-    public RecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_main_list, parent, false);
-        final ViewHolder vh = new ViewHolder(v);
-        v.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mOnItemClick != null) {
-                    mOnItemClick.onItemClick(v, vh.getPosition());
-                }
-            }
-        });
+    public RecyclerAdapter.ViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_main_list, parent, false);
+        ViewHolder vh = new ViewHolder(view);
         return vh;
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         if(mDataset!=null && mDataset.size()>0){
             RecordModel recordModel=mDataset.get(position);
             if(recordModel!=null){
                 holder.mTitleTv.setText(recordModel.getTitle());
+                LogUtil.e(TAG,""+holder.mTitleTv.getText()+" "+position);
                 String content = recordModel.getContent();
                 //移除内容中特殊的标记
                 if(recordModel.getRecordType() ==RecordModel.RECORD_TYPE_LIST){
@@ -61,6 +56,24 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             }
         }
 
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mOnItemClick != null) {
+                    mOnItemClick.onItemClick(v, holder.getPosition());
+                }
+            }
+        });
+
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (mOnLongItemClick != null) {
+                    mOnLongItemClick.onLongItemClick(v, holder.getPosition());
+                }
+                return true;
+            }
+        });
 
     }
 
@@ -89,11 +102,24 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         this.mDataset = dataset;
         notifyDataSetChanged();
     }
+
+
+    public void setOnLongItemClick(OnLongItemClick mOnLongItemClick) {
+        this.mOnLongItemClick = mOnLongItemClick;
+    }
+
     /**
      * item接口点击回调
      */
     public interface OnItemClick{
         public void onItemClick(View v,int position);
+    }
+
+    /**
+     * 长按事件
+     */
+    public interface OnLongItemClick{
+        public void onLongItemClick(View v,int position);
     }
 }
 

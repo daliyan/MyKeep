@@ -8,6 +8,12 @@
         android:orderInCategory="100"
         app:showAsAction="always" />
 
+    <item android:id="@+id/action_search"
+        android:title="@string/action_serach"
+        android:icon="@drawable/ic_search_white_24dp"
+        app:showAsAction="collapseActionView|ifRoom"
+        android:actionViewClass="android.support.v7.widget.SearchView" />
+
     <item android:id="@+id/action_login"
         android:title="@string/action_login"
         android:icon="@drawable/ic_person_white_24dp"

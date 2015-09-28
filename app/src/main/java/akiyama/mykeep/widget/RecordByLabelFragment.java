@@ -1,9 +1,20 @@
 package akiyama.mykeep.widget;
 
+import android.annotation.TargetApi;
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.GradientDrawable;
+import android.os.Build;
+import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.transition.Explode;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -11,6 +22,7 @@ import android.widget.ImageView;
 import java.util.ArrayList;
 import java.util.List;
 
+import akiyama.mykeep.AppContext;
 import akiyama.mykeep.R;
 import akiyama.mykeep.adapter.RecyclerAdapter;
 import akiyama.mykeep.base.BaseObserverFragment;
@@ -22,6 +34,7 @@ import akiyama.mykeep.db.model.BaseModel;
 import akiyama.mykeep.db.model.RecordModel;
 import akiyama.mykeep.event.EventType;
 import akiyama.mykeep.event.NotifyInfo;
+import akiyama.mykeep.event.helper.KeepNotifyCenterHelper;
 import akiyama.mykeep.task.QueryByUserDbTask;
 import akiyama.mykeep.task.QueryRecordByLabelTask;
 import akiyama.mykeep.util.LogUtil;
@@ -39,15 +52,17 @@ public class RecordByLabelFragment extends BaseObserverFragment {
 
     public static final String TAG="RecordByLabelFragment";
     public static final String KEY_LABEL_NAME="key_label_name";//标签名称KEY值
+    public static final String KEY_CHANGE_MENU="key_change_menu";//修改菜单标记
     private View mEmptyView;
     private ImageView mEmptyIv;
     private RecyclerView mRecyclerView;
     private RecyclerAdapter mAdapter;
     private List<RecordModel> mRecordModels;
-    private RecyclerView.LayoutManager mLayoutManager;
+    private StaggeredGridLayoutManager mLayoutManager;
     private String mLabelName="";
     private Context mContext;
     private RecordController rc=new RecordController();
+    private int mSpanCount = 2;
     @Override
     public int onSetLayoutId() {
         return R.layout.fragemnt_record_label_list;
@@ -59,7 +74,7 @@ public class RecordByLabelFragment extends BaseObserverFragment {
         mRecyclerView = (RecyclerView) view.findViewById(R.id.record_rv);
         mEmptyView = view.findViewById(R.id.empty_include);
         mEmptyIv = (ImageView) mEmptyView.findViewById(R.id.empty_iv);
-        mLayoutManager = new LinearLayoutManager(mContext);
+        mLayoutManager = new StaggeredGridLayoutManager(mSpanCount, StaggeredGridLayoutManager.VERTICAL);
     }
 
     @Override
@@ -68,6 +83,7 @@ public class RecordByLabelFragment extends BaseObserverFragment {
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new RecyclerAdapter(mRecordModels);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(mAdapter);
         mLabelName = getArguments().getString(KEY_LABEL_NAME);//获取需要加载的标签分类名称
     }
@@ -83,13 +99,36 @@ public class RecordByLabelFragment extends BaseObserverFragment {
         mAdapter.setOnItemClick(new RecyclerAdapter.OnItemClick() {
             @Override
             public void onItemClick(View v, int position) {
-                if (mRecordModels != null && mRecordModels.size() > position) {
-                    goEditRecordActivity(mRecordModels.get(position));
-                }else {
-                    LogUtil.e(TAG,"setOnItemClick position is NV");
+                //如果View被选定，点击就取消选定状态
+                if(v.isSelected()){
+                    LogUtil.d(TAG, "onItem:" + v.hashCode());
+                    switchActionBarMenu(StatusMode.MENU_NORMAL);
+                }else{
+                    if (mRecordModels != null && mRecordModels.size() > position) {
+                        goEditRecordActivity(mRecordModels.get(position), v);
+                    }else {
+                        LogUtil.e(TAG,"setOnItemClick position is NV");
+                    }
                 }
             }
         });
+
+        mAdapter.setOnLongItemClick(new RecyclerAdapter.OnLongItemClick() {
+            @Override
+            public void onLongItemClick(View v, int position) {
+                switchActionBarMenu(StatusMode.MENU_EDIT);
+               // mAdapter.notifyItemRemoved(position);
+                LogUtil.e(TAG,"LongItem: "+v.hashCode()+" "+position);
+                v.setBackgroundColor(getResources().getColor(R.color.blue));
+            }
+        });
+
+    }
+
+    private void switchActionBarMenu(String actionbarMode){
+        Bundle bundle = new Bundle();
+        bundle.putString(KEY_CHANGE_MENU,actionbarMode);
+        KeepNotifyCenterHelper.getInstance().notifySwitchMenu(bundle);
     }
 
     @Override
@@ -101,12 +140,13 @@ public class RecordByLabelFragment extends BaseObserverFragment {
      * 去编辑该条记录
      * @param recordModel
      */
-    private void goEditRecordActivity(RecordModel recordModel){
+    private void goEditRecordActivity(RecordModel recordModel,View view){
         Intent goEditRecord = new Intent(mContext,AddRecordActivity.class);
         goEditRecord.putExtra(AddRecordActivity.KEY_RECORD_MODE, StatusMode.EDIT_RECORD_MODE);
         goEditRecord.putExtra(AddRecordActivity.KEY_EDIT_RECORD_LIST, recordModel);
         mContext.startActivity(goEditRecord);
     }
+
 
     /**
      * 通过标签查询记录数据

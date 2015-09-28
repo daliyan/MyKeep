@@ -21,6 +21,9 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <meta-data
+                android:name="android.app.default_searchable"
+                android:value="akiyama.mykeep.widget.SearchResultsActivity" />
         </activity>
 
         <activity android:name="akiyama.mykeep.widget.LoginRegActivity"
@@ -31,6 +34,16 @@
 
         <activity android:name=".widget.AddLabelActivity"
             android:screenOrientation="portrait"/>
+
+        <activity android:name="akiyama.mykeep.widget.SearchResultsActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <meta-data android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+        </activity>
+
         <provider
             android:name="akiyama.mykeep.db.DataProvider"
             android:authorities="akiyama.mykeep.provider"

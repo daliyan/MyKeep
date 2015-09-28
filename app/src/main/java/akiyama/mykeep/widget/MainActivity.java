@@ -1,12 +1,17 @@
 package akiyama.mykeep.widget;
 
+import android.app.SearchManager;
+import android.app.SearchableInfo;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,7 +41,9 @@ import akiyama.mykeep.util.LoginHelper;
 
 
 public class MainActivity extends BaseObserverActivity implements View.OnClickListener{
-    private static final  String TAG="MainActivity";
+    private static final String TAG="MainActivity";
+
+    private String mMenuMode=StatusMode.MENU_NORMAL;
     private DrawerLayout mDrawerDl;//侧滑菜单布局控件
     private ActionBarDrawerToggle mDrawerToggle;
 
@@ -81,7 +88,6 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         queryLabeles();
     }
 
-
     @Override
     protected void findView(){
         mDrawerDl=(DrawerLayout)findViewById(R.id.left_menu_dl);
@@ -122,14 +128,12 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
     @Override
     protected void initView(){
         setToolBarTitle("记事");
-
         mLabelList = new ArrayList<>();
         mRecordView.setBackgroundResource(R.color.light_gray);
         mFiledView.setBackgroundResource(R.color.white);
         mRecycleView.setBackgroundResource(R.color.white);
         mSettingView.setBackgroundResource(R.color.white);
         setLeftMenuItem();
-
         mRecordLabelAdapter = new RecordByLabelAdapter(getFragmentManager(),mLabelList);
         mRecordVp.setAdapter(mRecordLabelAdapter);
         mRecordVp.setOffscreenPageLimit(0);
@@ -160,93 +164,15 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         });
     }
 
-    @Override
-    protected void onChange(NotifyInfo notifyInfo) {
-        String eventType = notifyInfo.getEventType();
-        if(eventType.equals(EventType.EVENT_LOGIN)){
-            supportInvalidateOptionsMenu();
-            mUserNameTv.setText(LoginHelper.getCurrentUser().getUsername());
-            queryLabeles();
-        }else if(eventType.equals(EventType.EVENT_LOGINOUT)){
-            supportInvalidateOptionsMenu();
-            mUserNameTv.setText(getResources().getString(R.string.no_login));
-            queryLabeles();
-        }else if(eventType.equals(EventType.EVENT_CHANGE_LABEL)){
-            queryLabeles();//标签发生改变，刷新标签记录
-        }
-    }
-
-    @Override
-    protected String[] getObserverEventType() {
-        return new String[]{
-                EventType.EVENT_LOGIN,
-                EventType.EVENT_LOGINOUT,
-                EventType.EVENT_CHANGE_LABEL
-        };
-    }
-
-    /**
-     * 设置左侧菜单的文字和图标
-     */
-   private void setLeftMenuItem(){
-       mRecordTv.setText(getResources().getString(R.string.item_menu_1));
-       mRecordIv.setImageResource(R.drawable.ic_assignment_black_24dp);
-
-       mFiledTv.setText(getResources().getString(R.string.item_menu_2));
-       mFiledIv.setImageResource(R.drawable.ic_access_alarms_black_24dp);
-
-       mRecycleTv.setText(getResources().getString(R.string.item_menu_3));
-       mRecycleIv.setImageResource(R.drawable.ic_drafts_black_24dp);
-
-       mSettingTv.setText(getResources().getString(R.string.item_menu_4));
-       mSettingIv.setImageResource(R.drawable.ic_settings_black_24dp);
-
-       mSyncTv.setText(getResources().getString(R.string.item_menu_5));
-       mSyncIv.setImageResource(R.drawable.ic_loop_black_24dp);
-
-       mHelpTv.setText(getResources().getString(R.string.item_menu_6));
-       mHelpIv.setImageResource(R.drawable.ic_help_black_24dp);
-   }
-
-    private void setDrawer(){
-        //创建返回键，并实现打开关/闭监听
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerDl, mToolbar, R.string.open, R.string.close) {
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-            }
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                super.onDrawerClosed(drawerView);
-            }
-        };
-        mDrawerToggle.syncState();
-        mDrawerDl.setDrawerListener(mDrawerToggle);
-    }
-
-    /**
-     * 设置用户信息
-     */
-    private void setUserInfo(){
-        if(LoginHelper.isLogin()){
-            mUserNameTv.setText(LoginHelper.getCurrentUser().getUsername());
-        }else{
-            mUserNameTv.setText(getResources().getString(R.string.no_login));
-        }
-
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        MenuItem login=menu.findItem(R.id.action_login);
-        AVUser avUser=LoginHelper.getCurrentUser();
-        if(avUser!=null){
-            login.setTitle(getResources().getString(R.string.loginOut));
+        if(StatusMode.MENU_EDIT.equals(mMenuMode)){
+            setEditMenu(menu);
         }else{
-            login.setTitle(getResources().getString(R.string.action_login));
+            setNormalMenu(menu);
         }
-        return super.onCreateOptionsMenu(menu);
+        return true;
     }
 
     @Override
@@ -309,6 +235,110 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
             default:
                 break;
         }
+    }
+
+
+    @Override
+    protected void onChange(NotifyInfo notifyInfo) {
+        String eventType = notifyInfo.getEventType();
+        if(eventType.equals(EventType.EVENT_LOGIN)){
+            supportInvalidateOptionsMenu();
+            mUserNameTv.setText(LoginHelper.getCurrentUser().getUsername());
+            queryLabeles();
+        }else if(eventType.equals(EventType.EVENT_LOGINOUT)){
+            supportInvalidateOptionsMenu();
+            mUserNameTv.setText(getResources().getString(R.string.no_login));
+            queryLabeles();
+        }else if(eventType.equals(EventType.EVENT_CHANGE_LABEL)){
+            queryLabeles();//标签发生改变，刷新标签记录
+        }else if(eventType.equals(EventType.EVENT_CHANGE_MAIN_MENU)){
+            mMenuMode = notifyInfo.getBundleString(RecordByLabelFragment.KEY_CHANGE_MENU);
+            supportInvalidateOptionsMenu();
+            mDrawerToggle.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
+        }
+    }
+
+    @Override
+    protected String[] getObserverEventType() {
+        return new String[]{
+                EventType.EVENT_LOGIN,
+                EventType.EVENT_LOGINOUT,
+                EventType.EVENT_CHANGE_LABEL,
+                EventType.EVENT_CHANGE_MAIN_MENU
+        };
+    }
+
+    /**
+     * 设置左侧菜单的文字和图标
+     */
+   private void setLeftMenuItem(){
+       mRecordTv.setText(getResources().getString(R.string.item_menu_1));
+       mRecordIv.setImageResource(R.drawable.ic_assignment_black_24dp);
+
+       mFiledTv.setText(getResources().getString(R.string.item_menu_2));
+       mFiledIv.setImageResource(R.drawable.ic_access_alarms_black_24dp);
+
+       mRecycleTv.setText(getResources().getString(R.string.item_menu_3));
+       mRecycleIv.setImageResource(R.drawable.ic_drafts_black_24dp);
+
+       mSettingTv.setText(getResources().getString(R.string.item_menu_4));
+       mSettingIv.setImageResource(R.drawable.ic_settings_black_24dp);
+
+       mSyncTv.setText(getResources().getString(R.string.item_menu_5));
+       mSyncIv.setImageResource(R.drawable.ic_loop_black_24dp);
+
+       mHelpTv.setText(getResources().getString(R.string.item_menu_6));
+       mHelpIv.setImageResource(R.drawable.ic_help_black_24dp);
+   }
+
+    private void setDrawer(){
+        //创建返回键，并实现打开关/闭监听
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerDl, mToolbar, R.string.open, R.string.close) {
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+            }
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+            }
+        };
+        mDrawerToggle.syncState();
+        mDrawerDl.setDrawerListener(mDrawerToggle);
+    }
+
+    /**
+     * 设置用户信息
+     */
+    private void setUserInfo(){
+        if(LoginHelper.isLogin()){
+            mUserNameTv.setText(LoginHelper.getCurrentUser().getUsername());
+        }else{
+            mUserNameTv.setText(getResources().getString(R.string.no_login));
+        }
+
+    }
+
+    /**
+     * 设置正常模式下的 actionbar menu
+     */
+    private void setNormalMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        MenuItem login=menu.findItem(R.id.action_login);
+        AVUser avUser=LoginHelper.getCurrentUser();
+        if(avUser!=null){
+            login.setTitle(getResources().getString(R.string.loginOut));
+        }else{
+            login.setTitle(getResources().getString(R.string.action_login));
+        }
+    }
+
+    /**
+     * 设置编辑模式下的actionbar menu
+     * @param menu
+     */
+    private void setEditMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.menu_main_edit, menu);
     }
 
     /**

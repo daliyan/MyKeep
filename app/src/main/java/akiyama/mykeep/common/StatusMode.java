@@ -9,4 +9,7 @@ package akiyama.mykeep.common;
 public class StatusMode {
     public static final String EDIT_RECORD_MODE ="record_edit_mode";//记录编辑模式
     public static final String ADD_RECORD_MODE ="record_add_mode";//记录添加模式
+
+    public static final String MENU_EDIT="menu_eidt";//actionbar切换到编辑模式
+    public static final String MENU_NORMAL="menu_normal";//正常模式
 }

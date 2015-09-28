@@ -7,6 +7,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.graphics.Typeface;
+import android.os.Build;
 
 import com.avos.avoscloud.AVOSCloud;
 import com.avos.avoscloud.AVObject;
@@ -149,5 +150,4 @@ public class AppContext extends Application{
     public static Typeface getRobotoSlabThin() {
         return mRobotoSlabThin;
     }
-
 }

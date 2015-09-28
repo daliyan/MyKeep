@@ -1,5 +1,7 @@
 package akiyama.mykeep.event.imple;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +18,7 @@ import akiyama.mykeep.event.NotifyInfo;
  * @since 2015-06-30  14:36
  */
 public class EventSubject implements IEventSubject {
+    private static final String TAG="EventSubject";
     private Map<String,ArrayList<EventObserver>> mEventObservers=new HashMap<String,ArrayList<EventObserver>>();
     private static volatile EventSubject mEventSubject;
     private EventSubject(){
@@ -59,8 +62,12 @@ public class EventSubject implements IEventSubject {
     public void notifyObserver(NotifyInfo notifyInfo) {
         if(mEventObservers!=null && mEventObservers.size()>0 && notifyInfo!=null){
             ArrayList<EventObserver> eventObservers=mEventObservers.get(notifyInfo.getEventType());
-            for(EventObserver observer:eventObservers){
-                observer.dispatchChange(notifyInfo);
+            if(eventObservers!=null){
+                for(EventObserver observer:eventObservers){
+                    observer.dispatchChange(notifyInfo);
+                }
+            }else{
+                Log.e(TAG,"eventObservers is null,"+notifyInfo.getEventType()+" may be not register");
             }
         }
 

@@ -74,4 +74,11 @@ public class KeepNotifyCenterHelper {
     public void notifyLabelChange(){
         notifyObserver(new NotifyInfo(EventType.EVENT_CHANGE_LABEL));
     }
+
+    /**
+     * 通知到主页切换到actionbar item
+     */
+    public void notifySwitchMenu(Bundle bundle){
+        notifyObserver(new NotifyInfo(EventType.EVENT_CHANGE_MAIN_MENU,bundle));
+    }
 }

@@ -6,6 +6,7 @@
         <item name="colorPrimaryDark">@color/primary_material_light</item>
         <item name="android:textColorPrimary">@android:color/white</item>
         <item name="actionMenuTextColor">@color/white</item>
+        !-- specify shared element transitions -->
     </style>
 
     <style name="MyActionBarTitleText" parent="Base.TextAppearance.AppCompat">
