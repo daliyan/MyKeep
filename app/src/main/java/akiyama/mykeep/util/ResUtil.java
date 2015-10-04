@@ -1,6 +1,5 @@
 package akiyama.mykeep.util;
 
-import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Typeface;
 import android.widget.TextView;
@@ -37,4 +36,6 @@ public class ResUtil {
             view.setTypeface(Typeface.createFromAsset(assetManager, "fonts/RobotoSlab/RobotoSlab-Thin.ttf"));
         }
     }
+
+
 }

@@ -10,12 +10,15 @@ import java.util.List;
 
 import akiyama.mykeep.AppContext;
 import akiyama.mykeep.R;
+import akiyama.mykeep.common.DbConfig;
 import akiyama.mykeep.db.model.RecordModel;
 import akiyama.mykeep.util.DateUtil;
+import akiyama.mykeep.util.LogUtil;
 import akiyama.mykeep.util.ResUtil;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
 
+    private static final String TAG="RecyclerAdapter";
    private List<RecordModel> mDataset;
    private OnItemClick mOnItemClick;
    public RecyclerAdapter(List<RecordModel> mDataset){
@@ -43,7 +46,13 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             RecordModel recordModel=mDataset.get(position);
             if(recordModel!=null){
                 holder.mTitleTv.setText(recordModel.getTitle());
-                holder.mSubTitleTv.setText(recordModel.getContent());
+                String content = recordModel.getContent();
+                //移除内容中特殊的标记
+                if(recordModel.getRecordType() ==RecordModel.RECORD_TYPE_LIST){
+                    content = content.replace(DbConfig.BIG_SPLIT_SYMBOL,"");
+                    content = content.replace(DbConfig.SMAIL_SPLIT_SYMBOL,"");
+                }
+                holder.mSubTitleTv.setText(content);
                 holder.mUpdateTv.setText(DateUtil.getDate(recordModel.getUpdateTime()));
 
                 holder.mTitleTv.setTypeface(AppContext.getRobotoSlabBold());
