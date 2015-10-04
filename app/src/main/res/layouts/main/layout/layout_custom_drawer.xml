@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/left_menu_dl"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!--主布局-->
+    <LinearLayout
+        android:id="@+id/content_main_ll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/pager_strip_tsv"
+            android:layout_width="match_parent"
+            android:layout_height="43dip"
+            style="@style/TabLayout"/>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/content_vp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <com.getbase.floatingactionbutton.FloatingActionsMenu
+                android:id="@+id/add_record_fam"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:fab_addButtonColorNormal="@color/main_bg"
+                app:fab_addButtonColorPressed="@color/blue"
+                android:layout_gravity="bottom|right">
+
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/add_normal_record_fab"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_material_note_dark"
+                    app:backgroundTint="@color/deep_orange"/>
+
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/add_list_record_fab"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_material_list_dark"
+                    app:backgroundTint="@color/deep_orange"/>
+
+            </com.getbase.floatingactionbutton.FloatingActionsMenu>
+        </FrameLayout>
+
+
+    </LinearLayout>
+
+    <!--侧滑菜单-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#fff"
+        android:layout_gravity="start">
+
+        <include layout="@layout/layout_custom_left_menu"/>
+
+    </LinearLayout>
+
+</android.support.v4.widget.DrawerLayout>

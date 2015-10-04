@@ -1,12 +1,16 @@
 package akiyama.mykeep;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.Application;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
+import android.graphics.Typeface;
 
 import com.avos.avoscloud.AVOSCloud;
 import com.avos.avoscloud.AVObject;
+import com.squareup.leakcanary.LeakCanary;
 
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
@@ -24,25 +28,37 @@ import akiyama.mykeep.util.LogUtil;
 public class AppContext extends Application{
 
     public final static boolean DEBUG=BuildConfig.DEBUG;
-    public final static String TAG="AppContext";
+    private final static String TAG="AppContext";
     private static AppContext mInstance;
     private static int mVersionCode;
-    public static String mVersionName;
-    public static String mPackageName;
-    public static PackageInfo mInfo;
+    private static String mVersionName;
+    private static String mPackageName;
+    private static PackageInfo mInfo;
     private static HashMap<String, WeakReference<Activity>> mContexts = new HashMap<String, WeakReference<Activity>>();
-
+    private static Typeface mRobotoSlabBold = null;
+    private static Typeface mRobotoSlabLight = null;
+    private static Typeface mRobotoSlabRegular = null;
+    private static Typeface mRobotoSlabThin = null;
     private static List<Activity> mActivityList = new LinkedList<Activity>();
     @Override
     public void onCreate() {
         super.onCreate();
-        AVOSCloud.initialize(this,"0t6l98r6429fu5z6pde2f6zn9r8ykm5itbrmuxzormpuifva","1aw548nzzzhxetq0b8yxgbdjpatr9pvj8m8zttebl1z2t73l");
         init();
         initAppInfo();
+        deviceInfo();
+        initAppTypeface();
+    }
+
+    @Override
+    public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
     }
 
     private void init(){
         this.mInstance=this;
+        AVOSCloud.initialize(this,"0t6l98r6429fu5z6pde2f6zn9r8ykm5itbrmuxzormpuifva",
+                "1aw548nzzzhxetq0b8yxgbdjpatr9pvj8m8zttebl1z2t73l");
+       //LeakCanary.install(this);
     }
 
     private void initAppInfo(){
@@ -57,6 +73,11 @@ public class AppContext extends Application{
         } catch (PackageManager.NameNotFoundException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void deviceInfo(){
+        ActivityManager activityManager = (ActivityManager)getSystemService(ACTIVITY_SERVICE);
+        LogUtil.d(TAG,"heap size："+ activityManager.getMemoryClass()+" LargeMemory:"+ activityManager.getLargeMemoryClass());
     }
 
 
@@ -100,6 +121,33 @@ public class AppContext extends Application{
 
     public static AppContext getInstance(){
         return mInstance;
+    }
+
+    /**
+     * 预处理字体，否则设置字体会很慢
+     */
+    private void initAppTypeface(){
+        AssetManager localAssetManager = getAssets();
+        mRobotoSlabRegular = Typeface.createFromAsset(localAssetManager, "fonts/RobotoSlab/RobotoSlab-Regular.ttf");
+        mRobotoSlabBold = Typeface.createFromAsset(localAssetManager, "fonts/RobotoSlab/RobotoSlab-Bold.ttf");
+        mRobotoSlabLight = Typeface.createFromAsset(localAssetManager, "fonts/RobotoSlab/RobotoSlab-Light.ttf");
+        mRobotoSlabThin = Typeface.createFromAsset(localAssetManager, "fonts/RobotoSlab/RobotoSlab-Thin.ttf");
+    }
+
+    public static Typeface getRobotoSlabBold() {
+        return mRobotoSlabBold;
+    }
+
+    public static Typeface getRobotoSlabLight() {
+        return mRobotoSlabLight;
+    }
+
+    public static Typeface getRobotoSlabRegular() {
+        return mRobotoSlabRegular;
+    }
+
+    public static Typeface getRobotoSlabThin() {
+        return mRobotoSlabThin;
     }
 
 }

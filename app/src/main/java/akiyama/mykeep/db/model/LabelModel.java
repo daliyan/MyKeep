@@ -4,10 +4,8 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Parcel;
-import android.text.Layout;
 
 import akiyama.mykeep.common.DbConfig;
-import akiyama.mykeep.db.DataProvider;
 import akiyama.mykeep.util.DataProviderHelper;
 
 /**
@@ -81,17 +79,17 @@ public class LabelModel extends BaseModel{
     }
 
     public void setName(String name) {
-        //不能包含DbConfig.LABEL_SPLIT_SYMBOL 字符，需要进行转义处理
-        if(name.contains(DbConfig.LABEL_SPLIT_SYMBOL)){
-            name = name.replace(DbConfig.LABEL_SPLIT_SYMBOL,DbConfig.LABEL_REPLACE_SYMBOL);
+        //不能包含DbConfig.SPLIT_SYMBOL 字符，需要进行转义处理
+        if(name.contains(DbConfig.SPLIT_SYMBOL)){
+            name = name.replace(DbConfig.SPLIT_SYMBOL,DbConfig.REPLACE_SYMBOL);
         }
         this.name = name;
     }
 
     public String getName() {
         //反转义
-        if(name.contains(DbConfig.LABEL_REPLACE_SYMBOL)){
-            name = name.replace(DbConfig.LABEL_REPLACE_SYMBOL,DbConfig.LABEL_SPLIT_SYMBOL);
+        if(name.contains(DbConfig.REPLACE_SYMBOL)){
+            name = name.replace(DbConfig.REPLACE_SYMBOL,DbConfig.SPLIT_SYMBOL);
         }
         return name;
     }

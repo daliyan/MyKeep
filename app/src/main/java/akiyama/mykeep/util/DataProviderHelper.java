@@ -21,6 +21,10 @@ public class DataProviderHelper {
         return c.getString(c.getColumnIndexOrThrow(columnName));
     }
 
+    public static int parseInt(Cursor c, String columnName) {
+        return c.getInt(c.getColumnIndexOrThrow(columnName));
+    }
+
     public static Uri withAppendedId(Uri baseUri, String id) {
         return Uri.withAppendedPath(baseUri, "id/" + id);
     }

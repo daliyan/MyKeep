@@ -32,7 +32,7 @@
             android:contentDescription="@string/create_new_label_edit_mode"
             style="@style/LabelEditorIcon" />
 
-        <akiyama.mykeep.view.KeepTextView
+        <TextView
             android:id="@+id/creat_label_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

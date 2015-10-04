@@ -1,7 +1,6 @@
 package akiyama.mykeep.widget;
 
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -15,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import akiyama.mykeep.AppContext;
 import akiyama.mykeep.R;
 import akiyama.mykeep.base.BaseObserverActivity;
 import akiyama.mykeep.common.Constants;
@@ -29,9 +29,9 @@ import akiyama.mykeep.event.EventType;
 import akiyama.mykeep.task.UpdateSingleDbTask;
 import akiyama.mykeep.util.DateUtil;
 import akiyama.mykeep.util.LoginHelper;
-import akiyama.mykeep.util.ResUtil;
 import akiyama.mykeep.util.StringUtil;
 import akiyama.mykeep.view.LabelsLayout;
+import akiyama.mykeep.view.RecordListView;
 import akiyama.mykeep.vo.SearchVo;
 
 /**
@@ -45,9 +45,12 @@ public class AddRecordActivity extends BaseObserverActivity {
     private static final String TAG="AddRecordActivity";
     public static final String KEY_RECORD_MODE ="key_record_mode";//编辑状态
     public static final String KEY_EDIT_RECORD_LIST="ket_edit_record_list";//编辑模式下带的参数
-    private String mMode = StatusMode.RECORD_ADD_MODE;//默认是记录添加模式
+    public static final String KEY_ADD_RECORD_TYPE ="key_add_record_type";//添加记录的类型，如列表、普通、音频、视屏 etc
+    private String mMode = StatusMode.ADD_RECORD_MODE;//默认是记录添加模式
+    private int mAddRecordType;//添加记录
     private EditText mTitleEt;
     private EditText mContentEt;
+    private RecordListView mContentRlv;
     private TextView mUpdateTimeTv;
     private LabelsLayout mLabelLsl;
     private RecordModel mEditRecordModel;
@@ -66,19 +69,39 @@ public class AddRecordActivity extends BaseObserverActivity {
      */
     private void setInitUiByMode(){
         mMode = getIntent().getStringExtra(KEY_RECORD_MODE);
-        if(mMode!=null && mMode.equals(StatusMode.RECORD_EDIT_MODE)){
+        if(mMode!=null && mMode.equals(StatusMode.EDIT_RECORD_MODE)){
             mEditRecordModel = getIntent().getParcelableExtra(KEY_EDIT_RECORD_LIST);
+            mAddRecordType = mEditRecordModel.getRecordType();
             mStartRecord = mEditRecordModel;
             if(mEditRecordModel!=null){
                 mTitleEt.setText(mEditRecordModel.getTitle());
-                mContentEt.setText(mEditRecordModel.getContent());
-                mLabelLsl.setLabels(StringUtil.subStringBySymbol(mEditRecordModel.getLabelNames(), DbConfig.LABEL_SPLIT_SYMBOL));
+                if(mAddRecordType == RecordModel.RECORD_TYPE_NORMAL){
+                    mContentEt.setText(mEditRecordModel.getContent());
+                }else if(mAddRecordType == RecordModel.RECORD_TYPE_LIST){
+                    mContentRlv.setFormatText(mEditRecordModel.getContent());
+                }
+                mLabelLsl.setLabels(StringUtil.subStringBySymbol(mEditRecordModel.getLabelNames(), DbConfig.SPLIT_SYMBOL));
                 mUpdateTimeTv.setText("修改时间："+DateUtil.getDate(mEditRecordModel.getUpdateTime()));
             }
-        }else if(mMode!=null && mMode.equals(StatusMode.RECORD_ADD_MODE)){
+        }else if(mMode!=null && mMode.equals(StatusMode.ADD_RECORD_MODE)){
+            mAddRecordType = getIntent().getIntExtra(KEY_ADD_RECORD_TYPE,RecordModel.RECORD_TYPE_NORMAL);
             mStartRecord.setContent("");
             mStartRecord.setTitle("");
             mStartRecord.setLabelNames("");
+        }
+        setAddModeUi();
+    }
+
+    /**
+     * 根据不同的记事类型来设置不同的UI数据
+     */
+    private void setAddModeUi(){
+        if(mAddRecordType == RecordModel.RECORD_TYPE_NORMAL){
+            mContentEt.setVisibility(View.VISIBLE);
+            mContentRlv.setVisibility(View.GONE);
+        }else if(mAddRecordType==RecordModel.RECORD_TYPE_LIST){
+            mContentEt.setVisibility(View.GONE);
+            mContentRlv.setVisibility(View.VISIBLE);
         }
     }
 
@@ -86,6 +109,7 @@ public class AddRecordActivity extends BaseObserverActivity {
     protected void findView() {
         mTitleEt=(EditText) findViewById(R.id.record_title_et);
         mContentEt=(EditText) findViewById(R.id.record_content_et);
+        mContentRlv = (RecordListView) findViewById(R.id.record_content_rlv);
         mLabelLsl =(LabelsLayout) findViewById(R.id.label_lsl);
         mUpdateTimeTv = (TextView) findViewById(R.id.record_update_time_tv);
     }
@@ -93,9 +117,8 @@ public class AddRecordActivity extends BaseObserverActivity {
     @Override
     protected void initView() {
         setToolBarTitle("添加记事");
-        ResUtil.setRobotoSlabTypeface(mTitleEt,ResUtil.ROBOTOSLAB_BOLD);
-        ResUtil.setRobotoSlabTypeface(mContentEt,ResUtil.ROBOTOSLAB_LIGHR);
-        ResUtil.setRobotoSlabTypeface(mUpdateTimeTv,ResUtil.ROBOTOSLAB_LIGHR);
+        mTitleEt.setTypeface(AppContext.getRobotoSlabLight());
+        mUpdateTimeTv.setTypeface(AppContext.getRobotoSlabLight());
     }
 
     @Override
@@ -168,9 +191,9 @@ public class AddRecordActivity extends BaseObserverActivity {
      * 保存或者更新数据
      */
     private void saveOrUpdateRecordToDb(){
-        String title=mTitleEt.getText().toString();
-        String content=mContentEt.getText().toString();
-        String labelNames=getCurrentLabel();
+        String title = mTitleEt.getText().toString();
+        String content = getContentText();
+        String labelNames = getCurrentLabel();
         if(mStartRecord!=null && mStartRecord.getTitle().equals(title)
                 && mStartRecord.getContent().equals(content)
                 && mStartRecord.getLabelNames().equals(labelNames)){
@@ -189,15 +212,33 @@ public class AddRecordActivity extends BaseObserverActivity {
             record.setUpdateTime(String.valueOf(Calendar.getInstance().getTimeInMillis()));
             record.setAlarmTime(String.valueOf(Calendar.getInstance().getTimeInMillis()));
             record.setUserId(LoginHelper.getCurrentUserId());
-            if(mMode.equals(StatusMode.RECORD_ADD_MODE)){
+            record.setRecordType(mAddRecordType);
+            if(mMode.equals(StatusMode.ADD_RECORD_MODE)){
                 saveRecordTask(record);
-            }else if(mMode.equals(StatusMode.RECORD_EDIT_MODE)){
+            }else if(mMode.equals(StatusMode.EDIT_RECORD_MODE)){
                 record.setId(mEditRecordModel.getId());
                 updateRecordTask(record);
             }
         }
+    }
 
+    private String getContentText(){
+        if(mAddRecordType == RecordModel.RECORD_TYPE_NORMAL){
+            return mContentEt.getText().toString();
+        }else if(mAddRecordType == RecordModel.RECORD_TYPE_LIST){
+            return mContentRlv.getFormatText();
+        }
+        return "";
+    }
 
+    private void initContentText(){
+        if(mAddRecordType == RecordModel.RECORD_TYPE_NORMAL){
+            mTitleEt.setText("");
+            mContentEt.setText("");
+        }else if(mAddRecordType == RecordModel.RECORD_TYPE_LIST){
+            mTitleEt.setText("");
+            mContentRlv.initList();
+        }
     }
 
     private void goAddLabelActivity(){
@@ -217,6 +258,8 @@ public class AddRecordActivity extends BaseObserverActivity {
         return null;
     }
 
+
+
     private void saveRecordTask(final RecordModel record){
         final String labelName = record.getLabelNames();
         new SaveSingleDbTask(mContext,rc,false){
@@ -224,8 +267,7 @@ public class AddRecordActivity extends BaseObserverActivity {
             public void savePostExecute(Boolean aBoolean) {
                 if(aBoolean){
                     notifyRecordChange(labelName);
-                    mTitleEt.setText("");
-                    mContentEt.setText("");
+                    initContentText();
                     AddRecordActivity.this.finish();
                 }
             }
@@ -240,7 +282,7 @@ public class AddRecordActivity extends BaseObserverActivity {
                 if(aBoolean){
                     notifyRecordChange(labelName);
                     mTitleEt.setText("");
-                    mContentEt.setText("");
+                    initContentText();
                     AddRecordActivity.this.finish();
                 }
             }

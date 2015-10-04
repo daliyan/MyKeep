@@ -2,15 +2,14 @@ package akiyama.mykeep.view;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
+import akiyama.mykeep.AppContext;
 import akiyama.mykeep.R;
 import akiyama.mykeep.common.DbConfig;
 import akiyama.mykeep.util.DimUtil;
-import akiyama.mykeep.util.ResUtil;
 
 /**
  * 标签组
@@ -21,7 +20,7 @@ import akiyama.mykeep.util.ResUtil;
 public class LabelsLayout extends LinearLayout {
 
     private Context mContext;
-    private String mLabelStr="";
+    private StringBuffer mLabelStr= new StringBuffer("");
     private int mLabelPadding = (int) DimUtil.dipToPx(4);
     public LabelsLayout(Context context) {
         super(context);
@@ -53,20 +52,20 @@ public class LabelsLayout extends LinearLayout {
             LinearLayout.LayoutParams params =new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
             params.setMargins(mLabelPadding,mLabelPadding,mLabelPadding,mLabelPadding);
             labelTv.setLayoutParams(params);
-            labelTv.setPadding(mLabelPadding,mLabelPadding,mLabelPadding,mLabelPadding);
+            labelTv.setPadding(mLabelPadding, mLabelPadding, mLabelPadding, mLabelPadding);
             labelTv.setBackgroundResource(R.drawable.corners_bg);
-            ResUtil.setRobotoSlabTypeface(labelTv, ResUtil.ROBOTOSLAB_LIGHR);
+            labelTv.setTypeface(AppContext.getRobotoSlabLight());
             this.addView(labelTv);
-            mLabelStr += labelName + DbConfig.LABEL_SPLIT_SYMBOL;
+            mLabelStr.append(labelName + DbConfig.SPLIT_SYMBOL) ;
         }
     }
 
     public String getLabelTextStr(){
-        return mLabelStr;
+        return mLabelStr.toString();
     }
 
     public void initLabelText(){
-        mLabelStr="";
+        mLabelStr= new StringBuffer("");
     }
 
     /**

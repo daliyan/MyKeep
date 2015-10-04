@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import akiyama.mykeep.common.DbConfig;
 import akiyama.mykeep.util.DataProviderHelper;
 
 /**
@@ -21,13 +22,16 @@ public class RecordModel extends BaseModel{
     public static final String IMPORTANT="important";
     public static final String VERY_IMPORTANT="very_important";
 
+    public static final int RECORD_TYPE_NORMAL = 0;
+    public static final int RECORD_TYPE_LIST = 1;
+
     private String title;
     private String content;
     private String alarmTime;
     private String level;
     private String userId;
     private String labelNames;//里面有多条label记录，使用","隔开
-
+    private int recordType;//记事类型
     public RecordModel(){
 
     }
@@ -40,6 +44,7 @@ public class RecordModel extends BaseModel{
         level=in.readString();
         userId=in.readString();
         labelNames =in.readString();
+        recordType = in.readInt();
     }
 
     @Override
@@ -51,6 +56,7 @@ public class RecordModel extends BaseModel{
         cv.put(RecordColumns.LEVEL,level);
         cv.put(RecordColumns.USERID,userId);
         cv.put(RecordColumns.LABELNAMES, labelNames);
+        cv.put(RecordColumns.RECORDTYPE, recordType);
         return cv;
     }
 
@@ -79,6 +85,7 @@ public class RecordModel extends BaseModel{
         recordModel.updateTime=DataProviderHelper.parseString(cursor,BaseColumns.UPDATEAT);
         recordModel.userId=DataProviderHelper.parseString(cursor,RecordColumns.USERID);
         recordModel.labelNames =DataProviderHelper.parseString(cursor,RecordColumns.LABELNAMES);
+        recordModel.recordType =DataProviderHelper.parseInt(cursor, RecordColumns.RECORDTYPE);
         return recordModel;
     }
 
@@ -96,6 +103,7 @@ public class RecordModel extends BaseModel{
         dest.writeString(level);
         dest.writeString(userId);
         dest.writeString(labelNames);
+        dest.writeInt(recordType);
     }
 
     public static final Parcelable.Creator<RecordModel> CREATOR = new Creator(){
@@ -158,5 +166,13 @@ public class RecordModel extends BaseModel{
 
     public String getLabelNames() {
         return labelNames;
+    }
+
+    public int getRecordType() {
+        return recordType;
+    }
+
+    public void setRecordType(int recordType) {
+        this.recordType = recordType;
     }
 }

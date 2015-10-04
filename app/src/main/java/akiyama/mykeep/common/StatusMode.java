@@ -7,6 +7,6 @@ package akiyama.mykeep.common;
  * @since 2015-08-27  16:24
  */
 public class StatusMode {
-    public static final String RECORD_EDIT_MODE="record_edit_mode";//记录编辑模式
-    public static final String RECORD_ADD_MODE="record_add_mode";//记录添加模式
+    public static final String EDIT_RECORD_MODE ="record_edit_mode";//记录编辑模式
+    public static final String ADD_RECORD_MODE ="record_add_mode";//记录添加模式
 }
