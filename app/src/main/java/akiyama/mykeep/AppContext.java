@@ -58,7 +58,7 @@ public class AppContext extends Application{
         this.mInstance=this;
         AVOSCloud.initialize(this,"0t6l98r6429fu5z6pde2f6zn9r8ykm5itbrmuxzormpuifva",
                 "1aw548nzzzhxetq0b8yxgbdjpatr9pvj8m8zttebl1z2t73l");
-       //LeakCanary.install(this);
+       LeakCanary.install(this);
     }
 
     private void initAppInfo(){

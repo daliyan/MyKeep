@@ -92,7 +92,6 @@ public class RecordListView extends LinearLayout implements View.OnClickListener
         //给当前添加的View设置一个TAG，便于后面删除的时候移除
         itemView.setTag(cancelIv.hashCode());
         checkBox.setTag(cancelIv.hashCode());
-        LogUtil.d(""+cancelIv.hashCode());
         contentEt.setTag(TAG_NOTICK_CONTENT);
         mNoTickLl.addView(itemView);
         contentEt.requestFocus();
@@ -119,7 +118,6 @@ public class RecordListView extends LinearLayout implements View.OnClickListener
         //给当前添加的View设置一个TAG，便于后面删除的时候移除,使用cancelIv.hashCode()来标识唯一的一个TAG
         itemView.setTag(cancelIv.hashCode());
         checkBox.setTag(cancelIv.hashCode());
-        LogUtil.d(""+cancelIv.hashCode());
         contentTv.setTag(TAG_TICK_CONTENT);
         mTickLl.addView(itemView);
     }

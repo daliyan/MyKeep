@@ -6,59 +6,71 @@
     android:layout_height="match_parent"
     android:background="@color/white">
 
-    <include layout="@layout/layout_toolbar"/>
+    <include layout="@layout/layout_toolbar" />
 
-    <EditText
-        android:id="@+id/record_title_et"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="15dip"
-        android:background="@color/trans"
-        android:maxLines="1"
-        android:textSize="20sp"
-        android:textColor="@color/black"
-        android:textStyle="bold"
-        android:hint="@string/record_title"/>
+        android:layout_height="match_parent"
+        android:scrollbars="none">
 
-    <EditText
-        android:id="@+id/record_content_et"
-        android:layout_width="match_parent"
-        android:layout_height="0dip"
-        android:layout_weight="1"
-        android:layout_margin="15dip"
-        android:background="#00000000"
-        android:text=""
-        android:textColor="@color/black"
-        android:gravity="top"
-        android:textSize="16sp"
-        android:lineSpacingExtra="2dip"
-        android:hint="@string/record_content"
-        android:visibility="visible"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-    <akiyama.mykeep.view.RecordListView
-        android:id="@+id/record_content_rlv"
-        android:layout_width="match_parent"
-        android:layout_height="0dip"
-        android:layout_weight="1"
-        android:layout_margin="15dip"
-        android:visibility="visible"/>
+            <EditText
+                android:id="@+id/record_title_et"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dip"
+                android:background="@color/trans"
+                android:maxLines="1"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:hint="@string/record_title" />
 
-    <akiyama.mykeep.view.LabelsLayout
-        android:id="@+id/label_lsl"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="10dip"
-        android:layout_gravity="right"
-        android:gravity="right"/>
+            <EditText
+                android:id="@+id/record_content_et"
+                android:layout_width="match_parent"
+                android:layout_height="0dip"
+                android:layout_weight="1"
+                android:layout_margin="15dip"
+                android:background="#00000000"
+                android:text=""
+                android:textColor="@color/black"
+                android:gravity="top"
+                android:textSize="16sp"
+                android:lineSpacingExtra="2dip"
+                android:hint="@string/record_content"
+                android:visibility="visible" />
 
-    <TextView
-        android:id="@+id/record_update_time_tv"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/grey"
-        android:paddingBottom="10dip"
-        android:paddingLeft="10dip"
-        android:paddingRight="10dip"
-        android:gravity="right"/>
+            <akiyama.mykeep.view.RecordListView
+                android:id="@+id/record_content_rlv"
+                android:layout_width="match_parent"
+                android:layout_height="0dip"
+                android:layout_weight="1"
+                android:layout_margin="15dip"
+                android:visibility="visible" />
 
+            <akiyama.mykeep.view.LabelsLayout
+                android:id="@+id/label_lsl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dip"
+                android:layout_gravity="right"
+                android:gravity="right" />
+
+            <TextView
+                android:id="@+id/record_update_time_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/grey"
+                android:paddingBottom="10dip"
+                android:paddingLeft="10dip"
+                android:paddingRight="10dip"
+                android:gravity="right" />
+        </LinearLayout>
+
+    </ScrollView>
 </LinearLayout>

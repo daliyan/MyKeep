@@ -74,4 +74,11 @@ public class KeepNotifyCenterHelper {
     public void notifyLabelChange(){
         notifyObserver(new NotifyInfo(EventType.EVENT_CHANGE_LABEL));
     }
+
+    /**
+     * 标签记录发生改变
+     */
+    public void notifySwitchView(){
+        notifyObserver(new NotifyInfo(EventType.EVENT_SWITCH_VIEW));
+    }
 }

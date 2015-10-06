@@ -2,8 +2,11 @@ package akiyama.mykeep.widget;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -22,6 +25,7 @@ import akiyama.mykeep.db.model.BaseModel;
 import akiyama.mykeep.db.model.RecordModel;
 import akiyama.mykeep.event.EventType;
 import akiyama.mykeep.event.NotifyInfo;
+import akiyama.mykeep.preferences.KeepPreferenceUtil;
 import akiyama.mykeep.task.QueryByUserDbTask;
 import akiyama.mykeep.task.QueryRecordByLabelTask;
 import akiyama.mykeep.util.LogUtil;
@@ -44,7 +48,8 @@ public class RecordByLabelFragment extends BaseObserverFragment {
     private RecyclerView mRecyclerView;
     private RecyclerAdapter mAdapter;
     private List<RecordModel> mRecordModels;
-    private RecyclerView.LayoutManager mLayoutManager;
+    private StaggeredGridLayoutManager mLayoutManager;
+    private int mSpanCount = 1;
     private String mLabelName="";
     private Context mContext;
     private RecordController rc=new RecordController();
@@ -59,17 +64,20 @@ public class RecordByLabelFragment extends BaseObserverFragment {
         mRecyclerView = (RecyclerView) view.findViewById(R.id.record_rv);
         mEmptyView = view.findViewById(R.id.empty_include);
         mEmptyIv = (ImageView) mEmptyView.findViewById(R.id.empty_iv);
-        mLayoutManager = new LinearLayoutManager(mContext);
     }
 
     @Override
     public void initView() {
+        mSpanCount = KeepPreferenceUtil.getInstance(mContext).getShowViewCount();
         mRecordModels =new ArrayList<>();
+        mLabelName = getArguments().getString(KEY_LABEL_NAME);//获取需要加载的标签分类名称
+        mAdapter = new RecyclerAdapter(mRecordModels);
+
+        mLayoutManager = new StaggeredGridLayoutManager(mSpanCount,StaggeredGridLayoutManager.VERTICAL);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new RecyclerAdapter(mRecordModels);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(mAdapter);
-        mLabelName = getArguments().getString(KEY_LABEL_NAME);//获取需要加载的标签分类名称
     }
 
     @Override
@@ -95,6 +103,38 @@ public class RecordByLabelFragment extends BaseObserverFragment {
     @Override
     public void onClick(View v) {
 
+    }
+
+    @Override
+    protected void onChange(NotifyInfo notifyInfo) {
+        String eventType = notifyInfo.getEventType();
+        if(eventType.equals(EventType.EVENT_LOGIN)){
+            queryRecordByLabel(false);
+        }else if(eventType.equals(EventType.EVENT_LOGINOUT)){
+            mRecordModels.clear();
+            mAdapter.refreshDate(mRecordModels);
+        }else if(eventType.equals(EventType.EVENT_REFRESH_RECORD)){
+            String labels = notifyInfo.getBundleString(Constants.KEY_LABEL_NAMES);
+            String[] labelNames = StringUtil.subStringBySymbol(labels, DbConfig.SPLIT_SYMBOL);
+            if(mLabelName!=null){
+                //“全部”标签组或者需要刷新的标签组刷新数据
+                if(StringUtil.isContains(labelNames,mLabelName) || mLabelName.equals(mContext.getString(R.string.all_label))){
+                    queryRecordByLabel(false);
+                }
+            }
+        }else if(eventType.equals(EventType.EVENT_SWITCH_VIEW)){
+            refreshViewSpanCount();
+        }
+    }
+
+    @Override
+    protected String[] getObserverEventType() {
+        return new String[]{
+                EventType.EVENT_LOGIN,
+                EventType.EVENT_LOGINOUT,
+                EventType.EVENT_REFRESH_RECORD,
+                EventType.EVENT_SWITCH_VIEW
+        };
     }
 
     /**
@@ -132,7 +172,6 @@ public class RecordByLabelFragment extends BaseObserverFragment {
                     //设置空状态下的视图
                     if(models.size() >0){
                         mEmptyView.setVisibility(View.GONE);
-
                     }else{
                         mEmptyView.setVisibility(View.VISIBLE);
                     }
@@ -163,36 +202,12 @@ public class RecordByLabelFragment extends BaseObserverFragment {
         }.execute(LoginHelper.getCurrentUserId());
     }
 
-    @Override
-    protected void onChange(NotifyInfo notifyInfo) {
-        String eventType = notifyInfo.getEventType();
-        if(eventType.equals(EventType.EVENT_LOGIN)){
-            queryRecordByLabel(false);
-        }else if(eventType.equals(EventType.EVENT_LOGINOUT)){
-            mRecordModels.clear();
-            mAdapter.refreshDate(mRecordModels);
-        }else if(eventType.equals(EventType.EVENT_REFRESH_RECORD)){
-            String labels = notifyInfo.getBundleString(Constants.KEY_LABEL_NAMES);
-            String[] labelNames = StringUtil.subStringBySymbol(labels, DbConfig.SPLIT_SYMBOL);
-            if(mLabelName!=null){
-                //“全部”标签组或者需要刷新的标签组刷新数据
-                if(StringUtil.isContains(labelNames,mLabelName) || mLabelName.equals(mContext.getString(R.string.all_label))){
-                    queryRecordByLabel(false);
-                }
-            }
-        }
-    }
 
-    @Override
-    protected String[] getObserverEventType() {
-        return new String[]{
-                EventType.EVENT_LOGIN,
-                EventType.EVENT_LOGINOUT,
-                EventType.EVENT_REFRESH_RECORD
-        };
-    }
-
-    public String getLabelName() {
-        return mLabelName;
+    /**
+     * 切换记事本视图显示
+     */
+    private void refreshViewSpanCount(){
+        mLayoutManager.setSpanCount(KeepPreferenceUtil.getInstance(mContext).getShowViewCount());
+        mAdapter.refreshDate(mRecordModels);
     }
 }
