@@ -27,6 +27,7 @@
             android:screenOrientation="portrait"/>
 
         <activity android:name="akiyama.mykeep.widget.AddRecordActivity"
+            android:theme="@style/Theme.AppTheme.Record"
             android:screenOrientation="portrait"/>
 
         <activity android:name=".widget.AddLabelActivity"

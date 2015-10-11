@@ -1,34 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.MyTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="Theme.AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/main_bg</item>
         <item name="colorPrimaryDark">@color/primary_material_light</item>
         <item name="android:textColorPrimary">@android:color/white</item>
-        <item name="actionMenuTextColor">@color/white</item>
+        <item name="drawerArrowStyle">@style/AppTheme.DrawerArrowToggle</item>
+        <item name="android:textColorSecondary">@color/white</item>
     </style>
 
-    <style name="MyActionBarTitleText" parent="Base.TextAppearance.AppCompat">
-        <item name="android:textColor">#ffffff</item>
-    </style>
-
-    <style name="Theme.AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="Theme.AppTheme.Record" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/main_bg</item>
         <item name="colorPrimaryDark">@color/primary_material_light</item>
         <item name="android:textColorPrimary">@android:color/white</item>
         <item name="drawerArrowStyle">@style/AppTheme.DrawerArrowToggle</item>
     </style>
 
+    <style name="MyActionBarTitleText" parent="Base.TextAppearance.AppCompat">
+        <item name="android:textColor">#ffffff</item>
+    </style>
+
     <style name="AppTheme.DrawerArrowToggle" parent="Base.Widget.AppCompat.DrawerArrowToggle">
         <item name="color">@android:color/white</item>
     </style>
 
-    <style name="AppTheme.ToolbarStyle" parent="Base.Widget.AppCompat.Toolbar">
-        <item name="actionOverflowButtonStyle">@style/AppTheme.OverflowButtonStyle</item>
-    </style>
-
-    <style name="AppTheme.OverflowButtonStyle" parent="Widget.AppCompat.Light.ActionButton.Overflow">
-        <item name="android:src">@drawable/ic_more_vert_white_36dp</item>
+    <style name="Theme.AlertDialog" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:windowBackground">@drawable/pick_dialog_bg</item>
     </style>
 
 </resources>

@@ -15,8 +15,7 @@
     <CheckBox
         android:id="@+id/no_tick_select_cb"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="5dip"/>
+        android:layout_height="wrap_content"/>
 
     <EditText
         android:id="@+id/no_tick_content_message_et"

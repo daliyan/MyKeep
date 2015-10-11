@@ -19,5 +19,6 @@
         android:textColor="@color/grey"
         android:textSize="15sp"
         android:paddingTop="10dip"
-        android:text="该标签下没有任何记录^_^,点击右下角按钮添加记录"/>
+        android:lineSpacingExtra="2dip"
+        android:text="点击右下角按钮添加记录"/>
 </LinearLayout>

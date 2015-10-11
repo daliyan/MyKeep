@@ -1,9 +1,5 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.MyTheme">
-    </style>
-
     <style name="LabelEditorIcon">
         <item name="android:layout_gravity">center|left|top</item>
         <item name="android:paddingTop">12.0dip</item>
