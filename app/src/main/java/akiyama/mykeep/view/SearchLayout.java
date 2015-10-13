@@ -1,6 +1,7 @@
 package akiyama.mykeep.view;
 
 import android.content.Context;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -10,8 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
 
@@ -28,7 +27,7 @@ public class SearchLayout extends LinearLayout{
     private static final String TAG="SearchView";
     private Context mContext;
     private EditText mEditTextEt;
-    private SwipeRecyclerView mListViewLv;
+    private SwipeRecyclerView mSwipeSrv;
     private View mView;
     private RecyclerView.Adapter mAdpter=null;
     private LinearLayout mCreatLl;
@@ -54,12 +53,12 @@ public class SearchLayout extends LinearLayout{
         mContext = context;
         mView = LayoutInflater.from(context).inflate(R.layout.layout_search_view, this);
         mEditTextEt = (EditText) mView.findViewById(R.id.search_content_et);
-        mListViewLv = (SwipeRecyclerView) mView.findViewById(R.id.search_result_lv);
+        mSwipeSrv = (SwipeRecyclerView) mView.findViewById(R.id.search_result_lv);
         mCreatLl =(LinearLayout) mView.findViewById(R.id.add_label_vs);
         mCreatLabelTitleTv = (TextView) mView.findViewById(R.id.creat_label_tv);
         mLayoutManager = new LinearLayoutManager(mContext);
         if(mAdpter!=null){
-            mListViewLv.setAdapter(mAdpter);
+            mSwipeSrv.setAdapter(mAdpter);
         }
 
         mCreatLl.setOnClickListener(new OnClickListener() {
@@ -77,12 +76,13 @@ public class SearchLayout extends LinearLayout{
         mEditTextEt.addTextChangedListener(textWatcher);
     }
 
-    public void setmAdpter(RecyclerView.Adapter adapter){
+    public void setAdpter(RecyclerView.Adapter adapter){
         this.mAdpter=adapter;
         if(mAdpter!=null){
-            mListViewLv.setHasFixedSize(true);
-            mListViewLv.setLayoutManager(mLayoutManager);
-            mListViewLv.setAdapter(mAdpter);
+            mSwipeSrv.setHasFixedSize(true);
+            mSwipeSrv.setItemAnimator(new DefaultItemAnimator());
+            mSwipeSrv.setLayoutManager(mLayoutManager);
+            mSwipeSrv.setAdapter(mAdpter);
         }
     }
 

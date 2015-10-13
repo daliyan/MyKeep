@@ -10,6 +10,7 @@
         android:id="@+id/cardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:cardUseCompatPadding="true"
         app:cardCornerRadius="5dp"
         app:cardElevation="5dp">
 

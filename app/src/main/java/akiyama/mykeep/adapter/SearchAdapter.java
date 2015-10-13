@@ -31,11 +31,11 @@ public class SearchAdapter extends RecyclerViewAdapter<SearchAdapter.ViewHolder>
 
     private static final int EDIT_LABEL=0;
     private static final int DELETE_LABEL=1;
-    private List<SearchVo> mSearchVoList;
-    private List<SearchVo> mSearchFilterList=new ArrayList<>();
+    private ArrayList<SearchVo> mSearchVoList;
+    private ArrayList<SearchVo> mSearchFilterList = new ArrayList<>();
     private Context mContext;
 
-    public SearchAdapter(Context context,List<SearchVo> searchVoList){
+    public SearchAdapter(Context context,ArrayList<SearchVo> searchVoList){
         this.mContext=context;
         this.mSearchVoList=searchVoList;
         this.mSearchFilterList=searchVoList;
@@ -89,8 +89,6 @@ public class SearchAdapter extends RecyclerViewAdapter<SearchAdapter.ViewHolder>
             holder.mTitleTv.setText(mSearchVoList.get(position).getName());
             holder.mSelectLabelCb.setChecked(mSearchVoList.get(position).getIsCheck());
         }
-        holder.mSelectLabelCb.setClickable(false);
-
         /**
          * 设置单击事件，需要用自定义的单击事件来实现，否则由于滑动冲突会导致单击失效
          */
@@ -118,8 +116,8 @@ public class SearchAdapter extends RecyclerViewAdapter<SearchAdapter.ViewHolder>
                         //直接在主线程中删除
                         boolean isDelete=labelController.deleteLabelByName(mContext,mSearchVoList.get(position).getName());
                         if(isDelete){
+                            notifyItemRemoved(position);
                             mSearchVoList.remove(mSearchVoList.get(position));
-                            notifyDataSetChanged();
                             KeepNotifyCenterHelper.getInstance().notifyLabelChange();
                         }else {
                             Toast.makeText(mContext,"删除失败，请重试！",Toast.LENGTH_SHORT).show();
@@ -137,16 +135,16 @@ public class SearchAdapter extends RecyclerViewAdapter<SearchAdapter.ViewHolder>
         return mSearchVoList.size();
     }
 
-    public void refreshDate(List<SearchVo> searchVoList){
+    public void refreshDate(ArrayList<SearchVo> searchVoList){
         this.mSearchVoList=searchVoList;
         notifyDataSetChanged();
     }
 
-    public List<SearchVo> getFinalSearchDate(){
+    public ArrayList<SearchVo> getFinalSearchDate(){
         return mSearchFilterList;
     }
 
-    public List<SearchVo> getSearchVoList() {
+    public ArrayList<SearchVo> getSearchVoList() {
         return mSearchVoList;
     }
 

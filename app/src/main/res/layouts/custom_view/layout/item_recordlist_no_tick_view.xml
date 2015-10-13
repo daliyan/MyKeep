@@ -15,27 +15,25 @@
     <CheckBox
         android:id="@+id/no_tick_select_cb"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"/>
 
     <EditText
         android:id="@+id/no_tick_content_message_et"
         android:layout_width="0dip"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:layout_margin="5dip"
         android:background="#00000000"
-        android:text=""
+        android:layout_margin="5dip"
         android:textColor="@color/black"
         android:gravity="top"
         android:textSize="16sp"
-        android:lineSpacingExtra="2dip"
         android:hint="@string/record_list_hint"/>
 
     <ImageView
         android:id="@+id/no_tick_cancel_iv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_cancel_black_24dp"
+        android:src="@drawable/ic_material_delete_dark"
         android:padding="5dip"/>
 
 </LinearLayout>

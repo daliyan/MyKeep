@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white_normal">
+
+
+    <akiyama.mykeep.view.calendar.DayPickerView
+        android:id="@+id/pickerView"
+        android:layout_width="match_parent"
+        android:layout_height="180dip"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.3dip"
+        android:background="#000000"
+        android:layout_marginTop="15dip"
+        android:layout_marginLeft="10dip"
+        android:layout_marginRight="10dip"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/ic_event"
+        android:drawablePadding="5dip"
+        android:text="提醒今天，16：48"
+        android:layout_margin="15dip"
+        style="@style/TextNormal"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.3dip"
+        android:background="#000000"
+        android:layout_marginLeft="10dip"
+        android:layout_marginRight="10dip"/>
+
+</LinearLayout>

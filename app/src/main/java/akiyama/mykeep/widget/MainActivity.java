@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,14 +37,22 @@ import akiyama.mykeep.db.model.RecordModel;
 import akiyama.mykeep.event.NotifyInfo;
 import akiyama.mykeep.event.EventType;
 import akiyama.mykeep.event.helper.KeepNotifyCenterHelper;
+import akiyama.mykeep.preferences.KeepPreferenceUtil;
 import akiyama.mykeep.task.QueryByUserDbTask;
 import akiyama.mykeep.util.LoginHelper;
 
 
 public class MainActivity extends BaseObserverActivity implements View.OnClickListener{
     private static final String TAG="MainActivity";
-
     private String mMenuMode=StatusMode.MENU_NORMAL;
+    /**
+     * 单行视图
+     */
+    private static final int SINGLE_VIEW=1;
+    /**
+     * 多行视图
+     */
+    private static final int MANY_VIEW=2;
     private DrawerLayout mDrawerDl;//侧滑菜单布局控件
     private ActionBarDrawerToggle mDrawerToggle;
 
@@ -68,6 +77,7 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
     private ImageView mSyncIv;
     private ImageView mHelpIv;
     private TextView mUserNameTv;
+    private LinearLayout mLoginLl;
 
     private FloatingActionsMenu mAddRecordMenuFam;//记事菜单
     private FloatingActionButton mAddNormalRecordFab;//增加普通计事
@@ -116,6 +126,7 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         mHelpIv=(ImageView) mHelpView.findViewById(R.id.title_iv);
 
         mUserNameTv =(TextView) findViewById(R.id.username_tv);
+        mLoginLl = (LinearLayout) findViewById(R.id.login_ll);
 
         mRecordVp = (ViewPager) findViewById(R.id.content_vp);
         mTabLy = (TabLayout) findViewById(R.id.pager_strip_tsv);
@@ -145,13 +156,14 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
 
     @Override
     protected void setOnClick(){
+        mLoginLl.setOnClickListener(this);
         mRecordView.setOnClickListener(this);
         mRecycleView.setOnClickListener(this);
         mSettingView.setOnClickListener(this);
         mFiledView.setOnClickListener(this);
         mAddListRecordFab.setOnClickListener(this);
         mAddNormalRecordFab.setOnClickListener(this);
-        mAddRecordMenuFam.setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu.OnFloatingActionsMenuUpdateListener() {
+      /*  mAddRecordMenuFam.setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu.OnFloatingActionsMenuUpdateListener() {
             @Override
             public void onMenuExpanded() {
 
@@ -161,82 +173,30 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
             public void onMenuCollapsed() {
 
             }
-        });
+        });*/
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if(StatusMode.MENU_EDIT.equals(mMenuMode)){
-            setEditMenu(menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        MenuItem login=menu.findItem(R.id.action_login);
+        MenuItem switchView = menu.findItem(R.id.action_switch_view);
+        AVUser avUser=LoginHelper.getCurrentUser();
+
+        if(avUser!=null){
+            login.setTitle(getResources().getString(R.string.loginOut));
         }else{
-            setNormalMenu(menu);
+            login.setTitle(getResources().getString(R.string.action_login));
         }
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        switch (id){
-            case R.id.action_login:
-                if(LoginHelper.isLogin()){
-                    AVUser.logOut();//清除当前缓存的数据
-                    KeepNotifyCenterHelper.getInstance().notifyLoginout();//通知注销登录信息
-                    Toast.makeText(this, "注销成功！", Toast.LENGTH_LONG).show();
-                }else{
-                    goLogin();
-                }
-                break;
-            case R.id.action_add:
-                //goAddRcord(StatusMode.ADD_RECORD_MODE,StatusMode.);
-                break;
-            default:
-                break;
+        if(isSingleView()){
+            switchView.setTitle(getResources().getString(R.string.many_view));
+        }else {
+            switchView.setTitle(getResources().getString(R.string.single_view));
         }
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
-
-
-    @Override
-    public void onClick(View v) {
-        int id=v.getId();
-        switch (id){
-            case R.id.item_menu_1:
-                mRecordView.setBackgroundResource(R.color.light_gray);
-                mFiledView.setBackgroundResource(R.color.white);
-                mRecycleView.setBackgroundResource(R.color.white);
-                mSettingView.setBackgroundResource(R.color.white);
-                break;
-            case R.id.item_menu_2:
-                mRecordView.setBackgroundResource(R.color.white);
-                mFiledView.setBackgroundResource(R.color.light_gray);
-                mRecycleView.setBackgroundResource(R.color.white);
-                mSettingView.setBackgroundResource(R.color.white);
-                break;
-            case R.id.item_menu_3:
-                mRecordView.setBackgroundResource(R.color.white);
-                mFiledView.setBackgroundResource(R.color.white);
-                mRecycleView.setBackgroundResource(R.color.light_gray);
-                mSettingView.setBackgroundResource(R.color.white);
-                break;
-            case R.id.item_menu_4:
-                mRecordView.setBackgroundResource(R.color.white);
-                mFiledView.setBackgroundResource(R.color.white);
-                mRecycleView.setBackgroundResource(R.color.white);
-                mSettingView.setBackgroundResource(R.color.light_gray);
-                break;
-            case R.id.add_normal_record_fab:
-                goAddRcord(StatusMode.ADD_RECORD_MODE,RecordModel.RECORD_TYPE_NORMAL);
-                break;
-            case R.id.add_list_record_fab:
-                goAddRcord(StatusMode.ADD_RECORD_MODE,RecordModel.RECORD_TYPE_LIST);
-                break;
-            default:
-                break;
-        }
-    }
-
 
     @Override
     protected void onChange(NotifyInfo notifyInfo) {
@@ -325,7 +285,9 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
     private void setNormalMenu(Menu menu){
         getMenuInflater().inflate(R.menu.menu_main, menu);
         MenuItem login=menu.findItem(R.id.action_login);
+        MenuItem switchView = menu.findItem(R.id.action_switch_view);
         AVUser avUser=LoginHelper.getCurrentUser();
+
         if(avUser!=null){
             login.setTitle(getResources().getString(R.string.loginOut));
         }else{
@@ -333,12 +295,86 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         }
     }
 
-    /**
-     * 设置编辑模式下的actionbar menu
-     * @param menu
-     */
-    private void setEditMenu(Menu menu){
-        getMenuInflater().inflate(R.menu.menu_main_edit, menu);
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id){
+            case R.id.action_login:
+                if(LoginHelper.isLogin()){
+                    AVUser.logOut();//清除当前缓存的数据
+                    KeepNotifyCenterHelper.getInstance().notifyLoginout();//通知注销登录信息
+                    Toast.makeText(this, "注销成功！", Toast.LENGTH_LONG).show();
+                }else{
+                    goLogin();
+                }
+                break;
+            case R.id.action_add:
+                break;
+            case R.id.action_switch_view:
+                if(isSingleView()){
+                    KeepPreferenceUtil.getInstance(this).setShowViewCount(MANY_VIEW);
+                } else {
+                    KeepPreferenceUtil.getInstance(this).setShowViewCount(SINGLE_VIEW);
+                }
+                supportInvalidateOptionsMenu();
+                KeepNotifyCenterHelper.getInstance().notifySwitchView();
+                break;
+            default:
+                break;
+        }
+        return true;
+    }
+
+
+    @Override
+    public void onClick(View v) {
+        int id=v.getId();
+        switch (id){
+            case R.id.item_menu_1:
+                mRecordView.setBackgroundResource(R.color.light_gray);
+                mFiledView.setBackgroundResource(R.color.white);
+                mRecycleView.setBackgroundResource(R.color.white);
+                mSettingView.setBackgroundResource(R.color.white);
+                break;
+            case R.id.item_menu_2:
+                mRecordView.setBackgroundResource(R.color.white);
+                mFiledView.setBackgroundResource(R.color.light_gray);
+                mRecycleView.setBackgroundResource(R.color.white);
+                mSettingView.setBackgroundResource(R.color.white);
+                break;
+            case R.id.item_menu_3:
+                mRecordView.setBackgroundResource(R.color.white);
+                mFiledView.setBackgroundResource(R.color.white);
+                mRecycleView.setBackgroundResource(R.color.light_gray);
+                mSettingView.setBackgroundResource(R.color.white);
+                break;
+            case R.id.item_menu_4:
+                mRecordView.setBackgroundResource(R.color.white);
+                mFiledView.setBackgroundResource(R.color.white);
+                mRecycleView.setBackgroundResource(R.color.white);
+                mSettingView.setBackgroundResource(R.color.light_gray);
+                break;
+            case R.id.add_normal_record_fab:
+                goAddRcord(StatusMode.ADD_RECORD_MODE,RecordModel.RECORD_TYPE_NORMAL);
+                break;
+            case R.id.add_list_record_fab:
+                goAddRcord(StatusMode.ADD_RECORD_MODE,RecordModel.RECORD_TYPE_LIST);
+                break;
+            case R.id.login_ll:
+               /* if(LoginHelper.isLogin()){
+                    AVUser.logOut();//清除当前缓存的数据
+                    KeepNotifyCenterHelper.getInstance().notifyLoginout();//通知注销登录信息
+                    Toast.makeText(this, "注销成功！", Toast.LENGTH_LONG).show();
+                }else{
+
+                }*/
+                if(LoginHelper.isLogin()){
+                    goLogin();
+                }
+                break;
+            default:
+                break;
+        }
     }
 
     /**
@@ -378,4 +414,11 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         }.execute(LoginHelper.getCurrentUserId());
     }
 
+
+    private boolean isSingleView(){
+        if(KeepPreferenceUtil.getInstance(this).getShowViewCount()==SINGLE_VIEW){
+            return true;
+        }
+        return false;
+    }
 }

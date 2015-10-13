@@ -52,7 +52,6 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ((ViewGroup) mLayoutView.getParent()).removeView(mLayoutView);
     }
 
     /**

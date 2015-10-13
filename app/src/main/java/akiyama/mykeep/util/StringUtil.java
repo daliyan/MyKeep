@@ -41,6 +41,18 @@ public class StringUtil {
         return false;
     }
 
+    public static boolean notIsEmpty(String... parmaes){
+        int parmaesLenght = parmaes.length;
+        if(parmaesLenght>0){
+            for(String parma:parmaes){
+                if(TextUtils.isEmpty(parma)){
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
 
 
 }

@@ -1,12 +1,7 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.MyTheme">
-    </style>
-
     <style name="LabelEditorIcon">
-        <item name="android:layout_gravity">center|left|top</item>
-        <item name="android:paddingTop">12.0dip</item>
+        <item name="android:layout_gravity">center</item>
         <item name="android:layout_marginLeft">12.0dip</item>
     </style>
 
@@ -25,5 +20,12 @@
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">@color/white</item>
         <item name="textAllCaps">true</item>
+    </style>
+
+    <style name="TextNormal">
+        <item name="android:textSize">16dip</item>
+        <item name="android:textColor">@color/text_normal</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:gravity">left|center_vertical</item>
     </style>
 </resources>

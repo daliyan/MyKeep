@@ -31,7 +31,7 @@
         android:id="@+id/tick_cancel_iv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_cancel_black_24dp"
+        android:src="@drawable/ic_material_delete_dark"
         android:padding="8dip"/>
 
 </LinearLayout>

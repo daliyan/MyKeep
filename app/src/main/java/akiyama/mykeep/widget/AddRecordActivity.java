@@ -1,8 +1,13 @@
 package akiyama.mykeep.widget;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.ContextThemeWrapper;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -165,6 +170,10 @@ public class AddRecordActivity extends BaseObserverActivity {
                 break;
             case R.id.action_delete_record:
                 break;
+            case R.id.action_select_style:
+                //showPickDialog();
+                showDateDialog();
+                break;
         }
         return true;
     }
@@ -307,5 +316,38 @@ public class AddRecordActivity extends BaseObserverActivity {
                 mLabelLsl.addLabel(searchVo.getName());
             }
         }
+    }
+
+
+    private void showPickDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this,R.style.Theme_AlertDialog));
+        builder.setTitle("记事等级");
+        View dialogView = getLayoutInflater().inflate(R.layout.layout_pick_dialog, null);
+        builder.setView(dialogView).setPositiveButton(R.string.signin, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+
+            }
+        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+            }
+        });
+        builder.create().show();
+    }
+
+    private void showDateDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this,R.style.Theme_AlertDialog));
+        builder.setTitle("时间提醒");
+        View dialogView = getLayoutInflater().inflate(R.layout.layout_calendar_time_dialog, null);
+        builder.setView(dialogView).setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+
+            }
+        }).setNegativeButton(R.string.remove, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+            }
+        });
+        builder.create().show();
     }
 }

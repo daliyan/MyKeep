@@ -8,9 +8,10 @@
     <string name="action_login_out">登出</string>
     <string name="action_about">关于</string>
     <string name="search_hint">搜索记事</string>
+    <string name="action_switch_view">切换视图</string>
 
-    <string name="open">左侧菜单</string>
-    <string name="close">我的博客</string>
+    <string name="open">菜单</string>
+    <string name="close">记事本</string>
 
     <string name="item_menu_1">记事</string>
     <string name="item_menu_2">提醒</string>
@@ -29,6 +30,9 @@
     <string name="signin">确定</string>
     <string name="cancel">取消</string>
 
+    <string name="save">保存</string>
+    <string name="remove">移除</string>
+
     <string name="record_title">标题</string>
     <string name="record_content">记事</string>
     <string name="record_list_hint">新增清单项</string>
@@ -42,4 +46,9 @@
     <string name="action_main_edit">编辑</string>
     <string name="action_main_delete">删除</string>
     <string name="action_main_priority">优先级</string>
+    <string name="many_view">多列视图</string>
+    <string name="single_view">单列视图</string>
+
+    <string name="sans_serif" translatable="false">sans-serif</string>
+    <string name="ic_event">M33.06 22.12L30.94 20l-9.76 9.76-4.24-4.24-2.12 2.12L21.18 34l11.88-11.88zM38 6h-2V2h-4v4H16V2h-4v4h-2c-2.21 0-3.98 1.79-3.98 4L6 38c0 2.21 1.79 4 4 4h28c2.21 0 4-1.79 4-4V10c0-2.21-1.79-4-4-4zm0 32H10V16h28v22z</string>
 </resources>

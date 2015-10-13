@@ -23,6 +23,7 @@ import akiyama.mykeep.base.BaseObserverActivity;
 import akiyama.mykeep.controller.LabelController;
 import akiyama.mykeep.db.model.LabelModel;
 import akiyama.mykeep.event.EventType;
+import akiyama.mykeep.util.LogUtil;
 import akiyama.mykeep.util.LoginHelper;
 import akiyama.mykeep.util.StringUtil;
 import akiyama.mykeep.view.SearchLayout;
@@ -41,8 +42,8 @@ public class AddLabelActivity extends BaseObserverActivity implements SearchLayo
     public static final String KEY_EXTRA_SELECTED_LABEL="extra_selected_label";
     private SearchLayout mSearchSly;
     private SearchAdapter mSearchAdapter;
-    private List<SearchVo> mSearchList;
-    private List<SearchVo> mSelectLabels;//已经选定的Label标签
+    private ArrayList<SearchVo> mSearchList;
+    private ArrayList<SearchVo> mSelectLabels;//已经选定的Label标签
     private String mLabels;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +77,7 @@ public class AddLabelActivity extends BaseObserverActivity implements SearchLayo
     protected void setOnClick() {
         mSearchSly.setCreatLabelClickEvent(this);
         mSearchSly.setInputChangeListener(this);
-        mSearchSly.setmAdpter(mSearchAdapter);
+        mSearchSly.setAdpter(mSearchAdapter);
     }
 
     @Override
@@ -130,9 +131,9 @@ public class AddLabelActivity extends BaseObserverActivity implements SearchLayo
     public void onTextChanged(CharSequence s, int start, int before, int count) {
         mSearchSly.setHideCreatLayout();
         if(s.length()==0){
-            mSearchAdapter.refreshDate(mSearchAdapter.getFinalSearchDate());
+            mSearchAdapter.refreshDate(mSearchList);
         }else{
-            List<SearchVo> queryList=queryList(s.toString());
+            ArrayList<SearchVo> queryList=queryList(s.toString());
             mSearchAdapter.refreshDate(queryList);
             if(queryList.size()==0 && !TextUtils.isEmpty(mSearchSly.getSearchText())){
                 mSearchSly.setShowCreatLayout("创建“"+mSearchSly.getSearchText()+"”");
@@ -229,8 +230,8 @@ public class AddLabelActivity extends BaseObserverActivity implements SearchLayo
      * @param name
      * @return
      */
-    private List<SearchVo> queryList(String name){
-        List<SearchVo> searchs=new ArrayList<SearchVo>();
+    private ArrayList<SearchVo> queryList(String name){
+        ArrayList<SearchVo> searchs=new ArrayList<SearchVo>();
         for(int i=0;i<mSearchList.size();i++){
             if(mSearchList.get(i).getName().contains(name)){
                 searchs.add(mSearchList.get(i));

@@ -15,7 +15,7 @@
     <LinearLayout
         android:id="@+id/add_list_item_ll"
         android:layout_width="match_parent"
-        android:layout_height="50dip"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical">
 

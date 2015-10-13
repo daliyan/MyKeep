@@ -1,5 +1,6 @@
 package akiyama.mykeep.adapter;
 
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -86,14 +87,22 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         public TextView mTitleTv;
         public TextView mSubTitleTv;
         public TextView mUpdateTv;
+        public CardView mCardView;
         public ViewHolder(View v) {
             super(v);
             mTitleTv =(TextView) v.findViewById(R.id.title);
             mSubTitleTv =(TextView) v.findViewById(R.id.subtitle);
             mUpdateTv =(TextView) v.findViewById(R.id.update_time_tv);
+            mCardView = (CardView) v.findViewById(R.id.cardView);
         }
     }
 
+    /**
+     * 针对某些高版本系统出现设置cardElevation无效果的BUG
+     */
+    public void setElevation(){
+
+    }
     public void setOnItemClick(OnItemClick mOnItemClick) {
         this.mOnItemClick = mOnItemClick;
     }
