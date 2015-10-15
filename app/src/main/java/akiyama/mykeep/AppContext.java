@@ -43,11 +43,9 @@ public class AppContext extends Application{
     private static Typeface mRobotoSlabRegular = null;
     private static Typeface mRobotoSlabThin = null;
     private static List<Activity> mActivityList = new LinkedList<Activity>();
-    {{
-        MrVector.register(
-                R.drawable.ic_event
-        );
-    }}
+    private static final int[] sDrawables = {
+            R.drawable.ic_event
+    };
 
     @Override
     public void onCreate() {
@@ -61,11 +59,6 @@ public class AppContext extends Application{
     @Override
     public void onTrimMemory(int level) {
         super.onTrimMemory(level);
-    }
-
-    @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(MrVector.wrap(newBase));
     }
 
     private void init(){

@@ -9,6 +9,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 
 import com.readystatesoftware.systembartint.SystemBarTintManager;
@@ -41,10 +42,12 @@ public abstract class BaseActivity extends ActionBarActivity implements View.OnC
     public void setContentView(int layoutResID) {
         super.setContentView(layoutResID);
         mToolbar= (Toolbar) findViewById(R.id.toolbar);
+        ((ViewGroup)findViewById(android.R.id.content)).getChildAt(0).setFitsSystemWindows(true);
         findView();
         initView();
         setOnClick();
         setStatusBarView();
+
     }
 
     /**

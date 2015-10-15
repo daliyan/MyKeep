@@ -11,10 +11,10 @@
 
 
     <path
-        android:fillColor="@color/text_normal"
-        android:pathData="@string/event_ic"
+        android:fillColor="@color/main_bg"
+        android:pathData="@string/ic_mode_edit"
 
-        app:vc_fillColor="@color/text_normal"
-        app:vc_pathData="@string/event_ic" />
+        app:vc_fillColor="@color/main_bg"
+        app:vc_pathData="@string/ic_mode_edit" />
 
 </vector>

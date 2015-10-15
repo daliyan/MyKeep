@@ -28,6 +28,7 @@ import akiyama.mykeep.task.QueryByUserDbTask;
 import akiyama.mykeep.task.QueryRecordByLabelTask;
 import akiyama.mykeep.util.LogUtil;
 import akiyama.mykeep.util.LoginHelper;
+import akiyama.mykeep.util.SvgHelper;
 
 /**
  * 通过标签分类显示记录信息
@@ -62,6 +63,7 @@ public class RecordByLabelFragment extends BaseObserverFragment {
         mRecyclerView = (RecyclerView) view.findViewById(R.id.record_rv);
         mEmptyView = view.findViewById(R.id.empty_include);
         mEmptyIv = (ImageView) mEmptyView.findViewById(R.id.empty_iv);
+        SvgHelper.setImageDrawable(getActivity(),mEmptyIv,R.drawable.ic_event);
         mLayoutManager = new StaggeredGridLayoutManager(mSpanCount, StaggeredGridLayoutManager.VERTICAL);
     }
 
