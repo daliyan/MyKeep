@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,6 +18,7 @@ import akiyama.mykeep.R;
 import akiyama.mykeep.controller.LabelController;
 import akiyama.mykeep.event.helper.KeepNotifyCenterHelper;
 import akiyama.mykeep.util.DimUtil;
+import akiyama.mykeep.util.SvgHelper;
 import akiyama.mykeep.vo.SearchVo;
 import akiyama.swipe.adapter.RecyclerViewAdapter;
 import akiyama.swipe.swipe.SwipeItemLayout;
@@ -88,6 +90,7 @@ public class SearchAdapter extends RecyclerViewAdapter<SearchAdapter.ViewHolder>
         if(mSearchVoList!=null){
             holder.mTitleTv.setText(mSearchVoList.get(position).getName());
             holder.mSelectLabelCb.setChecked(mSearchVoList.get(position).getIsCheck());
+            SvgHelper.setImageDrawable( holder.mNameIconIv,R.raw.ic_label_outline_24px);
         }
         /**
          * 设置单击事件，需要用自定义的单击事件来实现，否则由于滑动冲突会导致单击失效
@@ -151,11 +154,13 @@ public class SearchAdapter extends RecyclerViewAdapter<SearchAdapter.ViewHolder>
    public static class ViewHolder extends RecyclerViewAdapter.ViewHolder {
        public TextView mTitleTv;
        public CheckBox mSelectLabelCb;
+       public ImageView mNameIconIv;
        public View mView;
        public ViewHolder(View v, List<? extends View> menuItems, SwipeItemLayout swipeItemLayout, int layoutId) {
            super(v, menuItems, swipeItemLayout, layoutId);
            this.mView=v;
            mTitleTv =(TextView) v.findViewById(R.id.label_name_tv);
+           mNameIconIv = (ImageView) v.findViewById(R.id.label_icon_iv);
            mSelectLabelCb=(CheckBox) v.findViewById(R.id.select_label_cb);
        }
 

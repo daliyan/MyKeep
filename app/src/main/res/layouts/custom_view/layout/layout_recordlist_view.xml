@@ -20,8 +20,8 @@
         android:gravity="center_vertical">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="24dip"
+            android:layout_height="24dip"
             android:src="@drawable/ic_access_alarms_black_24dp"
             android:padding="15dip"/>
 

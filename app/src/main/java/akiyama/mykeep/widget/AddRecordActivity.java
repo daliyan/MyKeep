@@ -8,19 +8,12 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-
-import com.telly.mrvector.MrVector;
-import com.wnafee.vector.compat.ResourcesCompat;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -42,7 +35,6 @@ import akiyama.mykeep.task.UpdateSingleDbTask;
 import akiyama.mykeep.util.DateUtil;
 import akiyama.mykeep.util.LoginHelper;
 import akiyama.mykeep.util.StringUtil;
-import akiyama.mykeep.util.SvgHelper;
 import akiyama.mykeep.view.LabelsLayout;
 import akiyama.mykeep.view.RecordListView;
 import akiyama.mykeep.vo.SearchVo;
@@ -69,14 +61,19 @@ public class AddRecordActivity extends BaseObserverActivity {
     private RecordModel mEditRecordModel;
     private RecordModel mStartRecord = new RecordModel();//刚刚进入添加记录页面的时候的数据，为了比较数据是否发生改变
     private RecordController rc=new RecordController();
-    private static final int[] sDrawables = {
-            R.drawable.ic_event
-    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_add_record);
         setInitUiByMode();
+    }
+
+    /**
+     * 初始化SVG资源
+     */
+    @Override
+    public void initSvgView() {
+
     }
 
     /**
@@ -349,7 +346,6 @@ public class AddRecordActivity extends BaseObserverActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this,R.style.Theme_AlertDialog));
         builder.setTitle("时间提醒");
         View dialogView = getLayoutInflater().inflate(R.layout.layout_calendar_time_dialog, null);
-        SvgHelper.setImageDrawable(this,R.id.remain_iv,R.drawable.ic_event,dialogView);
         builder.setView(dialogView).setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {

@@ -2,6 +2,7 @@ package akiyama.mykeep.widget;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
@@ -9,6 +10,9 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.widget.ImageView;
 
+
+import com.larvalabs.svgandroid.SVG;
+import com.larvalabs.svgandroid.SVGBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,8 +67,15 @@ public class RecordByLabelFragment extends BaseObserverFragment {
         mRecyclerView = (RecyclerView) view.findViewById(R.id.record_rv);
         mEmptyView = view.findViewById(R.id.empty_include);
         mEmptyIv = (ImageView) mEmptyView.findViewById(R.id.empty_iv);
-        SvgHelper.setImageDrawable(getActivity(),mEmptyIv,R.drawable.ic_event);
         mLayoutManager = new StaggeredGridLayoutManager(mSpanCount, StaggeredGridLayoutManager.VERTICAL);
+    }
+
+    /**
+     * 初始化SVG资源
+     */
+    @Override
+    public void initSvgView() {
+        SvgHelper.setImageDrawable(mEmptyIv,R.raw.ic_mode_edit_48px);
     }
 
     @Override
@@ -81,6 +92,8 @@ public class RecordByLabelFragment extends BaseObserverFragment {
         mAdapter = new RecyclerAdapter(mRecordModels);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(mAdapter);
+
+
     }
 
     @Override

@@ -8,12 +8,9 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.graphics.Typeface;
-import android.os.Build;
 
 import com.avos.avoscloud.AVOSCloud;
-import com.avos.avoscloud.AVObject;
 import com.squareup.leakcanary.LeakCanary;
-import com.telly.mrvector.MrVector;
 
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
@@ -43,10 +40,6 @@ public class AppContext extends Application{
     private static Typeface mRobotoSlabRegular = null;
     private static Typeface mRobotoSlabThin = null;
     private static List<Activity> mActivityList = new LinkedList<Activity>();
-    private static final int[] sDrawables = {
-            R.drawable.ic_event
-    };
-
     @Override
     public void onCreate() {
         super.onCreate();

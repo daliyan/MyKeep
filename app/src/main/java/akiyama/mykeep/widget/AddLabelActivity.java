@@ -51,6 +51,10 @@ public class AddLabelActivity extends BaseObserverActivity implements SearchLayo
         setContentView(R.layout.activity_add_label);
     }
 
+    @Override
+    public void initSvgView() {
+
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

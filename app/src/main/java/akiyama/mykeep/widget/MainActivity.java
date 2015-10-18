@@ -40,6 +40,7 @@ import akiyama.mykeep.event.helper.KeepNotifyCenterHelper;
 import akiyama.mykeep.preferences.KeepPreferenceUtil;
 import akiyama.mykeep.task.QueryByUserDbTask;
 import akiyama.mykeep.util.LoginHelper;
+import akiyama.mykeep.util.SvgHelper;
 
 
 public class MainActivity extends BaseObserverActivity implements View.OnClickListener{
@@ -136,6 +137,30 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         mAddListRecordFab = (FloatingActionButton) findViewById(R.id.add_list_record_fab);
     }
 
+    /**
+     * 初始化SVG资源
+     */
+    @Override
+    public void initSvgView() {
+        mRecordTv.setText(getResources().getString(R.string.item_menu_1));
+        SvgHelper.setImageDrawable(mRecordIv, R.raw.ic_assignment_24px);
+
+        mFiledTv.setText(getResources().getString(R.string.item_menu_2));
+        SvgHelper.setImageDrawable(mFiledIv, R.raw.ic_access_alarms_24px);
+
+        mRecycleTv.setText(getResources().getString(R.string.item_menu_3));
+        SvgHelper.setImageDrawable(mRecycleIv, R.raw.ic_drafts_24px);
+
+        mSettingTv.setText(getResources().getString(R.string.item_menu_4));
+        SvgHelper.setImageDrawable(mSettingIv, R.raw.ic_settings_24px);
+
+        mSyncTv.setText(getResources().getString(R.string.item_menu_5));
+        SvgHelper.setImageDrawable(mSyncIv, R.raw.ic_loop_24px);
+
+        mHelpTv.setText(getResources().getString(R.string.item_menu_6));
+        SvgHelper.setImageDrawable(mHelpIv, R.raw.ic_help_24px);
+    }
+
     @Override
     protected void initView(){
         setToolBarTitle("记事");
@@ -144,7 +169,6 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         mFiledView.setBackgroundResource(R.color.white);
         mRecycleView.setBackgroundResource(R.color.white);
         mSettingView.setBackgroundResource(R.color.white);
-        setLeftMenuItem();
         mRecordLabelAdapter = new RecordByLabelAdapter(getFragmentManager(),mLabelList);
         mRecordVp.setAdapter(mRecordLabelAdapter);
         mRecordVp.setOffscreenPageLimit(0);
@@ -228,9 +252,9 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         };
     }
 
-    /**
+   /* *//**
      * 设置左侧菜单的文字和图标
-     */
+     *//*
    private void setLeftMenuItem(){
        mRecordTv.setText(getResources().getString(R.string.item_menu_1));
        mRecordIv.setImageResource(R.drawable.ic_assignment_black_24dp);
@@ -249,7 +273,7 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
 
        mHelpTv.setText(getResources().getString(R.string.item_menu_6));
        mHelpIv.setImageResource(R.drawable.ic_help_black_24dp);
-   }
+   }*/
 
     private void setDrawer(){
         //创建返回键，并实现打开关/闭监听

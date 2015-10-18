@@ -1,15 +1,16 @@
 package akiyama.mykeep.util;
 
+
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.support.annotation.Nullable;
+import android.os.Build;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 
-import com.wnafee.vector.compat.ResourcesCompat;
+import com.larvalabs.svgandroid.SVG;
+import com.larvalabs.svgandroid.SVGBuilder;
 
+import akiyama.mykeep.AppContext;
 
 /**
  * FIXME
@@ -21,34 +22,30 @@ import com.wnafee.vector.compat.ResourcesCompat;
 public class SvgHelper {
 
     /**
-     * 设置SVG Drawable到Image类控件中
-     * @param context
-     * @param viewId 需要设置的控件ID
-     * @param drawableId 需要设置的SVG Drawable的ID
-     * @param parentView 可能需要通过该parentView来查找viewId对应的控件
+     * 获取Image图片
+     * @param svgId
+     * @return
      */
-    public static void setImageDrawable(Context context,int viewId,int drawableId,@Nullable View parentView){
-        ImageView imageView = null;
-        if(parentView!=null){
-            imageView =(ImageView) parentView.findViewById(viewId);
-        }else{
-            imageView =(ImageView) ((Activity)context).findViewById(viewId);
+    public static void setImageDrawable(ImageView imageView,int svgId){
+        SVG svg = new SVGBuilder().readFromResource(AppContext.getInstance().getResources(), svgId).build();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            imageView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         }
-
-        if(imageView!=null){
-            Drawable remainDr = ResourcesCompat.getDrawable(context, drawableId);
-            imageView.setImageDrawable(remainDr);
-        }
+        imageView.setImageDrawable(svg.getDrawable());
     }
 
     /**
-     * 设置SVG Drawable到Image类控件中
+     * 设置Image图片
      * @param context
-     * @param imageView 需要设置的控件
-     * @param drawableId 需要设置的SVG Drawable的ID
+     * @param viewId
+     * @param svgId
      */
-    public static void setImageDrawable(Context context,ImageView imageView,int drawableId){
-        Drawable remainDr = ResourcesCompat.getDrawable(context, drawableId);
-        imageView.setImageDrawable(remainDr);
+    public static void setImageDrawable(Context context,int viewId,int svgId){
+        SVG svg = new SVGBuilder().readFromResource(context.getResources(), svgId).build();
+        ImageView imageView = (ImageView) ((Activity)context).findViewById(viewId);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            imageView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        }
+        imageView.setImageDrawable(svg.getDrawable());
     }
 }

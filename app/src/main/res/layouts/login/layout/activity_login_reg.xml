@@ -13,7 +13,6 @@
         android:layout_below="@+id/login_toolbar"
         android:drawablePadding="5dip"
         android:textColor="@color/black"
-        android:drawableLeft="@drawable/ic_perm_identity_black_24dp"
         android:layout_margin="16dp"
         android:hint="@string/username" />
 
@@ -22,7 +21,6 @@
         android:inputType="textPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:drawableLeft="@drawable/ic_invert_colors_black_24dp"
         android:layout_below="@+id/username_et"
         android:textColor="@color/black"
         android:drawablePadding="5dip"

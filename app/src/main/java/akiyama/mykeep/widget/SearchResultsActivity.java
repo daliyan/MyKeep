@@ -7,6 +7,7 @@ import android.view.View;
 
 import akiyama.mykeep.R;
 import akiyama.mykeep.base.BaseActivity;
+import akiyama.mykeep.util.SvgHelper;
 
 /**
  * FIXME
@@ -22,6 +23,11 @@ public class SearchResultsActivity extends BaseActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_search_result);
         handleIntent(getIntent());
+    }
+
+    @Override
+    public void initSvgView() {
+
     }
 
     @Override

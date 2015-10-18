@@ -8,10 +8,9 @@
 
     <ImageView
         android:id="@+id/title_iv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dip"
-        android:src="@drawable/ic_perm_identity_black_36dp"/>
+        android:layout_width="24dip"
+        android:layout_height="24dip"
+        android:layout_margin="10dip"/>
 
     <TextView
         android:id="@+id/title_tv"
@@ -20,6 +19,6 @@
         android:layout_weight="1"
         android:textColor="@color/black"
         android:text="提醒"
-        android:textSize="14sp"/>
+        android:textSize="16sp"/>
 
 </LinearLayout>

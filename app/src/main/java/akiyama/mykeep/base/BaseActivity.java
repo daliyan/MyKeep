@@ -44,10 +44,10 @@ public abstract class BaseActivity extends ActionBarActivity implements View.OnC
         mToolbar= (Toolbar) findViewById(R.id.toolbar);
         ((ViewGroup)findViewById(android.R.id.content)).getChildAt(0).setFitsSystemWindows(true);
         findView();
+        initSvgView();
         initView();
         setOnClick();
         setStatusBarView();
-
     }
 
     /**
@@ -119,5 +119,10 @@ public abstract class BaseActivity extends ActionBarActivity implements View.OnC
      * 设置点击监听
      */
     protected abstract void setOnClick();
+
+    /**
+     * 初始化SVG资源
+     */
+    public abstract void initSvgView();
 
 }

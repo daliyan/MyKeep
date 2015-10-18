@@ -44,6 +44,14 @@ public class LoginRegActivity extends BaseActivity implements View.OnClickListen
         forgotPasswordTv=(TextView)findViewById(R.id.forgot_password_tv);
     }
 
+    /**
+     * 初始化SVG资源
+     */
+    @Override
+    public void initSvgView() {
+
+    }
+
     @Override
     protected void initView() {
         setToolBarTitle("注册");

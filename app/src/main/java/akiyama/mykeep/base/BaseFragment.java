@@ -29,6 +29,7 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
         if(mLayoutView==null){
             mLayoutView = inflater.inflate(onSetLayoutId(),container, false);
             findView(mLayoutView);
+            initSvgView();
             initView();
             setOnClick();
         }
@@ -79,4 +80,9 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
      * 设置一些点击监听
      */
     public abstract void setOnClick();
+
+    /**
+     * 初始化SVG资源
+     */
+    public abstract void initSvgView();
 }
