@@ -36,6 +36,6 @@
 
     <color name="white_normal">#eeeeee</color>
     <color name="text_normal">#727476</color>
-    <color name="select">#338cda</color>
+    <color name="text_select">#2d89d9</color>
     <color name="logo_fill_color">#000000</color>
 </resources>
