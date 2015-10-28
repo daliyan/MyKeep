@@ -12,8 +12,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -35,8 +38,12 @@ import akiyama.mykeep.task.UpdateSingleDbTask;
 import akiyama.mykeep.util.DateUtil;
 import akiyama.mykeep.util.LoginHelper;
 import akiyama.mykeep.util.StringUtil;
+import akiyama.mykeep.util.SvgHelper;
 import akiyama.mykeep.view.LabelsLayout;
 import akiyama.mykeep.view.RecordListView;
+import akiyama.mykeep.view.calendar.DatePickerController;
+import akiyama.mykeep.view.calendar.DayPickerView;
+import akiyama.mykeep.view.calendar.SimpleMonthAdapter;
 import akiyama.mykeep.vo.SearchVo;
 
 /**
@@ -346,6 +353,35 @@ public class AddRecordActivity extends BaseObserverActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this,R.style.Theme_AlertDialog));
         builder.setTitle("时间提醒");
         View dialogView = getLayoutInflater().inflate(R.layout.layout_calendar_time_dialog, null);
+        ImageView remainIv = (ImageView) dialogView.findViewById(R.id.remain_iv);
+        TextView remainTv = (TextView) dialogView.findViewById(R.id.remain_tv);
+        DayPickerView dayPickerView = (DayPickerView) dialogView.findViewById(R.id.pickerView);
+        dayPickerView.setController(new DatePickerController() {
+            @Override
+            public int getMaxYear() {
+                return 2015;
+            }
+
+            @Override
+            public void onDayOfMonthSelected(int year, int month, int day) {
+
+            }
+
+            @Override
+            public void onDateRangeSelected(SimpleMonthAdapter.SelectedDays<SimpleMonthAdapter.CalendarDay> selectedDays) {
+
+            }
+        });
+        if(mEditRecordModel!=null && mEditRecordModel.getAlarmTime()!=null){
+            remainTv.setText(DateUtil.getDate(mEditRecordModel.getAlarmTime()));
+            remainTv.setTextColor(getResources().getColor(R.color.text_select));
+            SvgHelper.setImageDrawable(remainIv,R.raw.ic_vibration_select_24px);
+        }else{
+            remainTv.setText("提醒我");
+            remainTv.setTextColor(getResources().getColor(R.color.text_normal));
+            SvgHelper.setImageDrawable(remainIv,R.raw.ic_vibration_24px);
+        }
+
         builder.setView(dialogView).setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {

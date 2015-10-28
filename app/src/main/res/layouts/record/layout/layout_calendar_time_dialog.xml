@@ -10,7 +10,8 @@
     <akiyama.mykeep.view.calendar.DayPickerView
         android:id="@+id/pickerView"
         android:layout_width="match_parent"
-        android:layout_height="180dip"/>
+        android:layout_height="wrap_content"
+        app:drawRoundRect="true"/>
 
     <View
         android:layout_width="match_parent"
@@ -30,14 +31,16 @@
             android:id="@+id/remain_iv"
             android:layout_width="24dip"
             android:layout_height="24dip"
-            android:layout_marginLeft="10dip"/>
+            android:layout_marginLeft="10dip"
+            android:layout_marginRight="10dip"/>
 
 
         <TextView
+            android:id="@+id/remain_tv"
             android:layout_width="0dip"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="提醒今天，16：48"
+            android:text="提醒我"
             style="@style/TextNormal"/>
 
      </LinearLayout>

@@ -1,57 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:clickable="true"
-    android:background="@drawable/label_select_bg">
+    app:cardUseCompatPadding="true"
+    android:background="@drawable/label_select_bg"
+    app:cardCornerRadius="5dp"
+    app:cardElevation="5dp">
 
-    <android.support.v7.widget.CardView
-        android:id="@+id/cardView"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardUseCompatPadding="true"
-        app:cardCornerRadius="5dp"
-        app:cardElevation="5dp">
+        android:layout_marginLeft="10dip"
+        android:layout_gravity="center"
+        android:minHeight="80dip"
+        android:orientation="vertical">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dip"
-                android:layout_gravity="center"
-                android:minHeight="80dip"
-                android:orientation="vertical">
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/list_title"
+            android:paddingTop="5dip"
+            android:textSize="18sp"
+            android:text="title" />
 
-                <TextView
-                    android:id="@+id/title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/list_title"
-                    android:paddingTop="5dip"
-                    android:textSize="18sp"
-                    android:text="title" />
+        <TextView
+            android:id="@+id/subtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/list_subtitle"
+            android:lineSpacingExtra="2dip"
+            android:textSize="16sp"
+            android:text="subtitle" />
 
-                <TextView
-                    android:id="@+id/subtitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/list_subtitle"
-                    android:lineSpacingExtra="2dip"
-                    android:textSize="16sp"
-                    android:text="subtitle" />
+        <TextView
+            android:id="@+id/update_time_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingRight="10dip"
+            android:gravity="right"
+            android:textColor="@color/deep_orange"
+            android:textSize="14sp"
+            android:maxLines="1"
+            android:text="7月10日 16：00" />
 
-                <TextView
-                    android:id="@+id/update_time_tv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingRight="10dip"
-                    android:gravity="right"
-                    android:textColor="@color/deep_orange"
-                    android:textSize="14sp"
-                    android:maxLines="1"
-                    android:text="7月10日 16：00" />
+    </LinearLayout>
 
-            </LinearLayout>
-    </android.support.v7.widget.CardView>
-
-</RelativeLayout>
+</android.support.v7.widget.CardView>

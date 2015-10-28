@@ -24,6 +24,7 @@ import akiyama.mykeep.R;
 import akiyama.mykeep.common.DbConfig;
 import akiyama.mykeep.util.LogUtil;
 import akiyama.mykeep.util.StringUtil;
+import akiyama.mykeep.util.SvgHelper;
 
 /**
  * 记录清单列表View
@@ -45,6 +46,7 @@ public class RecordListView extends LinearLayout implements View.OnClickListener
     private LinearLayout mNoTickLl;
     private LinearLayout mTickLl;
     private LinearLayout mAddListLl;
+    private ImageView mAddListIv;
     private InputMethodManager mImm;
     public RecordListView(Context context) {
         super(context);
@@ -70,8 +72,10 @@ public class RecordListView extends LinearLayout implements View.OnClickListener
         mNoTickLl = (LinearLayout) mView.findViewById(R.id.record_list_noTick_ll);
         mTickLl = (LinearLayout) mView.findViewById(R.id.record_list_tick_ll);
         mAddListLl = (LinearLayout) mView.findViewById(R.id.add_list_item_ll);
+        mAddListIv = (ImageView)mView.findViewById(R.id.add_list_iv);
         mAddListLl.setOnClickListener(this);
         mImm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        SvgHelper.setImageDrawable(mAddListIv,R.raw.ic_playlist_add_24px);
     }
 
     /**
@@ -80,9 +84,11 @@ public class RecordListView extends LinearLayout implements View.OnClickListener
     private void addNoTickView(String message){
         View itemView = LayoutInflater.from(mContext).inflate(R.layout.item_recordlist_no_tick_view, mNoTickLl, false);
         ImageView cancelIv = (ImageView)itemView.findViewById(R.id.no_tick_cancel_iv);
+        ImageView touchMoveIv = (ImageView) itemView.findViewById(R.id.touch_move_iv);
         CheckBox checkBox =(CheckBox) itemView.findViewById(R.id.no_tick_select_cb);
         EditText contentEt = (EditText) itemView.findViewById(R.id.no_tick_content_message_et);
         contentEt.setTypeface(AppContext.getRobotoSlabLight());
+        SvgHelper.setImageDrawable(touchMoveIv,R.raw.ic_apps_24px);
         if(message!=null){
             contentEt.setText(message);
         }
