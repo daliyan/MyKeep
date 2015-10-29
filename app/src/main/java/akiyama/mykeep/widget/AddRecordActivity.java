@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import org.w3c.dom.Text;
@@ -28,6 +30,7 @@ import akiyama.mykeep.base.BaseObserverActivity;
 import akiyama.mykeep.common.Constants;
 import akiyama.mykeep.common.DbConfig;
 import akiyama.mykeep.common.StatusMode;
+import akiyama.mykeep.db.model.BaseModel;
 import akiyama.mykeep.event.NotifyInfo;
 import akiyama.mykeep.event.helper.KeepNotifyCenterHelper;
 import akiyama.mykeep.task.SaveSingleDbTask;
@@ -36,6 +39,8 @@ import akiyama.mykeep.db.model.RecordModel;
 import akiyama.mykeep.event.EventType;
 import akiyama.mykeep.task.UpdateSingleDbTask;
 import akiyama.mykeep.util.DateUtil;
+import akiyama.mykeep.util.DimUtil;
+import akiyama.mykeep.util.LogUtil;
 import akiyama.mykeep.util.LoginHelper;
 import akiyama.mykeep.util.StringUtil;
 import akiyama.mykeep.util.SvgHelper;
@@ -70,9 +75,12 @@ public class AddRecordActivity extends BaseObserverActivity {
     private RecordController rc=new RecordController();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        long startTime = System.currentTimeMillis();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_add_record);
         setInitUiByMode();
+        long endTime = System.currentTimeMillis();
+        Toast.makeText(this,"onCreate"+(endTime-startTime)+"ms",Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -87,7 +95,10 @@ public class AddRecordActivity extends BaseObserverActivity {
      * 根据当前模式设置不同的UI数据
      */
     private void setInitUiByMode(){
+        long startTime = System.currentTimeMillis();
+        long endTime;
         mMode = getIntent().getStringExtra(KEY_RECORD_MODE);
+
         if(mMode!=null && mMode.equals(StatusMode.EDIT_RECORD_MODE)){
             mEditRecordModel = getIntent().getParcelableExtra(KEY_EDIT_RECORD_LIST);
             mAddRecordType = mEditRecordModel.getRecordType();
@@ -108,6 +119,8 @@ public class AddRecordActivity extends BaseObserverActivity {
             mStartRecord.setTitle("");
             mStartRecord.setLabelNames("");
         }
+        endTime = System.currentTimeMillis();
+        Toast.makeText(this,"setInitUiByMode()"+(endTime-startTime)+"ms",Toast.LENGTH_SHORT).show();
         setAddModeUi();
     }
 
@@ -115,6 +128,7 @@ public class AddRecordActivity extends BaseObserverActivity {
      * 根据不同的记事类型来设置不同的UI数据
      */
     private void setAddModeUi(){
+        long startTime = System.currentTimeMillis();
         if(mAddRecordType == RecordModel.RECORD_TYPE_NORMAL){
             mContentEt.setVisibility(View.VISIBLE);
             mContentRlv.setVisibility(View.GONE);
@@ -122,6 +136,8 @@ public class AddRecordActivity extends BaseObserverActivity {
             mContentEt.setVisibility(View.GONE);
             mContentRlv.setVisibility(View.VISIBLE);
         }
+        long endTime = System.currentTimeMillis();
+        Toast.makeText(this,"setAddModeUi()"+(endTime-startTime)+"ms",Toast.LENGTH_SHORT).show();
     }
 
     @Override
