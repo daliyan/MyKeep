@@ -8,8 +8,7 @@ import android.util.AttributeSet;
 
 import akiyama.mykeep.R;
 
-public class DayPickerView extends RecyclerView
-{
+public class DayPickerView extends RecyclerView {
     protected Context mContext;
     protected SimpleMonthAdapter mAdapter;
     private DatePickerController mController;
@@ -19,29 +18,24 @@ public class DayPickerView extends RecyclerView
     private TypedArray typedArray;
     private OnScrollListener onScrollListener;
 
-    public DayPickerView(Context context)
-    {
+    public DayPickerView(Context context) {
         this(context, null);
     }
 
-    public DayPickerView(Context context, AttributeSet attrs)
-    {
+    public DayPickerView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public DayPickerView(Context context, AttributeSet attrs, int defStyle)
-    {
+    public DayPickerView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        if (!isInEditMode())
-        {
+        if (!isInEditMode()) {
             typedArray = context.obtainStyledAttributes(attrs, R.styleable.DayPickerView);
             setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
             init(context);
         }
     }
 
-    public void setController(DatePickerController mController)
-    {
+    public void setController(DatePickerController mController) {
         this.mController = mController;
         setUpAdapter();
         setAdapter(mAdapter);
@@ -53,11 +47,9 @@ public class DayPickerView extends RecyclerView
         mContext = paramContext;
         setUpListView();
 
-        onScrollListener = new OnScrollListener()
-        {
+        onScrollListener = new OnScrollListener() {
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy)
-            {
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 final SimpleMonthView child = (SimpleMonthView) recyclerView.getChildAt(0);
                 if (child == null) {
@@ -84,18 +76,15 @@ public class DayPickerView extends RecyclerView
         setFadingEdgeLength(0);
     }
 
-    public SimpleMonthAdapter.SelectedDays<SimpleMonthAdapter.CalendarDay> getSelectedDays()
-    {
+    public SimpleMonthAdapter.SelectedDays<SimpleMonthAdapter.CalendarDay> getSelectedDays() {
         return mAdapter.getSelectedDays();
     }
 
-    protected DatePickerController getController()
-    {
+    protected DatePickerController getController() {
         return mController;
     }
 
-    protected TypedArray getTypedArray()
-    {
+    protected TypedArray getTypedArray() {
         return typedArray;
     }
 }

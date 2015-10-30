@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
 import android.view.Menu;
@@ -75,12 +76,28 @@ public class AddRecordActivity extends BaseObserverActivity {
     private RecordController rc=new RecordController();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        long startTime = System.currentTimeMillis();
+       //long startTime = System.currentTimeMillis();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_add_record);
-        setInitUiByMode();
-        long endTime = System.currentTimeMillis();
-        Toast.makeText(this,"onCreate"+(endTime-startTime)+"ms",Toast.LENGTH_SHORT).show();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                setInitUiByMode();
+            }
+        },100);
+
+        //long endTime = System.currentTimeMillis();
+        //Toast.makeText(this,"onCreate"+(endTime-startTime)+"ms",Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     /**
@@ -95,10 +112,7 @@ public class AddRecordActivity extends BaseObserverActivity {
      * 根据当前模式设置不同的UI数据
      */
     private void setInitUiByMode(){
-        long startTime = System.currentTimeMillis();
-        long endTime;
         mMode = getIntent().getStringExtra(KEY_RECORD_MODE);
-
         if(mMode!=null && mMode.equals(StatusMode.EDIT_RECORD_MODE)){
             mEditRecordModel = getIntent().getParcelableExtra(KEY_EDIT_RECORD_LIST);
             mAddRecordType = mEditRecordModel.getRecordType();
@@ -108,7 +122,13 @@ public class AddRecordActivity extends BaseObserverActivity {
                 if(mAddRecordType == RecordModel.RECORD_TYPE_NORMAL){
                     mContentEt.setText(mEditRecordModel.getContent());
                 }else if(mAddRecordType == RecordModel.RECORD_TYPE_LIST){
+                    //long startTime = System.currentTimeMillis();
+                    // TODO 优化1:此处应该做优化，耗时太严重,而且在加载大量数据的时候可能会引起OOM等错误，应当将RecordListView切换成2个RecyclerView
+                    // TODO 优化2:将其布局设置成ViewStup这样能够加快进入速度
+                    // TODO 优化3:可以考虑做延迟加载
                     mContentRlv.setFormatText(mEditRecordModel.getContent());
+                    //long endTime = System.currentTimeMillis();
+                    //Toast.makeText(this,"FormatText"+(endTime-startTime)+"ms",Toast.LENGTH_SHORT).show();
                 }
                 mLabelLsl.setLabels(StringUtil.subStringBySymbol(mEditRecordModel.getLabelNames(), DbConfig.SPLIT_SYMBOL));
                 mUpdateTimeTv.setText("修改时间："+DateUtil.getDate(mEditRecordModel.getUpdateTime()));
@@ -119,8 +139,6 @@ public class AddRecordActivity extends BaseObserverActivity {
             mStartRecord.setTitle("");
             mStartRecord.setLabelNames("");
         }
-        endTime = System.currentTimeMillis();
-        Toast.makeText(this,"setInitUiByMode()"+(endTime-startTime)+"ms",Toast.LENGTH_SHORT).show();
         setAddModeUi();
     }
 
@@ -128,7 +146,6 @@ public class AddRecordActivity extends BaseObserverActivity {
      * 根据不同的记事类型来设置不同的UI数据
      */
     private void setAddModeUi(){
-        long startTime = System.currentTimeMillis();
         if(mAddRecordType == RecordModel.RECORD_TYPE_NORMAL){
             mContentEt.setVisibility(View.VISIBLE);
             mContentRlv.setVisibility(View.GONE);
@@ -136,8 +153,6 @@ public class AddRecordActivity extends BaseObserverActivity {
             mContentEt.setVisibility(View.GONE);
             mContentRlv.setVisibility(View.VISIBLE);
         }
-        long endTime = System.currentTimeMillis();
-        Toast.makeText(this,"setAddModeUi()"+(endTime-startTime)+"ms",Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -370,17 +385,17 @@ public class AddRecordActivity extends BaseObserverActivity {
         builder.setTitle("时间提醒");
         View dialogView = getLayoutInflater().inflate(R.layout.layout_calendar_time_dialog, null);
         ImageView remainIv = (ImageView) dialogView.findViewById(R.id.remain_iv);
-        TextView remainTv = (TextView) dialogView.findViewById(R.id.remain_tv);
+        final TextView remainTv = (TextView) dialogView.findViewById(R.id.remain_tv);
         DayPickerView dayPickerView = (DayPickerView) dialogView.findViewById(R.id.pickerView);
         dayPickerView.setController(new DatePickerController() {
             @Override
             public int getMaxYear() {
-                return 2015;
+                return Calendar.getInstance().get(Calendar.YEAR)+1;
             }
 
             @Override
             public void onDayOfMonthSelected(int year, int month, int day) {
-
+                remainTv.setText(year+"年"+(month+1)+"月"+day+"日");
             }
 
             @Override
@@ -388,6 +403,7 @@ public class AddRecordActivity extends BaseObserverActivity {
 
             }
         });
+
         if(mEditRecordModel!=null && mEditRecordModel.getAlarmTime()!=null){
             remainTv.setText(DateUtil.getDate(mEditRecordModel.getAlarmTime()));
             remainTv.setTextColor(getResources().getColor(R.color.text_select));

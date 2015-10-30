@@ -37,15 +37,13 @@ public class SimpleMonthAdapter extends RecyclerView.Adapter<SimpleMonthAdapter.
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i)
-    {
+    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         final SimpleMonthView simpleMonthView = new SimpleMonthView(mContext, typedArray);
         return new ViewHolder(simpleMonthView, this);
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder viewHolder, int position)
-    {
+    public void onBindViewHolder(ViewHolder viewHolder, int position) {
         final SimpleMonthView v = viewHolder.simpleMonthView;
         final HashMap<String, Integer> drawingParams = new HashMap<String, Integer>();
         int month;
@@ -61,15 +59,13 @@ public class SimpleMonthAdapter extends RecyclerView.Adapter<SimpleMonthAdapter.
         int selectedFirstYear = -1;
         int selectedLastYear = -1;
 
-        if (selectedDays.getFirst() != null)
-        {
+        if (selectedDays.getFirst() != null) {
             selectedFirstDay = selectedDays.getFirst().day;
             selectedFirstMonth = selectedDays.getFirst().month;
             selectedFirstYear = selectedDays.getFirst().year;
         }
 
-        if (selectedDays.getLast() != null)
-        {
+        if (selectedDays.getLast() != null) {
             selectedLastDay = selectedDays.getLast().day;
             selectedLastMonth = selectedDays.getLast().month;
             selectedLastYear = selectedDays.getLast().year;
@@ -95,8 +91,7 @@ public class SimpleMonthAdapter extends RecyclerView.Adapter<SimpleMonthAdapter.
     }
 
     @Override
-    public int getItemCount()
-    {
+    public int getItemCount() {
         int itemCount = (((mController.getMaxYear() - calendar.get(Calendar.YEAR)) + 1) * MONTHS_IN_YEAR);
 
         if (firstMonth != -1)
@@ -108,12 +103,10 @@ public class SimpleMonthAdapter extends RecyclerView.Adapter<SimpleMonthAdapter.
         return itemCount;
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder
-    {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         final SimpleMonthView simpleMonthView;
 
-        public ViewHolder(View itemView, SimpleMonthView.OnDayClickListener onDayClickListener)
-        {
+        public ViewHolder(View itemView, SimpleMonthView.OnDayClickListener onDayClickListener) {
             super(itemView);
             simpleMonthView = (SimpleMonthView) itemView;
             simpleMonthView.setLayoutParams(new AbsListView.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
@@ -139,31 +132,25 @@ public class SimpleMonthAdapter extends RecyclerView.Adapter<SimpleMonthAdapter.
     }
 
     public void setSelectedDay(CalendarDay calendarDay) {
-        if (selectedDays.getFirst() != null && selectedDays.getLast() == null)
-        {
+        if (selectedDays.getFirst() != null && selectedDays.getLast() == null) {
             selectedDays.setLast(calendarDay);
 
-            if (selectedDays.getFirst().month < calendarDay.month)
-            {
+            if (selectedDays.getFirst().month < calendarDay.month) {
                 for (int i = 0; i < selectedDays.getFirst().month - calendarDay.month - 1; ++i)
                     mController.onDayOfMonthSelected(selectedDays.getFirst().year, selectedDays.getFirst().month + i, selectedDays.getFirst().day);
             }
 
             mController.onDateRangeSelected(selectedDays);
-        }
-        else if (selectedDays.getLast() != null)
-        {
+        } else if (selectedDays.getLast() != null) {
             selectedDays.setFirst(calendarDay);
             selectedDays.setLast(null);
-        }
-        else
+        } else
             selectedDays.setFirst(calendarDay);
 
         notifyDataSetChanged();
     }
 
-    public static class CalendarDay implements Serializable
-    {
+    public static class CalendarDay implements Serializable {
         private static final long serialVersionUID = -5456695978688356202L;
         private Calendar calendar;
 
@@ -211,8 +198,7 @@ public class SimpleMonthAdapter extends RecyclerView.Adapter<SimpleMonthAdapter.
             this.day = day;
         }
 
-        public Date getDate()
-        {
+        public Date getDate() {
             if (calendar == null) {
                 calendar = Calendar.getInstance();
             }
@@ -221,8 +207,7 @@ public class SimpleMonthAdapter extends RecyclerView.Adapter<SimpleMonthAdapter.
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             final StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("{ year: ");
             stringBuilder.append(year);
@@ -236,34 +221,28 @@ public class SimpleMonthAdapter extends RecyclerView.Adapter<SimpleMonthAdapter.
         }
     }
 
-    public SelectedDays<CalendarDay> getSelectedDays()
-    {
+    public SelectedDays<CalendarDay> getSelectedDays() {
         return selectedDays;
     }
 
-    public static class SelectedDays<K> implements Serializable
-    {
+    public static class SelectedDays<K> implements Serializable {
         private static final long serialVersionUID = 3942549765282708376L;
         private K first;
         private K last;
 
-        public K getFirst()
-        {
+        public K getFirst() {
             return first;
         }
 
-        public void setFirst(K first)
-        {
+        public void setFirst(K first) {
             this.first = first;
         }
 
-        public K getLast()
-        {
+        public K getLast() {
             return last;
         }
 
-        public void setLast(K last)
-        {
+        public void setLast(K last) {
             this.last = last;
         }
     }

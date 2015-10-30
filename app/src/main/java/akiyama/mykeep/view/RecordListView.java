@@ -82,11 +82,11 @@ public class RecordListView extends LinearLayout implements View.OnClickListener
      * 添加一个新的列表数据
      */
     private void addNoTickView(String message){
-        View itemView = LayoutInflater.from(mContext).inflate(R.layout.item_recordlist_no_tick_view, mNoTickLl, false);
-        ImageView cancelIv = (ImageView)itemView.findViewById(R.id.no_tick_cancel_iv);
-        ImageView touchMoveIv = (ImageView) itemView.findViewById(R.id.touch_move_iv);
-        CheckBox checkBox =(CheckBox) itemView.findViewById(R.id.no_tick_select_cb);
-        EditText contentEt = (EditText) itemView.findViewById(R.id.no_tick_content_message_et);
+        View itemNoTickView = LayoutInflater.from(mContext).inflate(R.layout.item_recordlist_no_tick_view, mNoTickLl, false);
+        ImageView cancelIv = (ImageView)itemNoTickView.findViewById(R.id.no_tick_cancel_iv);
+        ImageView touchMoveIv = (ImageView) itemNoTickView.findViewById(R.id.touch_move_iv);
+        CheckBox checkBox =(CheckBox) itemNoTickView.findViewById(R.id.no_tick_select_cb);
+        EditText contentEt = (EditText) itemNoTickView.findViewById(R.id.no_tick_content_message_et);
         contentEt.setTypeface(AppContext.getRobotoSlabLight());
         SvgHelper.setImageDrawable(touchMoveIv,R.raw.ic_apps_24px);
         if(message!=null){
@@ -96,10 +96,10 @@ public class RecordListView extends LinearLayout implements View.OnClickListener
         checkBox.setOnClickListener(this);
         cancelIv.setOnClickListener(this);
         //给当前添加的View设置一个TAG，便于后面删除的时候移除
-        itemView.setTag(cancelIv.hashCode());
+        itemNoTickView.setTag(cancelIv.hashCode());
         checkBox.setTag(cancelIv.hashCode());
         contentEt.setTag(TAG_NOTICK_CONTENT);
-        mNoTickLl.addView(itemView);
+        mNoTickLl.addView(itemNoTickView);
         contentEt.requestFocus();
         if(!mImm.isActive()){
             mImm.showSoftInput(contentEt,InputMethodManager.RESULT_UNCHANGED_SHOWN);
@@ -110,10 +110,10 @@ public class RecordListView extends LinearLayout implements View.OnClickListener
      * 添加一个新的列表数据
      */
     private void addTickView(String message){
-        View itemView = LayoutInflater.from(mContext).inflate(R.layout.item_recordlist_tick_view, mNoTickLl, false);
-        ImageView cancelIv = (ImageView)itemView.findViewById(R.id.tick_cancel_iv);
-        CheckBox checkBox =(CheckBox) itemView.findViewById(R.id.tick_select_cb);
-        TextView contentTv = (TextView) itemView.findViewById(R.id.tick_content_tv);
+        View itemTickView = LayoutInflater.from(mContext).inflate(R.layout.item_recordlist_tick_view, mNoTickLl, false);
+        ImageView cancelIv = (ImageView)itemTickView.findViewById(R.id.tick_cancel_iv);
+        CheckBox checkBox =(CheckBox) itemTickView.findViewById(R.id.tick_select_cb);
+        TextView contentTv = (TextView) itemTickView.findViewById(R.id.tick_content_tv);
         contentTv.setTypeface(AppContext.getRobotoSlabLight());
         if(message!=null){
             contentTv.setText(message);
@@ -122,10 +122,10 @@ public class RecordListView extends LinearLayout implements View.OnClickListener
         checkBox.setOnClickListener(this);
         cancelIv.setOnClickListener(this);
         //给当前添加的View设置一个TAG，便于后面删除的时候移除,使用cancelIv.hashCode()来标识唯一的一个TAG
-        itemView.setTag(cancelIv.hashCode());
+        itemTickView.setTag(cancelIv.hashCode());
         checkBox.setTag(cancelIv.hashCode());
         contentTv.setTag(TAG_TICK_CONTENT);
-        mTickLl.addView(itemView);
+        mTickLl.addView(itemTickView);
     }
 
 
