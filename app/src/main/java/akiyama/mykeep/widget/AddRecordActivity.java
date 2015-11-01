@@ -1,11 +1,8 @@
 package akiyama.mykeep.widget;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -19,7 +16,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -31,7 +27,6 @@ import akiyama.mykeep.base.BaseObserverActivity;
 import akiyama.mykeep.common.Constants;
 import akiyama.mykeep.common.DbConfig;
 import akiyama.mykeep.common.StatusMode;
-import akiyama.mykeep.db.model.BaseModel;
 import akiyama.mykeep.event.NotifyInfo;
 import akiyama.mykeep.event.helper.KeepNotifyCenterHelper;
 import akiyama.mykeep.task.SaveSingleDbTask;
@@ -40,13 +35,11 @@ import akiyama.mykeep.db.model.RecordModel;
 import akiyama.mykeep.event.EventType;
 import akiyama.mykeep.task.UpdateSingleDbTask;
 import akiyama.mykeep.util.DateUtil;
-import akiyama.mykeep.util.DimUtil;
-import akiyama.mykeep.util.LogUtil;
 import akiyama.mykeep.util.LoginHelper;
 import akiyama.mykeep.util.StringUtil;
 import akiyama.mykeep.util.SvgHelper;
 import akiyama.mykeep.view.LabelsLayout;
-import akiyama.mykeep.view.RecordListView;
+import akiyama.mykeep.view.RecordRecyclerView;
 import akiyama.mykeep.view.calendar.DatePickerController;
 import akiyama.mykeep.view.calendar.DayPickerView;
 import akiyama.mykeep.view.calendar.SimpleMonthAdapter;
@@ -68,7 +61,7 @@ public class AddRecordActivity extends BaseObserverActivity {
     private int mAddRecordType;//添加记录
     private EditText mTitleEt;
     private EditText mContentEt;
-    private RecordListView mContentRlv;
+    private RecordRecyclerView mContentRlv;
     private TextView mUpdateTimeTv;
     private LabelsLayout mLabelLsl;
     private RecordModel mEditRecordModel;
@@ -79,13 +72,7 @@ public class AddRecordActivity extends BaseObserverActivity {
        //long startTime = System.currentTimeMillis();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_add_record);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                setInitUiByMode();
-            }
-        },100);
-
+        setInitUiByMode();
         //long endTime = System.currentTimeMillis();
         //Toast.makeText(this,"onCreate"+(endTime-startTime)+"ms",Toast.LENGTH_SHORT).show();
     }
@@ -159,7 +146,7 @@ public class AddRecordActivity extends BaseObserverActivity {
     protected void findView() {
         mTitleEt=(EditText) findViewById(R.id.record_title_et);
         mContentEt=(EditText) findViewById(R.id.record_content_et);
-        mContentRlv = (RecordListView) findViewById(R.id.record_content_rlv);
+        mContentRlv = (RecordRecyclerView) findViewById(R.id.record_content_rlv);
         mLabelLsl =(LabelsLayout) findViewById(R.id.label_lsl);
         mUpdateTimeTv = (TextView) findViewById(R.id.record_update_time_tv);
     }

@@ -4,13 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/record_list_noTick_ll"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/record_list_noTick_rv"
+        android:scrollbars="vertical"
+        android:overScrollMode="never"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-    </LinearLayout>
+        android:layout_margin="3dip"/>
 
     <LinearLayout
         android:id="@+id/add_list_item_ll"
@@ -43,12 +43,12 @@
         android:background="@color/light_gray"
         android:layout_margin="5dip" />
 
-    <LinearLayout
-        android:id="@+id/record_list_tick_ll"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/record_list_tick_rv"
+        android:scrollbars="vertical"
+        android:overScrollMode="never"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-    </LinearLayout>
+        android:layout_margin="3dip"/>
 
 </LinearLayout>

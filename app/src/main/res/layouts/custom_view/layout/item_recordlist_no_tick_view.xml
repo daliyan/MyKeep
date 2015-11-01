@@ -17,7 +17,7 @@
         android:layout_height="wrap_content"/>
 
     <EditText
-        android:id="@+id/no_tick_content_message_et"
+        android:id="@+id/no_tick_content_et"
         android:layout_width="0dip"
         android:layout_height="wrap_content"
         android:layout_weight="1"

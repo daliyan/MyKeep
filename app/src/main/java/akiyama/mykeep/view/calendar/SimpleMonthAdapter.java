@@ -151,7 +151,6 @@ public class SimpleMonthAdapter extends RecyclerView.Adapter<SimpleMonthAdapter.
     }
 
     public static class CalendarDay implements Serializable {
-        private static final long serialVersionUID = -5456695978688356202L;
         private Calendar calendar;
 
         int day;

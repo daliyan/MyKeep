@@ -44,7 +44,7 @@
                 android:hint="@string/record_content"
                 android:visibility="visible" />
 
-            <akiyama.mykeep.view.RecordListView
+            <akiyama.mykeep.view.RecordRecyclerView
                 android:id="@+id/record_content_rlv"
                 android:layout_width="match_parent"
                 android:layout_height="0dip"
