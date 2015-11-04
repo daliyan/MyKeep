@@ -60,5 +60,4 @@ dependencies {
     compile 'com.nineoldandroids:library:2.4.+'
     compile 'cn.leancloud.android:avoscloud-sdk:v3.3+'
 
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-SNAPSHOT'
 }

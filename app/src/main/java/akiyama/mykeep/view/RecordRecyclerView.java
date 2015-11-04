@@ -90,10 +90,13 @@ public class RecordRecyclerView extends LinearLayout implements View.OnClickList
         mTickRlv.setHasFixedSize(true);
         mTickRlv.setLayoutManager(mTickLayoutManager);
         mTickRlv.setItemAnimator(new DefaultItemAnimator());
+
         mTickAdapter = new TickAdapter(mTick);
         mTickRlv.setAdapter(mTickAdapter);
+
         mNoTickAdapter = new NoTickAdapter(mNoTick);
         mNoTickRlv.setAdapter(mNoTickAdapter);
+
     }
 
     public void setList(List<String> mNoTick,List<String> mTick){
@@ -111,8 +114,7 @@ public class RecordRecyclerView extends LinearLayout implements View.OnClickList
         int id =v.getId();
         switch (id){
             case R.id.add_list_item_ll:
-                mNoTick.add("test");
-                mNoTickAdapter.notifyDataSetChanged();
+                mNoTickAdapter.addItem("");
                 break;
         }
     }
@@ -147,10 +149,8 @@ public class RecordRecyclerView extends LinearLayout implements View.OnClickList
                 }
             }
         }
-        mTickAdapter = new TickAdapter(mTick);
-        mTickRlv.setAdapter(mTickAdapter);
-        mNoTickAdapter = new NoTickAdapter(mNoTick);
-        mNoTickRlv.setAdapter(mNoTickAdapter);
+        mNoTickAdapter.notifyDataSetChanged();
+        mTickAdapter.notifyDataSetChanged();
     }
 
 

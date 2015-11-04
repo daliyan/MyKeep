@@ -39,6 +39,7 @@ public class TickAdapter extends RecyclerView.Adapter<TickAdapter.ViewHolder> {
             holder.mCancelIv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    mDataset.remove(position);
                     notifyItemRemoved(position);
                 }
             });
