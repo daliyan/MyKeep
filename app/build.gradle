@@ -26,19 +26,17 @@ android {
     }
 
     sourceSets {
-        main {
-            res.srcDirs =
-                    [
-                            'src/main/res',
-                            'src/main/res/layouts',
-                            'src/main/res/layouts/main',
-                            'src/main/res/layouts/label',
-                            'src/main/res/layouts/record',
-                            'src/main/res/layouts/login',
-                            'src/main/res/layouts/common',
-                            'src/main/res/layouts/custom_view'
-                    ]
-        }
+        main.res.srcDirs =
+                [
+                        'src/main/res',
+                        'src/main/res/layouts',
+                        'src/main/res/layouts/main',
+                        'src/main/res/layouts/label',
+                        'src/main/res/layouts/record',
+                        'src/main/res/layouts/login',
+                        'src/main/res/layouts/common',
+                        'src/main/res/layouts/custom_view'
+                ]
     }
 }
 

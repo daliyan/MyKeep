@@ -3,6 +3,7 @@ package akiyama.mykeep.adapter;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,11 +17,11 @@ import java.util.List;
 
 import akiyama.mykeep.AppContext;
 import akiyama.mykeep.R;
+import akiyama.mykeep.util.SvgHelper;
 
 public class NoTickAdapter extends RecyclerView.Adapter<NoTickAdapter.ViewHolder> {
     private static final String TAG = "NoTickAdapter";
     private List<String> mDataset;
-    private final Object mLock = new Object();
     public NoTickAdapter(List<String> mDataset) {
         this.mDataset = mDataset;
     }
@@ -35,11 +36,10 @@ public class NoTickAdapter extends RecyclerView.Adapter<NoTickAdapter.ViewHolder
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         if(mDataset!=null && mDataset.size()>0){
-            String recordList = mDataset.get(position);
             holder.mSelectCb.setChecked(true);
-            holder.mContentEt.setText(recordList);
             holder.mContentEt.setTypeface(AppContext.getRobotoSlabThin());
-            holder.mContentTextWatch.updatePosition(holder.getPosition());
+            holder.mContentTextWatch.updatePosition(position);//必须在setText之前updatePosition，否则会触发onTextChanged方法让位置错乱
+            holder.mContentEt.setText(mDataset.get(position));
             if(holder.mContentEt.hasFocus()){
                 holder.mCancelIv.setVisibility(View.VISIBLE);
             }else{
@@ -48,7 +48,9 @@ public class NoTickAdapter extends RecyclerView.Adapter<NoTickAdapter.ViewHolder
             holder.mCancelIv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    removeItem(position);
+                    //如果使用notifyItemxxx来删除位置，注意一定要使用getAdapterPosition()。否则因为视图和Adapter数据不一致导致出现错误的位置
+                    //如果使用notifyDataSetChanged()来更新位置，则直接使用position否则会返回NO_POSITION而报错
+                    removeItem(holder.getAdapterPosition());
                 }
             });
 
@@ -72,16 +74,15 @@ public class NoTickAdapter extends RecyclerView.Adapter<NoTickAdapter.ViewHolder
         }
     }
 
+
     public void addItem(String content){
         mDataset.add(content);
-       // notifyItemInserted(mDataset.size());//android BUG,存在并发的问题
-        notifyDataSetChanged();
+        notifyItemInserted(mDataset.size());
     }
 
     public void removeItem(int position){
         mDataset.remove(position);
-       //s notifyItemRemoved(position);
-        notifyDataSetChanged();
+        notifyItemRemoved(position);
     }
 
     @Override
@@ -99,10 +100,11 @@ public class NoTickAdapter extends RecyclerView.Adapter<NoTickAdapter.ViewHolder
         public ViewHolder(View v,ContentTextWatch mContentTextWatch) {
             super(v);
             if(v!=null){
-                mMoveIv = (ImageView) v.findViewById(R.id.tick_cancel_iv);
+                mMoveIv = (ImageView) v.findViewById(R.id.touch_move_iv);
                 mSelectCb = (CheckBox) v.findViewById(R.id.no_tick_select_cb);
                 mContentEt = (EditText) v.findViewById(R.id.no_tick_content_et);
                 mCancelIv = (ImageView) v.findViewById(R.id.no_tick_cancel_iv);
+                SvgHelper.setImageDrawable(mMoveIv, R.raw.ic_apps_24px);
                 this.mContentTextWatch = mContentTextWatch;
                 mContentEt.addTextChangedListener(mContentTextWatch);
             }
@@ -124,6 +126,7 @@ public class NoTickAdapter extends RecyclerView.Adapter<NoTickAdapter.ViewHolder
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
+            Log.e(TAG,"位置："+position+"字符"+s.toString());
             mDataset.set(position,s.toString());
         }
 

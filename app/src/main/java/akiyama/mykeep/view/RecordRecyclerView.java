@@ -1,11 +1,13 @@
 package akiyama.mykeep.view;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -19,6 +21,7 @@ import akiyama.mykeep.R;
 import akiyama.mykeep.adapter.NoTickAdapter;
 import akiyama.mykeep.adapter.TickAdapter;
 import akiyama.mykeep.common.DbConfig;
+import akiyama.mykeep.util.DimUtil;
 import akiyama.mykeep.util.StringUtil;
 import akiyama.mykeep.util.SvgHelper;
 
@@ -30,9 +33,6 @@ import akiyama.mykeep.util.SvgHelper;
  * @since 2015-09-08  10:44
  */
 public class RecordRecyclerView extends LinearLayout implements View.OnClickListener{
-
-    private static final String TAG_NOTICK_CONTENT="tag_no_tick_content";
-    private static final String TAG_TICK_CONTENT="tag_tick_content";
     private static final String TAG_NOTICK_VALUE="□ ";
     private static final String TAG_TICK_VALUE="";
     private View mView;
@@ -199,4 +199,22 @@ public class RecordRecyclerView extends LinearLayout implements View.OnClickList
         mTickRlv.removeAllViews();
     }
 
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+        Log.e("RecordRecyclerView","onDraw: width->"+ canvas.getWidth());
+
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        super.onLayout(changed, l, t, r, b);
+        Log.e("RecordRecyclerView","onLayout:"+l+" "+t+" "+r+" "+b);
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+       // heightMeasureSpec = (int)((mNoTick.size()+mTick.size())* DimUtil.dipToPx(40) + mAddListLl.getHeight());
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    }
 }
