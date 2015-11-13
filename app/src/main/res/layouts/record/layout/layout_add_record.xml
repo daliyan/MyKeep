@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white">
 
-    <include layout="@layout/layout_toolbar" />
+    <!--<include layout="@layout/layout_toolbar" />-->
 
     <ScrollView
         android:layout_width="match_parent"
@@ -29,33 +30,25 @@
                 android:textStyle="bold"
                 android:hint="@string/record_title" />
 
-            <EditText
-                android:id="@+id/record_content_et"
+            <ViewStub
+                android:id="@+id/record_content_normal_vs"
+                android:layout="@layout/normal"
                 android:layout_width="match_parent"
                 android:layout_height="0dip"
-                android:layout_weight="1"
-                android:layout_margin="15dip"
-                android:background="#00000000"
-                android:text=""
-                android:textColor="@color/black"
-                android:gravity="top"
-                android:textSize="16sp"
-                android:lineSpacingExtra="2dip"
-                android:hint="@string/record_content"
-                android:visibility="visible" />
+                android:layout_weight="1" />
 
-            <akiyama.mykeep.view.RecordRecyclerView
-                android:id="@+id/record_content_rlv"
+            <ViewStub
+                android:id="@+id/record_content_list_vs"
+                android:layout="@layout/layout_list"
                 android:layout_width="match_parent"
                 android:layout_height="0dip"
-                android:layout_weight="1"
-                android:layout_margin="15dip"
-                android:visibility="visible" />
+                android:layout_weight="1" />
 
             <akiyama.mykeep.view.LabelsLayout
                 android:id="@+id/label_lsl"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="0dip"
+                android:layout_weight="1"
                 android:padding="10dip"
                 android:layout_gravity="right"
                 android:gravity="right" />

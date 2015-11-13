@@ -8,9 +8,10 @@
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/record_list_noTick_rv"
-            android:scrollbars="vertical"
+            android:scrollbars="none"
+            android:overScrollMode="never"
             android:layout_width="match_parent"
-            android:layout_height="180dip"
+            android:layout_height="wrap_content"
             android:layout_margin="3dip" />
 
         <LinearLayout
@@ -46,7 +47,7 @@
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/record_list_tick_rv"
-            android:scrollbars="vertical"
+            android:scrollbars="none"
             android:overScrollMode="never"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

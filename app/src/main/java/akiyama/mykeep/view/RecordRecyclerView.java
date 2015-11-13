@@ -3,6 +3,7 @@ package akiyama.mykeep.view;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
@@ -32,7 +33,7 @@ import akiyama.mykeep.util.SvgHelper;
  * @version 1.0
  * @since 2015-09-08  10:44
  */
-public class RecordRecyclerView extends LinearLayout implements View.OnClickListener{
+public class RecordRecyclerView extends LinearLayout implements View.OnClickListener,NoTickAdapter.NoTickCallback,TickAdapter.TickCallback{
     private static final String TAG_NOTICK_VALUE="□ ";
     private static final String TAG_TICK_VALUE="";
     private View mView;
@@ -40,8 +41,8 @@ public class RecordRecyclerView extends LinearLayout implements View.OnClickList
     private List<String> mNoTick;//未打勾的列表数据
     private List<String> mTick;//打勾的列表数据
     private RecyclerView mNoTickRlv;
-    private StaggeredGridLayoutManager mNoTickLayoutManager;
-    private StaggeredGridLayoutManager mTickLayoutManager;
+    private MyLinearLayoutManager mNoTickLayoutManager;
+    private MyLinearLayoutManager mTickLayoutManager;
     private RecyclerView mTickRlv;
     private LinearLayout mAddListLl;
     private ImageView mAddListIv;
@@ -80,8 +81,8 @@ public class RecordRecyclerView extends LinearLayout implements View.OnClickList
         mImm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
         SvgHelper.setImageDrawable(mAddListIv,R.raw.ic_playlist_add_24px);
 
-        mNoTickLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
-        mTickLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
+        mNoTickLayoutManager = new MyLinearLayoutManager(mNoTickRlv);
+        mTickLayoutManager = new MyLinearLayoutManager(mContext);
 
         mNoTickRlv.setHasFixedSize(true);
         mNoTickRlv.setLayoutManager(mNoTickLayoutManager);
@@ -92,29 +93,22 @@ public class RecordRecyclerView extends LinearLayout implements View.OnClickList
         mTickRlv.setItemAnimator(new DefaultItemAnimator());
 
         mTickAdapter = new TickAdapter(mTick);
+        mTickAdapter.setTickCallback(this);
         mTickRlv.setAdapter(mTickAdapter);
 
         mNoTickAdapter = new NoTickAdapter(mNoTick);
+        mNoTickAdapter.setNoTickCallback(this);
         mNoTickRlv.setAdapter(mNoTickAdapter);
 
     }
 
-    public void setList(List<String> mNoTick,List<String> mTick){
-        this.mNoTick = mNoTick;
-        this.mTick = mTick;
-    }
-
-    /**
-     * Called when a view has been clicked.
-     *
-     * @param v The view that was clicked.
-     */
     @Override
     public void onClick(View v) {
         int id =v.getId();
         switch (id){
             case R.id.add_list_item_ll:
                 mNoTickAdapter.addItem("");
+                noTickInvalidate();
                 break;
         }
     }
@@ -149,6 +143,7 @@ public class RecordRecyclerView extends LinearLayout implements View.OnClickList
                 }
             }
         }
+
         mNoTickAdapter.notifyDataSetChanged();
         mTickAdapter.notifyDataSetChanged();
     }
@@ -200,21 +195,39 @@ public class RecordRecyclerView extends LinearLayout implements View.OnClickList
     }
 
     @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        Log.e("RecordRecyclerView","onDraw: width->"+ canvas.getWidth());
-
+    public void onNoTickRemoveItem(int position) {
+        mNoTickAdapter.removeItem(position);
+        noTickInvalidate();
     }
 
     @Override
-    protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        super.onLayout(changed, l, t, r, b);
-        Log.e("RecordRecyclerView","onLayout:"+l+" "+t+" "+r+" "+b);
+    public void onNoTickCheckItme(int position) {
+        mTickAdapter.addItem(mNoTick.get(position));
+        tickInvalidate();
+        mNoTickAdapter.removeItem(position);
+        noTickInvalidate();
     }
 
     @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-       // heightMeasureSpec = (int)((mNoTick.size()+mTick.size())* DimUtil.dipToPx(40) + mAddListLl.getHeight());
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    public void onTickRemoveItem(int position) {
+        mTickAdapter.removeItem(position);
+    }
+
+    @Override
+    public void onTickCheckItme(int position) {
+        mNoTickAdapter.addItem(mNoTick.get(position));
+        noTickInvalidate();
+        mTickAdapter.removeItem(position);
+        tickInvalidate();
+    }
+
+    private void noTickInvalidate(){
+        mNoTickRlv.requestLayout();
+        mNoTickRlv.invalidate();
+    }
+
+    private void tickInvalidate(){
+        mTickRlv.requestLayout();
+        mTickRlv.invalidate();
     }
 }

@@ -1,12 +1,18 @@
 package akiyama.mykeep.widget;
 
+import android.annotation.TargetApi;
+import android.app.ActivityOptions;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.transition.Explode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,12 +40,17 @@ import akiyama.mykeep.event.EventType;
 import akiyama.mykeep.event.helper.KeepNotifyCenterHelper;
 import akiyama.mykeep.preferences.KeepPreferenceUtil;
 import akiyama.mykeep.task.QueryByUserDbTask;
+import akiyama.mykeep.util.AnimHelper;
+import akiyama.mykeep.util.DimUtil;
 import akiyama.mykeep.util.LoginHelper;
 import akiyama.mykeep.util.SvgHelper;
 
 
 public class MainActivity extends BaseObserverActivity implements View.OnClickListener{
     private static final String TAG="MainActivity";
+
+    private static final int MAIN = 0;
+    private static final int DETAIL = 1;
     private String mMenuMode=StatusMode.MENU_NORMAL;
     /**
      * 单行视图
@@ -74,7 +85,8 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
     private ImageView mHelpIv;
     private TextView mUserNameTv;
     private LinearLayout mLoginLl;
-
+    private LinearLayout mContentLy;
+    private RecordDetailFragment mDetailFragment;
     private FloatingActionsMenu mAddRecordMenuFam;//记事菜单
     private FloatingActionButton mAddNormalRecordFab;//增加普通计事
     private FloatingActionButton mAddListRecordFab;//添加列表数据
@@ -85,6 +97,10 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
     private List<LabelModel> mLabelList;
     private LabelController mLc = new LabelController();
 
+
+    private FragmentTransaction mTransaction;
+    private FragmentManager mFragmentManager;
+    private int mCurrentFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -127,9 +143,11 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         mRecordVp = (ViewPager) findViewById(R.id.content_vp);
         mTabLy = (TabLayout) findViewById(R.id.pager_strip_tsv);
 
+        mContentLy = (LinearLayout) findViewById(R.id.root);
         mAddRecordMenuFam = (FloatingActionsMenu) findViewById(R.id.add_record_fam);
         mAddNormalRecordFab = (FloatingActionButton) findViewById(R.id.add_normal_record_fab);
         mAddListRecordFab = (FloatingActionButton) findViewById(R.id.add_list_record_fab);
+
     }
 
     /**
@@ -158,6 +176,7 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
 
     @Override
     protected void initView(){
+        mCurrentFragment = MAIN;
         setToolBarTitle("记事");
         mLabelList = new ArrayList<>();
         mRecordView.setBackgroundResource(R.color.light_gray);
@@ -170,6 +189,34 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         mTabLy.setTabsFromPagerAdapter(mRecordLabelAdapter);
         mRecordVp.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLy));
         mTabLy.setupWithViewPager(mRecordVp);
+        mDetailFragment = new RecordDetailFragment();
+        mFragmentManager = getFragmentManager();
+        mTransaction = mFragmentManager.beginTransaction();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(getFragmentManager().getBackStackEntryCount() >0){
+            switch (mCurrentFragment){
+                case DETAIL:
+                    getFragmentManager().popBackStack();
+                    mCurrentFragment = MAIN;
+                    setToolBarTitle("记事");
+                    supportInvalidateOptionsMenu();
+                    setDrawer();
+                    mContentLy.setVisibility(View.GONE);
+                    if(mDetailFragment!=null){
+                        mDetailFragment.saveOrUpdateRecordToDb();
+                    }
+                    mDetailFragment = null;//设置为NULL，让下一次进入界面的时候重新渲染
+                    break;
+                default:
+                    getFragmentManager().popBackStack();
+                    break;
+            }
+        }else{
+            super.onBackPressed();
+        }
     }
 
 
@@ -182,38 +229,32 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         mFiledView.setOnClickListener(this);
         mAddListRecordFab.setOnClickListener(this);
         mAddNormalRecordFab.setOnClickListener(this);
-      /*  mAddRecordMenuFam.setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu.OnFloatingActionsMenuUpdateListener() {
-            @Override
-            public void onMenuExpanded() {
-
-            }
-
-            @Override
-            public void onMenuCollapsed() {
-
-            }
-        });*/
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        MenuItem login=menu.findItem(R.id.action_login);
-        MenuItem switchView = menu.findItem(R.id.action_switch_view);
-        AVUser avUser=LoginHelper.getCurrentUser();
+        if(mCurrentFragment == MAIN){
+            getMenuInflater().inflate(R.menu.menu_main, menu);
+            MenuItem login=menu.findItem(R.id.action_login);
+            MenuItem switchView = menu.findItem(R.id.action_switch_view);
+            AVUser avUser=LoginHelper.getCurrentUser();
 
-        if(avUser!=null){
-            login.setTitle(getResources().getString(R.string.loginOut));
-        }else{
-            login.setTitle(getResources().getString(R.string.action_login));
+            if(avUser!=null){
+                login.setTitle(getResources().getString(R.string.loginOut));
+            }else{
+                login.setTitle(getResources().getString(R.string.action_login));
+            }
+
+            if(isSingleView()){
+                switchView.setTitle(getResources().getString(R.string.many_view));
+            }else {
+                switchView.setTitle(getResources().getString(R.string.single_view));
+            }
+        }else if(mCurrentFragment == DETAIL){
+            getMenuInflater().inflate(R.menu.menu_add_record,menu);
         }
 
-        if(isSingleView()){
-            switchView.setTitle(getResources().getString(R.string.many_view));
-        }else {
-            switchView.setTitle(getResources().getString(R.string.single_view));
-        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -247,29 +288,6 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         };
     }
 
-   /* *//**
-     * 设置左侧菜单的文字和图标
-     *//*
-   private void setLeftMenuItem(){
-       mRecordTv.setText(getResources().getString(R.string.item_menu_1));
-       mRecordIv.setImageResource(R.drawable.ic_assignment_black_24dp);
-
-       mFiledTv.setText(getResources().getString(R.string.item_menu_2));
-       mFiledIv.setImageResource(R.drawable.ic_access_alarms_black_24dp);
-
-       mRecycleTv.setText(getResources().getString(R.string.item_menu_3));
-       mRecycleIv.setImageResource(R.drawable.ic_drafts_black_24dp);
-
-       mSettingTv.setText(getResources().getString(R.string.item_menu_4));
-       mSettingIv.setImageResource(R.drawable.ic_settings_black_24dp);
-
-       mSyncTv.setText(getResources().getString(R.string.item_menu_5));
-       mSyncIv.setImageResource(R.drawable.ic_loop_black_24dp);
-
-       mHelpTv.setText(getResources().getString(R.string.item_menu_6));
-       mHelpIv.setImageResource(R.drawable.ic_help_black_24dp);
-   }*/
-
     private void setDrawer(){
         //创建返回键，并实现打开关/闭监听
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerDl, mToolbar, R.string.open, R.string.close) {
@@ -296,22 +314,6 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
             mUserNameTv.setText(getResources().getString(R.string.no_login));
         }
 
-    }
-
-    /**
-     * 设置正常模式下的 actionbar menu
-     */
-    private void setNormalMenu(Menu menu){
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        MenuItem login=menu.findItem(R.id.action_login);
-        MenuItem switchView = menu.findItem(R.id.action_switch_view);
-        AVUser avUser=LoginHelper.getCurrentUser();
-
-        if(avUser!=null){
-            login.setTitle(getResources().getString(R.string.loginOut));
-        }else{
-            login.setTitle(getResources().getString(R.string.action_login));
-        }
     }
 
     @Override
@@ -374,20 +376,13 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
                 mSettingView.setBackgroundResource(R.color.light_gray);
                 break;
             case R.id.add_normal_record_fab:
-                goAddRcord(StatusMode.ADD_RECORD_MODE,RecordModel.RECORD_TYPE_NORMAL);
+                goAddRecordFragment(StatusMode.ADD_RECORD_MODE, RecordModel.RECORD_TYPE_NORMAL);
                 break;
             case R.id.add_list_record_fab:
-                goAddRcord(StatusMode.ADD_RECORD_MODE,RecordModel.RECORD_TYPE_LIST);
+                goAddRecordFragment(StatusMode.ADD_RECORD_MODE, RecordModel.RECORD_TYPE_LIST);
                 break;
             case R.id.login_ll:
-               /* if(LoginHelper.isLogin()){
-                    AVUser.logOut();//清除当前缓存的数据
-                    KeepNotifyCenterHelper.getInstance().notifyLoginout();//通知注销登录信息
-                    Toast.makeText(this, "注销成功！", Toast.LENGTH_LONG).show();
-                }else{
-
-                }*/
-                if(LoginHelper.isLogin()){
+                if(!LoginHelper.isLogin()){
                     goLogin();
                 }
                 break;
@@ -409,11 +404,49 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
      * @param recordMode 设置当前增加记事的模式：添加或者编辑
      * @param recordType 设置当前记事的类型，如清单列表型、普通模式
      */
-    private void goAddRcord(String recordMode,int recordType){
+    private void goAddRecord(String recordMode, int recordType){
         Intent addRecord=new Intent(this,AddRecordActivity.class);
         addRecord.putExtra(AddRecordActivity.KEY_RECORD_MODE, recordMode);
         addRecord.putExtra(AddRecordActivity.KEY_ADD_RECORD_TYPE, recordType);
         startActivity(addRecord);
+    }
+
+    private void goAddRecordFragment(String recordMode, int recordType){
+        mCurrentFragment = DETAIL;
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.setCustomAnimations(R.anim.abc_fade_in, R.anim.abc_fade_out, R.anim.abc_fade_in, R.anim.abc_fade_out);
+        if(mDetailFragment == null){
+            mDetailFragment = new RecordDetailFragment();
+        }
+        mContentLy.setVisibility(View.VISIBLE);
+        Bundle bundle= new Bundle();
+        bundle.putString(AddRecordActivity.KEY_RECORD_MODE, recordMode);
+        bundle.putInt(AddRecordActivity.KEY_ADD_RECORD_TYPE, recordType);
+        mDetailFragment.setArguments(bundle);
+        ft.replace(R.id.root, mDetailFragment, "mDetailFragment");
+        ft.addToBackStack(null);
+        ft.commit();
+        setToolBarTitle("添加记事");
+        supportInvalidateOptionsMenu();
+    }
+
+    public void goEditRecordFragment(RecordModel recordModel,View view){
+        mCurrentFragment = DETAIL;
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.setCustomAnimations(R.anim.abc_fade_in, R.anim.abc_fade_out, R.anim.abc_fade_in, R.anim.abc_fade_out);
+        if(mDetailFragment == null){
+            mDetailFragment = new RecordDetailFragment();
+        }
+        mContentLy.setVisibility(View.VISIBLE);
+        Bundle bundle= new Bundle();
+        bundle.putString(AddRecordActivity.KEY_RECORD_MODE, StatusMode.EDIT_RECORD_MODE);
+        bundle.putParcelable(AddRecordActivity.KEY_EDIT_RECORD_LIST, recordModel);
+        mDetailFragment.setArguments(bundle);
+        ft.replace(R.id.root, mDetailFragment, "mDetailFragment");
+        ft.addToBackStack(null);
+        ft.commit();
+        setToolBarTitle("添加记事");
+        supportInvalidateOptionsMenu();
     }
 
     /**

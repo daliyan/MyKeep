@@ -17,7 +17,7 @@ import akiyama.mykeep.R;
 public class TickAdapter extends RecyclerView.Adapter<TickAdapter.ViewHolder> {
     private static final String TAG = "NoTickAdapter";
     private List<String> mDataset;
-
+    private TickCallback mTickCallback;
     public TickAdapter(List<String> mDataset) {
         this.mDataset = mDataset;
     }
@@ -30,7 +30,7 @@ public class TickAdapter extends RecyclerView.Adapter<TickAdapter.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, final int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         if(mDataset!=null && mDataset.size()>0){
             String recordList = mDataset.get(position);
             holder.mSelectCb.setChecked(true);
@@ -39,18 +39,37 @@ public class TickAdapter extends RecyclerView.Adapter<TickAdapter.ViewHolder> {
             holder.mCancelIv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mDataset.remove(position);
-                    notifyItemRemoved(position);
+                    if(mTickCallback!=null){
+                        mTickCallback.onTickRemoveItem(holder.getAdapterPosition());
+                    }
                 }
             });
 
-            holder.mSelectCb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            holder.mSelectCb.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
+                public void onClick(View v) {
+                    CheckBox checkBox = ((CheckBox)v);
+                    checkBox.setChecked(!checkBox.isChecked());
+                    if(mTickCallback!=null){
+                        mTickCallback.onTickCheckItme(holder.getAdapterPosition());
+                    }
                 }
             });
         }
+    }
+
+    public void addItem(String content){
+        mDataset.add(content);
+        notifyItemInserted(mDataset.size());
+    }
+
+    public void removeItem(int position){
+        mDataset.remove(position);
+        notifyItemRemoved(position);
+    }
+
+    public void setTickCallback(TickCallback mTickCallback) {
+        this.mTickCallback = mTickCallback;
     }
 
     @Override
@@ -72,6 +91,11 @@ public class TickAdapter extends RecyclerView.Adapter<TickAdapter.ViewHolder> {
             }
 
         }
+    }
+
+    public interface TickCallback{
+        public void onTickRemoveItem(int position);
+        public void onTickCheckItme(int position);
     }
 }
 

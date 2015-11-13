@@ -22,6 +22,7 @@ import akiyama.mykeep.util.SvgHelper;
 public class NoTickAdapter extends RecyclerView.Adapter<NoTickAdapter.ViewHolder> {
     private static final String TAG = "NoTickAdapter";
     private List<String> mDataset;
+    private NoTickCallback mNoTickCallback;
     public NoTickAdapter(List<String> mDataset) {
         this.mDataset = mDataset;
     }
@@ -37,27 +38,35 @@ public class NoTickAdapter extends RecyclerView.Adapter<NoTickAdapter.ViewHolder
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         if(mDataset!=null && mDataset.size()>0){
             holder.mSelectCb.setChecked(true);
-            holder.mContentEt.setTypeface(AppContext.getRobotoSlabThin());
+            holder.mContentEt.setTypeface(AppContext.getRobotoSlabLight());
             holder.mContentTextWatch.updatePosition(position);//必须在setText之前updatePosition，否则会触发onTextChanged方法让位置错乱
             holder.mContentEt.setText(mDataset.get(position));
+            holder.mContentEt.requestFocus();
             if(holder.mContentEt.hasFocus()){
                 holder.mCancelIv.setVisibility(View.VISIBLE);
             }else{
                 holder.mCancelIv.setVisibility(View.GONE);
             }
+
             holder.mCancelIv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //如果使用notifyItemxxx来删除位置，注意一定要使用getAdapterPosition()。否则因为视图和Adapter数据不一致导致出现错误的位置
-                    //如果使用notifyDataSetChanged()来更新位置，则直接使用position否则会返回NO_POSITION而报错
-                    removeItem(holder.getAdapterPosition());
+                    if(mNoTickCallback!=null){
+                        //如果使用notifyItemxxx来删除位置，注意一定要使用getAdapterPosition()。否则因为视图和Adapter数据不一致导致出现错误的位置
+                        //如果使用notifyDataSetChanged()来更新位置，则直接使用position否则会返回NO_POSITION而报错
+                        mNoTickCallback.onNoTickRemoveItem(holder.getAdapterPosition());
+                    }
                 }
             });
 
-            holder.mSelectCb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            holder.mSelectCb.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
+                public void onClick(View v) {
+                    CheckBox checkBox = ((CheckBox)v);
+                    checkBox.setChecked(!checkBox.isChecked());
+                    if(mNoTickCallback!=null){
+                        mNoTickCallback.onNoTickCheckItme(holder.getAdapterPosition());
+                    }
                 }
             });
 
@@ -85,6 +94,10 @@ public class NoTickAdapter extends RecyclerView.Adapter<NoTickAdapter.ViewHolder
         notifyItemRemoved(position);
     }
 
+    public void setNoTickCallback(NoTickCallback mNoTickCallback) {
+        this.mNoTickCallback = mNoTickCallback;
+    }
+
     @Override
     public int getItemCount() {
         return mDataset.size();
@@ -104,6 +117,7 @@ public class NoTickAdapter extends RecyclerView.Adapter<NoTickAdapter.ViewHolder
                 mSelectCb = (CheckBox) v.findViewById(R.id.no_tick_select_cb);
                 mContentEt = (EditText) v.findViewById(R.id.no_tick_content_et);
                 mCancelIv = (ImageView) v.findViewById(R.id.no_tick_cancel_iv);
+
                 SvgHelper.setImageDrawable(mMoveIv, R.raw.ic_apps_24px);
                 this.mContentTextWatch = mContentTextWatch;
                 mContentEt.addTextChangedListener(mContentTextWatch);
@@ -134,6 +148,11 @@ public class NoTickAdapter extends RecyclerView.Adapter<NoTickAdapter.ViewHolder
         public void afterTextChanged(Editable s) {
 
         }
+    }
+
+    public interface NoTickCallback{
+        public void onNoTickRemoveItem(int position);
+        public void onNoTickCheckItme(int position);
     }
 }
 

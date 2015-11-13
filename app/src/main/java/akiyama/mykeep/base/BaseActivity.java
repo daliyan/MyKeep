@@ -5,7 +5,7 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
@@ -26,7 +26,7 @@ import akiyama.mykeep.R;
  * @version 1.0
  * @since 2015-06-12  09:59
  */
-public abstract class BaseActivity extends ActionBarActivity implements View.OnClickListener{
+public abstract class BaseActivity extends AppCompatActivity implements View.OnClickListener{
 
     private final static String TAG="BaseActivity";
     protected final Activity mContext=this;

@@ -40,9 +40,13 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if(!mIsInitDate){
-            initDate();
             mIsInitDate = true;
+            initDate();
         }
+    }
+
+    public View getLayoutView() {
+        return mLayoutView;
     }
 
     @Override

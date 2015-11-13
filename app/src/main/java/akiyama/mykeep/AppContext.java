@@ -97,21 +97,6 @@ public class AppContext extends Application{
         return context;
     }
 
-
-    public static void addActivity(Activity activity){
-        mActivityList.add(activity);
-    }
-
-    public static List<Activity> getmActivityList() {
-        return mActivityList;
-    }
-
-    public static void removeAcitivity(Activity activity){
-        if(mActivityList.contains(activity)){
-            mActivityList.remove(activity);
-        }
-    }
-
     public static HashMap<String, WeakReference<Activity>> getmContexts() {
         return mContexts;
     }

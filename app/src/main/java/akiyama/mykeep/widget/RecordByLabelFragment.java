@@ -1,5 +1,6 @@
 package akiyama.mykeep.widget;
 
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -113,7 +114,8 @@ public class RecordByLabelFragment extends BaseObserverFragment {
                     switchActionBarMenu(StatusMode.MENU_NORMAL);
                 }else{
                     if (mRecordModels != null && mRecordModels.size() > position) {
-                        goEditRecordActivity(mRecordModels.get(position), v);
+                        ((MainActivity)getActivity()).goEditRecordFragment(mRecordModels.get(position), v);
+                        //goEditRecordActivity(mRecordModels.get(position), v);
                     }else {
                         LogUtil.e(TAG,"setOnItemClick position is NV");
                     }

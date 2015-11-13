@@ -1,24 +1,17 @@
 package akiyama.mykeep.widget;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Debug;
-import android.os.Handler;
 import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -26,16 +19,16 @@ import java.util.List;
 
 import akiyama.mykeep.AppContext;
 import akiyama.mykeep.R;
-import akiyama.mykeep.base.BaseObserverActivity;
+import akiyama.mykeep.base.BaseObserverFragment;
 import akiyama.mykeep.common.Constants;
 import akiyama.mykeep.common.DbConfig;
 import akiyama.mykeep.common.StatusMode;
-import akiyama.mykeep.event.NotifyInfo;
-import akiyama.mykeep.event.helper.KeepNotifyCenterHelper;
-import akiyama.mykeep.task.SaveSingleDbTask;
 import akiyama.mykeep.controller.RecordController;
 import akiyama.mykeep.db.model.RecordModel;
 import akiyama.mykeep.event.EventType;
+import akiyama.mykeep.event.NotifyInfo;
+import akiyama.mykeep.event.helper.KeepNotifyCenterHelper;
+import akiyama.mykeep.task.SaveSingleDbTask;
 import akiyama.mykeep.task.UpdateSingleDbTask;
 import akiyama.mykeep.util.DateUtil;
 import akiyama.mykeep.util.LogUtil;
@@ -50,17 +43,22 @@ import akiyama.mykeep.view.calendar.SimpleMonthAdapter;
 import akiyama.mykeep.vo.SearchVo;
 
 /**
- * 添加一条记录
+ * 使用Fragment来显示记录列表的详情页面</br>
+ * 以前是使用Activity来显示，但是存在以下2个问题：</br>
+ *  1.以前在打开记录详情页面的时候使用开始的addView方式来一条条加载对应的列表数据比较耗时，现在修改成{@link akiyama.mykeep.view.RecordRecyclerView}使用空间RecyclerView加载列表数据，打开速度会快3倍左右（以前在华为P7上面为250MS，现在为70MS左右）</br>
+ *  2.进入详情页面速度比较慢，特别是在加载大量数据的时候，其中UI的渲染（setContentView(xxx)）占用52%的时间，在华为P7上面测试打开速度大概为70ms左右</br>
+ *  3.使用Fragment作为详情页面可以免去重复加载VIEW的耗时</br>
  * @author zhiwu_yan
  * @version 1.0
- * @since 2015-06-30  09:55
+ * @since 2015-11-12  09:42
  */
-public class AddRecordActivity extends BaseObserverActivity {
+public class RecordDetailFragment extends BaseObserverFragment{
 
     private static final String TAG="AddRecordActivity";
     public static final String KEY_RECORD_MODE ="key_record_mode";//编辑状态
     public static final String KEY_EDIT_RECORD_LIST="ket_edit_record_list";//编辑模式下带的参数
     public static final String KEY_ADD_RECORD_TYPE ="key_add_record_type";//添加记录的类型，如列表、普通、音频、视屏 etc
+    private Context mContext;
     private String mMode = StatusMode.ADD_RECORD_MODE;//默认是记录添加模式
     private int mAddRecordType;//添加记录
     private EditText mTitleEt;
@@ -79,33 +77,55 @@ public class AddRecordActivity extends BaseObserverActivity {
     private RecordModel mEditRecordModel;
     private RecordModel mStartRecord = new RecordModel();//刚刚进入添加记录页面的时候的数据，为了比较数据是否发生改变
     private RecordController rc=new RecordController();
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        //long startTime = System.currentTimeMillis();
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout_add_record);
-       /* long endTime = System.currentTimeMillis();
-        Toast.makeText(this,"setContentView"+(endTime-startTime)+"ms",Toast.LENGTH_SHORT).show();*/
-        setInitUiByMode();
-       /* endTime = System.currentTimeMillis();
-        Toast.makeText(this,"onCreate"+(endTime-startTime)+"ms",Toast.LENGTH_SHORT).show();*/
     }
 
-    /**
-     * 初始化SVG资源
-     */
+    @Override
+    public int onSetLayoutId() {
+        return R.layout.layout_add_record;
+    }
+
+    @Override
+    public void findView(View view) {
+        mTitleEt=(EditText) view.findViewById(R.id.record_title_et);
+        mLabelLsl =(LabelsLayout) view.findViewById(R.id.label_lsl);
+        mUpdateTimeTv = (TextView) view.findViewById(R.id.record_update_time_tv);
+    }
+
+
+    @Override
+    public void initView() {
+        mContext = getActivity();
+        mTitleEt.setTypeface(AppContext.getRobotoSlabLight());
+        mUpdateTimeTv.setTypeface(AppContext.getRobotoSlabLight());
+    }
+
+    @Override
+    public void initDate() {
+        setInitUiByMode();
+    }
+
+    @Override
+    public void setOnClick() {
+        mLabelLsl.setOnClickListener(this);
+    }
+
     @Override
     public void initSvgView() {
 
     }
 
+
     /**
      * 根据当前模式设置不同的UI数据
      */
     private void setInitUiByMode(){
-        mMode = getIntent().getStringExtra(KEY_RECORD_MODE);
+        mMode = getArguments().getString(KEY_RECORD_MODE);
         if(mMode!=null && mMode.equals(StatusMode.EDIT_RECORD_MODE)){
-            mEditRecordModel = getIntent().getParcelableExtra(KEY_EDIT_RECORD_LIST);
+            mEditRecordModel = getArguments().getParcelable(KEY_EDIT_RECORD_LIST);
             mAddRecordType = mEditRecordModel.getRecordType();
             initTypeView(mAddRecordType);
             mStartRecord = mEditRecordModel;
@@ -120,7 +140,7 @@ public class AddRecordActivity extends BaseObserverActivity {
                 mUpdateTimeTv.setText("修改时间："+DateUtil.getDate(mEditRecordModel.getUpdateTime()));
             }
         }else if(mMode!=null && mMode.equals(StatusMode.ADD_RECORD_MODE)){
-            mAddRecordType = getIntent().getIntExtra(KEY_ADD_RECORD_TYPE,RecordModel.RECORD_TYPE_NORMAL);
+            mAddRecordType = getArguments().getInt(KEY_ADD_RECORD_TYPE,RecordModel.RECORD_TYPE_NORMAL);
             initTypeView(mAddRecordType);
             mStartRecord.setContent("");
             mStartRecord.setTitle("");
@@ -129,54 +149,16 @@ public class AddRecordActivity extends BaseObserverActivity {
     }
 
     @Override
-    protected void findView() {
-        mTitleEt=(EditText) findViewById(R.id.record_title_et);
-        mLabelLsl =(LabelsLayout) findViewById(R.id.label_lsl);
-        mUpdateTimeTv = (TextView) findViewById(R.id.record_update_time_tv);
-    }
-
-    private View getListViewStub(){
-        if(mListView ==null){
-            ViewStub stub = (ViewStub)findViewById(R.id.record_content_list_vs);
-            mListView= stub.inflate();
+    public void onClick(View v) {
+        int id=v.getId();
+        switch (id){
+            case R.id.label_lsl:
+                goAddLabelActivity();
+                break;
+            default:
+                break;
         }
-        return mListView;
-    }
 
-    private View getNormalViewStub(){
-        if(mNormalView==null){
-            ViewStub stub = (ViewStub) findViewById(R.id.record_content_normal_vs);
-            mNormalView = stub.inflate();
-        }
-        return mNormalView;
-    }
-
-    private void initTypeView(int addRecordType){
-        if(addRecordType == RecordModel.RECORD_TYPE_NORMAL ){
-            mContentEt=(EditText) getNormalViewStub().findViewById(R.id.record_content_et);
-        }else if(addRecordType == RecordModel.RECORD_TYPE_LIST){
-            mContentRlv = (RecordRecyclerView) getListViewStub().findViewById(R.id.record_content_rlv);
-        }else{
-            LogUtil.e(TAG,"erro addRecordType");
-        }
-    }
-
-    @Override
-    protected void initView() {
-        setToolBarTitle("添加记事");
-        mTitleEt.setTypeface(AppContext.getRobotoSlabLight());
-        mUpdateTimeTv.setTypeface(AppContext.getRobotoSlabLight());
-    }
-
-    @Override
-    protected void setOnClick() {
-        mLabelLsl.setOnClickListener(this);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_add_record,menu);
-        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -201,47 +183,10 @@ public class AddRecordActivity extends BaseObserverActivity {
         };
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id=item.getItemId();
-        switch (id){
-            case R.id.action_add_label:
-                goAddLabelActivity();
-                break;
-            case R.id.action_share_content:
-                break;
-            case R.id.action_delete_record:
-                break;
-            case R.id.action_select_style:
-                //showPickDialog();
-                showDateDialog();
-                break;
-        }
-        return true;
-    }
-
-    @Override
-    public void onClick(View v) {
-        int id=v.getId();
-        switch (id){
-            case R.id.label_lsl:
-                goAddLabelActivity();
-                break;
-            default:
-                break;
-        }
-    }
-
-    @Override
-    protected void setBackEvent() {
-        saveOrUpdateRecordToDb();//返回的时候直接保存
-        super.setBackEvent();
-    }
-
     /**
      * 保存或者更新数据
      */
-    private void saveOrUpdateRecordToDb(){
+    public void saveOrUpdateRecordToDb(){
         String title = mTitleEt.getText().toString();
         String content = getContentText();
         String labelNames = getCurrentLabel();
@@ -293,7 +238,7 @@ public class AddRecordActivity extends BaseObserverActivity {
     }
 
     private void goAddLabelActivity(){
-        Intent addLabel=new Intent(this,AddLabelActivity.class);
+        Intent addLabel=new Intent(mContext,AddLabelActivity.class);
         addLabel.putExtra(AddLabelActivity.KEY_EXTRA_SELECT_LABEL,getCurrentLabel());
         startActivity(addLabel);
     }
@@ -319,7 +264,6 @@ public class AddRecordActivity extends BaseObserverActivity {
                 if(aBoolean){
                     notifyRecordChange(labelName);
                     initContentText();
-                    AddRecordActivity.this.finish();
                 }
             }
         }.execute(record);
@@ -334,18 +278,44 @@ public class AddRecordActivity extends BaseObserverActivity {
                     notifyRecordChange(labelName);
                     mTitleEt.setText("");
                     initContentText();
-                    AddRecordActivity.this.finish();
                 }
             }
         }.execute(record);
     }
-
 
     private void notifyRecordChange(String labelNames){
         Bundle bundle = new Bundle();
         bundle.putString(Constants.KEY_LABEL_NAMES,labelNames);
         KeepNotifyCenterHelper.getInstance().notifyRefreshRecord(bundle);
     }
+
+
+    private View getListViewStub(){
+        if(mListView ==null){
+            ViewStub stub = (ViewStub) getLayoutView().findViewById(R.id.record_content_list_vs);
+            mListView= stub.inflate();
+        }
+        return mListView;
+    }
+
+    private View getNormalViewStub(){
+        if(mNormalView==null){
+            ViewStub stub = (ViewStub) getLayoutView().findViewById(R.id.record_content_normal_vs);
+            mNormalView = stub.inflate();
+        }
+        return mNormalView;
+    }
+
+    private void initTypeView(int addRecordType){
+        if(addRecordType == RecordModel.RECORD_TYPE_NORMAL ){
+            mContentEt=(EditText) getNormalViewStub().findViewById(R.id.record_content_et);
+        }else if(addRecordType == RecordModel.RECORD_TYPE_LIST){
+            mContentRlv = (RecordRecyclerView) getListViewStub().findViewById(R.id.record_content_rlv);
+        }else{
+            LogUtil.e(TAG, "erro addRecordType");
+        }
+    }
+
     /**
      * 循环添加Label标签
      * @param selectedLabels
@@ -362,9 +332,9 @@ public class AddRecordActivity extends BaseObserverActivity {
 
 
     private void showPickDialog(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this,R.style.Theme_AlertDialog));
+        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(getActivity(),R.style.Theme_AlertDialog));
         builder.setTitle("记事等级");
-        View dialogView = getLayoutInflater().inflate(R.layout.layout_pick_dialog, null);
+        View dialogView = getActivity().getLayoutInflater().inflate(R.layout.layout_pick_dialog, null);
         builder.setView(dialogView).setPositiveButton(R.string.signin, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
@@ -378,9 +348,9 @@ public class AddRecordActivity extends BaseObserverActivity {
     }
 
     private void showDateDialog(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this,R.style.Theme_AlertDialog));
+        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(getActivity(),R.style.Theme_AlertDialog));
         builder.setTitle("时间提醒");
-        View dialogView = getLayoutInflater().inflate(R.layout.layout_calendar_time_dialog, null);
+        View dialogView = getActivity().getLayoutInflater().inflate(R.layout.layout_calendar_time_dialog, null);
         ImageView remainIv = (ImageView) dialogView.findViewById(R.id.remain_iv);
         final TextView remainTv = (TextView) dialogView.findViewById(R.id.remain_tv);
         DayPickerView dayPickerView = (DayPickerView) dialogView.findViewById(R.id.pickerView);
@@ -404,7 +374,7 @@ public class AddRecordActivity extends BaseObserverActivity {
         if(mEditRecordModel!=null && mEditRecordModel.getAlarmTime()!=null){
             remainTv.setText(DateUtil.getDate(mEditRecordModel.getAlarmTime()));
             remainTv.setTextColor(getResources().getColor(R.color.text_select));
-            SvgHelper.setImageDrawable(remainIv,R.raw.ic_vibration_select_24px);
+            SvgHelper.setImageDrawable(remainIv, R.raw.ic_vibration_select_24px);
         }else{
             remainTv.setText("提醒我");
             remainTv.setTextColor(getResources().getColor(R.color.text_normal));
