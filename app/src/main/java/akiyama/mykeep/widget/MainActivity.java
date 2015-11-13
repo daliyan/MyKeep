@@ -36,12 +36,13 @@ import akiyama.mykeep.db.model.BaseModel;
 import akiyama.mykeep.db.model.LabelModel;
 import akiyama.mykeep.db.model.RecordModel;
 import akiyama.mykeep.event.NotifyInfo;
-import akiyama.mykeep.event.EventType;
+
+
+
+
 import akiyama.mykeep.event.helper.KeepNotifyCenterHelper;
 import akiyama.mykeep.preferences.KeepPreferenceUtil;
 import akiyama.mykeep.task.QueryByUserDbTask;
-import akiyama.mykeep.util.AnimHelper;
-import akiyama.mykeep.util.DimUtil;
 import akiyama.mykeep.util.LoginHelper;
 import akiyama.mykeep.util.SvgHelper;
 
