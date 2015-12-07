@@ -1,6 +1,7 @@
 # MyKeep
 ## 项目说明
  符合MD设计的记事本应用
+ 
 ## 说明
  - 设计上符合MD设计风格
  - 使用ContentProvider方式来管理数据库
@@ -8,8 +9,10 @@
  - 使用SVG图片来作为资源图，占用大小更小，适配更简单
  - 使用fragment作为记事详情页面，打开速度更优，测试渲染打开速度大概10ms-20ms以内，比使用activity快大概200%
  - 使用Toolbar RecyclerView等控件来优化UI的显示效果
+
 ## 已知问题
  稍后编辑
+ 
 ## TODO List
   - 主页到详情页面（fragment）的跳转效果
   - Floating Button bug修复
