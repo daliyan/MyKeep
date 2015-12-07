@@ -237,7 +237,7 @@ public class RecordDetailFragment extends BaseObserverFragment{
         }
     }
 
-    private void goAddLabelActivity(){
+    public void goAddLabelActivity(){
         Intent addLabel=new Intent(mContext,AddLabelActivity.class);
         addLabel.putExtra(AddLabelActivity.KEY_EXTRA_SELECT_LABEL,getCurrentLabel());
         startActivity(addLabel);
@@ -347,7 +347,7 @@ public class RecordDetailFragment extends BaseObserverFragment{
         builder.create().show();
     }
 
-    private void showDateDialog(){
+    public void showDateDialog(){
         AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(getActivity(),R.style.Theme_AlertDialog));
         builder.setTitle("时间提醒");
         View dialogView = getActivity().getLayoutInflater().inflate(R.layout.layout_calendar_time_dialog, null);

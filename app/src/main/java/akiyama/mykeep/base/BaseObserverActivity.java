@@ -38,8 +38,6 @@ public abstract class BaseObserverActivity extends BaseActivity {
             for(String eventType:observerEventTypes){
                 eventSubject.registerObserver(eventType,observer);
             }
-
-
         }
 
     }
@@ -51,7 +49,6 @@ public abstract class BaseObserverActivity extends BaseActivity {
             for(String eventType:observerEventTypes){
                 eventSubject.removeObserver(eventType, observer);
             }
-
         }
     }
 

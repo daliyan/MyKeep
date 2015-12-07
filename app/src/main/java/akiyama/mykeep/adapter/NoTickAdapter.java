@@ -140,7 +140,6 @@ public class NoTickAdapter extends RecyclerView.Adapter<NoTickAdapter.ViewHolder
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            Log.e(TAG,"位置："+position+"字符"+s.toString());
             mDataset.set(position,s.toString());
         }
 

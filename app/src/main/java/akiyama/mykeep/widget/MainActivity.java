@@ -316,6 +316,41 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if(mCurrentFragment==DETAIL && mDetailFragment!=null){
+            return setDetailMenuSelect(item);
+        }else{
+           return setMainMenuSelect(item);
+        }
+    }
+
+    /**
+     * 详情页面的toolbar菜单跳转
+     * @param item
+     * @return
+     */
+    private boolean setDetailMenuSelect(MenuItem item){
+        int id=item.getItemId();
+        switch (id){
+            case R.id.action_add_label:
+                mDetailFragment.goAddLabelActivity();
+                break;
+            case R.id.action_share_content:
+                break;
+            case R.id.action_delete_record:
+                break;
+            case R.id.action_select_style:
+                mDetailFragment.showDateDialog();
+                break;
+        }
+        return true;
+    }
+
+    /**
+     * 主页的菜单跳转
+     * @param item
+     * @return
+     */
+    private boolean setMainMenuSelect(MenuItem item){
         int id = item.getItemId();
         switch (id){
             case R.id.action_login:
@@ -343,7 +378,6 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         }
         return true;
     }
-
 
     @Override
     public void onClick(View v) {
@@ -412,7 +446,7 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
     private void goAddRecordFragment(String recordMode, int recordType){
         mCurrentFragment = DETAIL;
         FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.setCustomAnimations(R.anim.abc_fade_in, R.anim.abc_fade_out, R.anim.abc_fade_in, R.anim.abc_fade_out);
+        //ft.setCustomAnimations(R.anim.abc_fade_in, R.anim.abc_fade_out, R.anim.abc_fade_in, R.anim.abc_fade_out);
         if(mDetailFragment == null){
             mDetailFragment = new RecordDetailFragment();
         }
