@@ -1,5 +1,7 @@
 package akiyama.mykeep.widget;
 
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
@@ -464,8 +466,8 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
 
     public void goEditRecordFragment(RecordModel recordModel,View view){
         mCurrentFragment = DETAIL;
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.setCustomAnimations(R.anim.abc_fade_in, R.anim.abc_fade_out, R.anim.abc_fade_in, R.anim.abc_fade_out);
+        final FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.setCustomAnimations(R.anim.fragment_slide_left_enter,R.anim.fragment_slide_right_exit);
         if(mDetailFragment == null){
             mDetailFragment = new RecordDetailFragment();
         }
@@ -476,9 +478,33 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         mDetailFragment.setArguments(bundle);
         ft.replace(R.id.root, mDetailFragment, "mDetailFragment");
         ft.addToBackStack(null);
-        ft.commit();
-        setToolBarTitle("添加记事");
-        supportInvalidateOptionsMenu();
+        ObjectAnimator left = ObjectAnimator.ofFloat(mToolbar,"translationX",1080,0);
+        left.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                ft.commit();
+                setToolBarTitle("添加记事");
+                supportInvalidateOptionsMenu();
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+        left.setDuration(400);
+        left.start();
+
     }
 
     /**
