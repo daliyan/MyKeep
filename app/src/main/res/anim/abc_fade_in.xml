@@ -1,5 +1,0 @@
-<objectAnimator xmlns:android="http://schemas.android.com/apk/res/android"
-    android:interpolator="@android:interpolator/accelerate_quad"
-    android:valueTo="2.0f"
-    android:propertyName="scaleX"
-    android:duration="@android:integer/config_mediumAnimTime" />

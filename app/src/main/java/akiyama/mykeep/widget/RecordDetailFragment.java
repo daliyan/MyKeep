@@ -5,13 +5,17 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -41,6 +45,7 @@ import akiyama.mykeep.view.calendar.DatePickerController;
 import akiyama.mykeep.view.calendar.DayPickerView;
 import akiyama.mykeep.view.calendar.SimpleMonthAdapter;
 import akiyama.mykeep.vo.SearchVo;
+import akiyama.mykeep.vo.ViewPivot;
 
 /**
  * 使用Fragment来显示记录列表的详情页面</br>
@@ -58,6 +63,7 @@ public class RecordDetailFragment extends BaseObserverFragment{
     public static final String KEY_RECORD_MODE ="key_record_mode";//编辑状态
     public static final String KEY_EDIT_RECORD_LIST="ket_edit_record_list";//编辑模式下带的参数
     public static final String KEY_ADD_RECORD_TYPE ="key_add_record_type";//添加记录的类型，如列表、普通、音频、视屏 etc
+    public static final String KEY_PIVOT_XY = "pivot_x_y";//列表页面的pivot xy值，用来现实fragment动画效果
     private Context mContext;
     private String mMode = StatusMode.ADD_RECORD_MODE;//默认是记录添加模式
     private int mAddRecordType;//添加记录
@@ -93,14 +99,22 @@ public class RecordDetailFragment extends BaseObserverFragment{
         mTitleEt=(EditText) view.findViewById(R.id.record_title_et);
         mLabelLsl =(LabelsLayout) view.findViewById(R.id.label_lsl);
         mUpdateTimeTv = (TextView) view.findViewById(R.id.record_update_time_tv);
+        mFragemntToolBar = (Toolbar) view.findViewById(R.id.toolbar);
     }
 
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = super.onCreateView(inflater, container, savedInstanceState);
+        setViewPivot();
+        return view;
+    }
 
     @Override
     public void initView() {
         mContext = getActivity();
         mTitleEt.setTypeface(AppContext.getRobotoSlabLight());
         mUpdateTimeTv.setTypeface(AppContext.getRobotoSlabLight());
+        setFragmentToolBarTitle("编辑记事");
     }
 
     @Override
@@ -119,6 +133,14 @@ public class RecordDetailFragment extends BaseObserverFragment{
     }
 
 
+    private void setViewPivot(){
+        ViewPivot viewPivot = getArguments().getParcelable(KEY_PIVOT_XY);
+        if(viewPivot!=null){
+            Toast.makeText(mContext,"X:"+viewPivot.pivotX+"Y:"+viewPivot.pivotY,Toast.LENGTH_SHORT).show();
+            mLayoutView.setPivotX(viewPivot.pivotX);
+            mLayoutView.setPivotY(viewPivot.pivotY);
+        }
+    }
     /**
      * 根据当前模式设置不同的UI数据
      */

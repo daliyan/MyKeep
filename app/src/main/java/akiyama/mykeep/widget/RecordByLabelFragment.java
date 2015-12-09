@@ -1,19 +1,13 @@
 package akiyama.mykeep.widget;
 
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.widget.ImageView;
-
-
-import com.larvalabs.svgandroid.SVG;
-import com.larvalabs.svgandroid.SVGBuilder;
 
 import java.util.ArrayList;
 import java.util.List;

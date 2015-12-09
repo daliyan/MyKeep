@@ -1,7 +1,5 @@
 package akiyama.mykeep.widget;
 
-import android.animation.Animator;
-import android.animation.ObjectAnimator;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
@@ -44,6 +42,7 @@ import akiyama.mykeep.preferences.KeepPreferenceUtil;
 import akiyama.mykeep.task.QueryByUserDbTask;
 import akiyama.mykeep.util.LoginHelper;
 import akiyama.mykeep.util.SvgHelper;
+import akiyama.mykeep.vo.ViewPivot;
 
 
 public class MainActivity extends BaseObserverActivity implements View.OnClickListener{
@@ -85,7 +84,7 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
     private ImageView mHelpIv;
     private TextView mUserNameTv;
     private LinearLayout mLoginLl;
-    private LinearLayout mContentLy;
+    private LinearLayout mDetailContentLy;
     private RecordDetailFragment mDetailFragment;
     private FloatingActionsMenu mAddRecordMenuFam;//记事菜单
     private FloatingActionButton mAddNormalRecordFab;//增加普通计事
@@ -143,7 +142,7 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         mRecordVp = (ViewPager) findViewById(R.id.content_vp);
         mTabLy = (TabLayout) findViewById(R.id.pager_strip_tsv);
 
-        mContentLy = (LinearLayout) findViewById(R.id.root);
+        mDetailContentLy = (LinearLayout) findViewById(R.id.detail_ll);
         mAddRecordMenuFam = (FloatingActionsMenu) findViewById(R.id.add_record_fam);
         mAddNormalRecordFab = (FloatingActionButton) findViewById(R.id.add_normal_record_fab);
         mAddListRecordFab = (FloatingActionButton) findViewById(R.id.add_list_record_fab);
@@ -199,15 +198,12 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         if(getFragmentManager().getBackStackEntryCount() >0){
             switch (mCurrentFragment){
                 case DETAIL:
-                    getFragmentManager().popBackStack();
-                    mCurrentFragment = MAIN;
-                    setToolBarTitle("记事");
-                    supportInvalidateOptionsMenu();
-                    setDrawer();
-                    mContentLy.setVisibility(View.GONE);
                     if(mDetailFragment!=null){
                         mDetailFragment.saveOrUpdateRecordToDb();
                     }
+                    getFragmentManager().popBackStack();
+                    mCurrentFragment = MAIN;
+                    //mDetailContentLy.setVisibility(View.GONE);
                     mDetailFragment = null;//设置为NULL，让下一次进入界面的时候重新渲染
                     break;
                 default:
@@ -254,7 +250,6 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         }else if(mCurrentFragment == DETAIL){
             getMenuInflater().inflate(R.menu.menu_add_record,menu);
         }
-
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -452,59 +447,36 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         if(mDetailFragment == null){
             mDetailFragment = new RecordDetailFragment();
         }
-        mContentLy.setVisibility(View.VISIBLE);
+        mDetailContentLy.setVisibility(View.VISIBLE);
         Bundle bundle= new Bundle();
-        bundle.putString(AddRecordActivity.KEY_RECORD_MODE, recordMode);
-        bundle.putInt(AddRecordActivity.KEY_ADD_RECORD_TYPE, recordType);
+        bundle.putString(RecordDetailFragment.KEY_RECORD_MODE, recordMode);
+        bundle.putInt(RecordDetailFragment.KEY_ADD_RECORD_TYPE, recordType);
         mDetailFragment.setArguments(bundle);
-        ft.replace(R.id.root, mDetailFragment, "mDetailFragment");
+        ft.replace(R.id.detail_ll, mDetailFragment, "mDetailFragment");
         ft.addToBackStack(null);
         ft.commit();
-        setToolBarTitle("添加记事");
+        //setToolBarTitle("添加记事");
         supportInvalidateOptionsMenu();
     }
 
     public void goEditRecordFragment(RecordModel recordModel,View view){
         mCurrentFragment = DETAIL;
-        final FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.setCustomAnimations(R.anim.fragment_slide_left_enter,R.anim.fragment_slide_right_exit);
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.setCustomAnimations(R.anim.fragment_scale_enter, R.anim.fragment_scale_exit, R.anim.fragment_scale_enter, R.anim.fragment_scale_exit);
         if(mDetailFragment == null){
             mDetailFragment = new RecordDetailFragment();
         }
-        mContentLy.setVisibility(View.VISIBLE);
+        mDetailContentLy.setVisibility(View.VISIBLE);
         Bundle bundle= new Bundle();
-        bundle.putString(AddRecordActivity.KEY_RECORD_MODE, StatusMode.EDIT_RECORD_MODE);
-        bundle.putParcelable(AddRecordActivity.KEY_EDIT_RECORD_LIST, recordModel);
+        bundle.putString(RecordDetailFragment.KEY_RECORD_MODE, StatusMode.EDIT_RECORD_MODE);
+        bundle.putParcelable(RecordDetailFragment.KEY_EDIT_RECORD_LIST, recordModel);
+        int[] location = new int[2];
+        view.getLocationOnScreen(location);
+        bundle.putParcelable(RecordDetailFragment.KEY_PIVOT_XY,new ViewPivot(location[0]+(view.getWidth()/2),location[1]+(view.getHeight()/2)));
         mDetailFragment.setArguments(bundle);
-        ft.replace(R.id.root, mDetailFragment, "mDetailFragment");
+        ft.replace(R.id.detail_ll, mDetailFragment, "mDetailFragment");
         ft.addToBackStack(null);
-        ObjectAnimator left = ObjectAnimator.ofFloat(mToolbar,"translationX",1080,0);
-        left.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-                ft.commit();
-                setToolBarTitle("添加记事");
-                supportInvalidateOptionsMenu();
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
-            }
-        });
-        left.setDuration(400);
-        left.start();
-
+        ft.commit();
     }
 
     /**

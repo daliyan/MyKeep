@@ -46,6 +46,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         findView();
         initSvgView();
         initView();
+        iniToolBar();
         setOnClick();
         setStatusBarView();
     }
@@ -57,14 +58,18 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         if(!TextUtils.isEmpty(title)){
             mToolbar.setTitle(title);
         }
-        setSupportActionBar(mToolbar);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
 
-        final Drawable upArrow = getResources().getDrawable(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
-        upArrow.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
-        getSupportActionBar().setHomeAsUpIndicator(upArrow);
-        setBackListener();
+    protected void iniToolBar(){
+        if(mToolbar!=null){
+            setSupportActionBar(mToolbar);
+            getSupportActionBar().setHomeButtonEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            final Drawable upArrow = getResources().getDrawable(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+            upArrow.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+            getSupportActionBar().setHomeAsUpIndicator(upArrow);
+            setBackListener();
+        }
     }
 
     protected void setBackListener(){

@@ -1,20 +1,29 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:clipToPadding="true"
-    android:orientation="vertical"
-    android:background="@color/white"
-    android:gravity="center_horizontal">
-    <include layout="@layout/layout_toolbar"/>
+    android:layout_height="match_parent">
+
     <LinearLayout
+        android:id="@+id/main_ll"
         android:layout_width="match_parent"
-        android:id="@+id/root"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <include layout="@layout/layout_toolbar" />
+
+        <include layout="@layout/layout_custom_drawer" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/detail_ll"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:visibility="gone">
 
     </LinearLayout>
 
-   <include layout="@layout/layout_custom_drawer" />
 
-</LinearLayout>
+</FrameLayout>
