@@ -1,12 +1,16 @@
 package akiyama.mykeep.widget;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.text.format.DateFormat;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +19,10 @@ import android.view.ViewStub;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -64,6 +71,7 @@ public class RecordDetailFragment extends BaseObserverFragment{
     public static final String KEY_EDIT_RECORD_LIST="ket_edit_record_list";//编辑模式下带的参数
     public static final String KEY_ADD_RECORD_TYPE ="key_add_record_type";//添加记录的类型，如列表、普通、音频、视屏 etc
     public static final String KEY_PIVOT_XY = "pivot_x_y";//列表页面的pivot xy值，用来现实fragment动画效果
+    private String mAlarmsTime;
     private Context mContext;
     private String mMode = StatusMode.ADD_RECORD_MODE;//默认是记录添加模式
     private int mAddRecordType;//添加记录
@@ -384,7 +392,8 @@ public class RecordDetailFragment extends BaseObserverFragment{
 
             @Override
             public void onDayOfMonthSelected(int year, int month, int day) {
-                remainTv.setText(year+"年"+(month+1)+"月"+day+"日");
+                mAlarmsTime = year+"年"+(month+1)+"月"+day+"日";
+                remainTv.setText(mAlarmsTime);
             }
 
             @Override
@@ -403,6 +412,13 @@ public class RecordDetailFragment extends BaseObserverFragment{
             SvgHelper.setImageDrawable(remainIv,R.raw.ic_vibration_24px);
         }
 
+        remainTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDatePickerDialog(remainTv);
+            }
+        });
+
         builder.setView(dialogView).setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
@@ -413,5 +429,33 @@ public class RecordDetailFragment extends BaseObserverFragment{
             }
         });
         builder.create().show();
+    }
+
+
+    private static class TimePickerFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
+
+        private String mTime;
+        private TextView mView;
+        private TimePickerFragment(String time,TextView view){
+            this.mTime = time;
+            this.mView = view;
+        }
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final Calendar c = Calendar.getInstance();
+            int hour = c.get(Calendar.HOUR_OF_DAY);
+            int minute = c.get(Calendar.MINUTE);
+            return new TimePickerDialog(getActivity(), this, hour, minute,DateFormat.is24HourFormat(getActivity()));
+        }
+
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            mTime = mTime + " "+hourOfDay+":"+minute;
+            mView.setText(mTime);
+        }
+    }
+
+    private void showDatePickerDialog(TextView remain) {
+        DialogFragment newFragment = new TimePickerFragment(mAlarmsTime,remain);
+        newFragment.show(getActivity().getFragmentManager(), "datePicker");
     }
 }
