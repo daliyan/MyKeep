@@ -45,6 +45,7 @@
                 android:resource="@xml/searchable" />
         </activity>
 
+
         <provider
             android:name="akiyama.mykeep.db.DataProvider"
             android:authorities="akiyama.mykeep.provider"

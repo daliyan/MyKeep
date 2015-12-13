@@ -185,8 +185,8 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         mRecordLabelAdapter = new RecordByLabelAdapter(getFragmentManager(),mLabelList);
         mRecordVp.setAdapter(mRecordLabelAdapter);
         mRecordVp.setOffscreenPageLimit(0);
-        mTabLy.setTabsFromPagerAdapter(mRecordLabelAdapter);
-        mRecordVp.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLy));
+        /*mTabLy.setTabsFromPagerAdapter(mRecordLabelAdapter);
+        mRecordVp.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLy));*/
         mTabLy.setupWithViewPager(mRecordVp);
         mDetailFragment = new RecordDetailFragment();
         mFragmentManager = getFragmentManager();
@@ -336,7 +336,7 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
             case R.id.action_delete_record:
                 break;
             case R.id.action_select_style:
-                mDetailFragment.showDateDialog();
+                mDetailFragment.showPickDialog();
                 break;
         }
         return true;

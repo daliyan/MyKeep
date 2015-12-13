@@ -201,7 +201,7 @@ public class RecordRecyclerView extends LinearLayout implements View.OnClickList
     }
 
     @Override
-    public void onNoTickCheckItme(int position) {
+    public void onNoTickCheckItem(int position) {
         mTickAdapter.addItem(mNoTick.get(position));
         tickInvalidate();
         mNoTickAdapter.removeItem(position);
@@ -214,7 +214,7 @@ public class RecordRecyclerView extends LinearLayout implements View.OnClickList
     }
 
     @Override
-    public void onTickCheckItme(int position) {
+    public void onTickCheckItem(int position) {
         mNoTickAdapter.addItem(mNoTick.get(position));
         noTickInvalidate();
         mTickAdapter.removeItem(position);

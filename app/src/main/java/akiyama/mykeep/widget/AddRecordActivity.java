@@ -378,7 +378,7 @@ public class AddRecordActivity extends BaseObserverActivity {
     }
 
     private void showDateDialog(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this,R.style.Theme_AlertDialog));
+    /*    AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this,R.style.Theme_AlertDialog));
         builder.setTitle("时间提醒");
         View dialogView = getLayoutInflater().inflate(R.layout.layout_calendar_time_dialog, null);
         ImageView remainIv = (ImageView) dialogView.findViewById(R.id.remain_iv);
@@ -420,6 +420,6 @@ public class AddRecordActivity extends BaseObserverActivity {
             public void onClick(DialogInterface dialog, int id) {
             }
         });
-        builder.create().show();
+        builder.create().show();*/
     }
 }

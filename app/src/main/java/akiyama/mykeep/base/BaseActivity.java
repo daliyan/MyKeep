@@ -41,14 +41,20 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     @Override
     public void setContentView(int layoutResID) {
         super.setContentView(layoutResID);
-        mToolbar= (Toolbar) findViewById(R.id.toolbar);
-        ((ViewGroup)findViewById(android.R.id.content)).getChildAt(0).setFitsSystemWindows(true);
+        if(hasToolBar()){
+            mToolbar= (Toolbar) findViewById(R.id.toolbar);
+            ((ViewGroup)findViewById(android.R.id.content)).getChildAt(0).setFitsSystemWindows(true);
+        }
         findView();
         initSvgView();
         initView();
         iniToolBar();
         setOnClick();
         setStatusBarView();
+    }
+
+    protected boolean hasToolBar(){
+        return true;
     }
 
     /**

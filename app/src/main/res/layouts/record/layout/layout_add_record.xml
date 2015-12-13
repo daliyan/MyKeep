@@ -53,6 +53,27 @@
                 android:layout_gravity="right"
                 android:gravity="right" />
 
+            <LinearLayout
+                android:id="@+id/alarm_ll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:padding="10dp">
+
+                <ImageView
+                    android:id="@+id/alarm_iv"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp" />
+
+                <TextView
+                    android:id="@+id/alarm_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:text="时间提醒"/>
+
+            </LinearLayout>
+
             <TextView
                 android:id="@+id/record_update_time_tv"
                 android:layout_width="match_parent"
@@ -61,7 +82,9 @@
                 android:paddingBottom="10dip"
                 android:paddingLeft="10dip"
                 android:paddingRight="10dip"
+                android:text="321321"
                 android:gravity="right" />
+
         </LinearLayout>
 
     </ScrollView>

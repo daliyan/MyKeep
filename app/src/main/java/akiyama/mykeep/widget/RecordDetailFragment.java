@@ -1,6 +1,7 @@
 package akiyama.mykeep.widget;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.TimePickerDialog;
@@ -16,13 +17,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -48,9 +49,6 @@ import akiyama.mykeep.util.StringUtil;
 import akiyama.mykeep.util.SvgHelper;
 import akiyama.mykeep.view.LabelsLayout;
 import akiyama.mykeep.view.RecordRecyclerView;
-import akiyama.mykeep.view.calendar.DatePickerController;
-import akiyama.mykeep.view.calendar.DayPickerView;
-import akiyama.mykeep.view.calendar.SimpleMonthAdapter;
 import akiyama.mykeep.vo.SearchVo;
 import akiyama.mykeep.vo.ViewPivot;
 
@@ -77,6 +75,9 @@ public class RecordDetailFragment extends BaseObserverFragment{
     private int mAddRecordType;//添加记录
     private EditText mTitleEt;
     private EditText mContentEt;
+    private LinearLayout mAlarmLl;
+    private ImageView mAlarmIv;
+    private TextView mAlarmTv;
     /**
      * 正常模式的VIEW
      */
@@ -108,6 +109,10 @@ public class RecordDetailFragment extends BaseObserverFragment{
         mLabelLsl =(LabelsLayout) view.findViewById(R.id.label_lsl);
         mUpdateTimeTv = (TextView) view.findViewById(R.id.record_update_time_tv);
         mFragemntToolBar = (Toolbar) view.findViewById(R.id.toolbar);
+        mAlarmLl = (LinearLayout) view.findViewById(R.id.alarm_ll);
+        mAlarmIv = (ImageView) view.findViewById(R.id.alarm_iv);
+        mAlarmTv = (TextView) view.findViewById(R.id.alarm_tv);
+
     }
 
     @Override
@@ -122,6 +127,7 @@ public class RecordDetailFragment extends BaseObserverFragment{
         mContext = getActivity();
         mTitleEt.setTypeface(AppContext.getRobotoSlabLight());
         mUpdateTimeTv.setTypeface(AppContext.getRobotoSlabLight());
+        mAlarmTv.setTypeface(AppContext.getRobotoSlabLight());
         setFragmentToolBarTitle("编辑记事");
     }
 
@@ -133,18 +139,18 @@ public class RecordDetailFragment extends BaseObserverFragment{
     @Override
     public void setOnClick() {
         mLabelLsl.setOnClickListener(this);
+        mAlarmLl.setOnClickListener(this);
     }
 
     @Override
     public void initSvgView() {
-
+        SvgHelper.setImageDrawable(mAlarmIv,R.raw.ic_access_alarms_24px);
     }
 
 
     private void setViewPivot(){
         ViewPivot viewPivot = getArguments().getParcelable(KEY_PIVOT_XY);
         if(viewPivot!=null){
-            Toast.makeText(mContext,"X:"+viewPivot.pivotX+"Y:"+viewPivot.pivotY,Toast.LENGTH_SHORT).show();
             mLayoutView.setPivotX(viewPivot.pivotX);
             mLayoutView.setPivotY(viewPivot.pivotY);
         }
@@ -184,6 +190,9 @@ public class RecordDetailFragment extends BaseObserverFragment{
         switch (id){
             case R.id.label_lsl:
                 goAddLabelActivity();
+                break;
+            case R.id.alarm_ll:
+                createAlarmDialog();
                 break;
             default:
                 break;
@@ -361,7 +370,7 @@ public class RecordDetailFragment extends BaseObserverFragment{
     }
 
 
-    private void showPickDialog(){
+    public void showPickDialog(){
         AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(getActivity(),R.style.Theme_AlertDialog));
         builder.setTitle("记事等级");
         View dialogView = getActivity().getLayoutInflater().inflate(R.layout.layout_pick_dialog, null);
@@ -377,85 +386,55 @@ public class RecordDetailFragment extends BaseObserverFragment{
         builder.create().show();
     }
 
-    public void showDateDialog(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(getActivity(),R.style.Theme_AlertDialog));
-        builder.setTitle("时间提醒");
-        View dialogView = getActivity().getLayoutInflater().inflate(R.layout.layout_calendar_time_dialog, null);
-        ImageView remainIv = (ImageView) dialogView.findViewById(R.id.remain_iv);
-        final TextView remainTv = (TextView) dialogView.findViewById(R.id.remain_tv);
-        DayPickerView dayPickerView = (DayPickerView) dialogView.findViewById(R.id.pickerView);
-        dayPickerView.setController(new DatePickerController() {
-            @Override
-            public int getMaxYear() {
-                return Calendar.getInstance().get(Calendar.YEAR)+1;
-            }
-
-            @Override
-            public void onDayOfMonthSelected(int year, int month, int day) {
-                mAlarmsTime = year+"年"+(month+1)+"月"+day+"日";
-                remainTv.setText(mAlarmsTime);
-            }
-
-            @Override
-            public void onDateRangeSelected(SimpleMonthAdapter.SelectedDays<SimpleMonthAdapter.CalendarDay> selectedDays) {
-
+    private void createAlarmDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setItems(R.array.alarm_list, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                if(which == 0){
+                    DialogFragment newFragment = new DatePickerFragment();
+                    newFragment.show(getFragmentManager(), "datePicker");
+                }else if(which==1){
+                    DialogFragment newFragment = new TimePickerFragment();
+                    newFragment.show(getFragmentManager(), "timePicker");
+                }
             }
         });
 
-        if(mEditRecordModel!=null && mEditRecordModel.getAlarmTime()!=null){
-            remainTv.setText(DateUtil.getDate(mEditRecordModel.getAlarmTime()));
-            remainTv.setTextColor(getResources().getColor(R.color.text_select));
-            SvgHelper.setImageDrawable(remainIv, R.raw.ic_vibration_select_24px);
-        }else{
-            remainTv.setText("提醒我");
-            remainTv.setTextColor(getResources().getColor(R.color.text_normal));
-            SvgHelper.setImageDrawable(remainIv,R.raw.ic_vibration_24px);
-        }
-
-        remainTv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDatePickerDialog(remainTv);
-            }
-        });
-
-        builder.setView(dialogView).setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-
-            }
-        }).setNegativeButton(R.string.remove, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-            }
-        });
         builder.create().show();
     }
 
 
-    private static class TimePickerFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
+    private class TimePickerFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
 
-        private String mTime;
-        private TextView mView;
-        private TimePickerFragment(String time,TextView view){
-            this.mTime = time;
-            this.mView = view;
-        }
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             final Calendar c = Calendar.getInstance();
             int hour = c.get(Calendar.HOUR_OF_DAY);
             int minute = c.get(Calendar.MINUTE);
-            return new TimePickerDialog(getActivity(), this, hour, minute,DateFormat.is24HourFormat(getActivity()));
+            return new TimePickerDialog(getActivity(), this, hour, minute, DateFormat.is24HourFormat(getActivity()));
         }
 
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-            mTime = mTime + " "+hourOfDay+":"+minute;
-            mView.setText(mTime);
         }
     }
 
-    private void showDatePickerDialog(TextView remain) {
-        DialogFragment newFragment = new TimePickerFragment(mAlarmsTime,remain);
-        newFragment.show(getActivity().getFragmentManager(), "datePicker");
+    public class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the current date as the default date in the picker
+            final Calendar c = Calendar.getInstance();
+            int year = c.get(Calendar.YEAR);
+            int month = c.get(Calendar.MONTH);
+            int day = c.get(Calendar.DAY_OF_MONTH);
+
+            // Create a new instance of DatePickerDialog and return it
+            return new DatePickerDialog(getActivity(), this, year, month, day);
+        }
+
+        public void onDateSet(DatePicker view, int year, int month, int day) {
+            // Do something with the date chosen by the user
+        }
     }
+
 }

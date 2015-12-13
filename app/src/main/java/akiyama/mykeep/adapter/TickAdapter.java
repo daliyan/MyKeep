@@ -1,11 +1,11 @@
 package akiyama.mykeep.adapter;
 
+import android.graphics.Paint;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -35,7 +35,8 @@ public class TickAdapter extends RecyclerView.Adapter<TickAdapter.ViewHolder> {
             String recordList = mDataset.get(position);
             holder.mSelectCb.setChecked(true);
             holder.mContentTv.setText(recordList);
-            holder.mContentTv.setTypeface(AppContext.getRobotoSlabBold());
+            holder.mContentTv.setTypeface(AppContext.getRobotoSlabRegular());
+            holder.mContentTv.getPaint().setFlags(Paint. STRIKE_THRU_TEXT_FLAG|Paint.ANTI_ALIAS_FLAG); //中划线
             holder.mCancelIv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -51,7 +52,7 @@ public class TickAdapter extends RecyclerView.Adapter<TickAdapter.ViewHolder> {
                     CheckBox checkBox = ((CheckBox)v);
                     checkBox.setChecked(!checkBox.isChecked());
                     if(mTickCallback!=null){
-                        mTickCallback.onTickCheckItme(holder.getAdapterPosition());
+                        mTickCallback.onTickCheckItem(holder.getAdapterPosition());
                     }
                 }
             });
@@ -95,7 +96,7 @@ public class TickAdapter extends RecyclerView.Adapter<TickAdapter.ViewHolder> {
 
     public interface TickCallback{
         public void onTickRemoveItem(int position);
-        public void onTickCheckItme(int position);
+        public void onTickCheckItem(int position);
     }
 }
 

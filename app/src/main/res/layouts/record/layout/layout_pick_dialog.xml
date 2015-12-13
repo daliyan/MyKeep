@@ -2,30 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white">
+    android:layout_height="match_parent">
 
-
-    <CheckBox
+    <DatePicker
+        android:id="@+id/datePicker"
+        android:layout_gravity="center_horizontal"
         android:layout_width="match_parent"
-        android:layout_height="40dip"
-        android:layout_marginTop="16dip"
-        android:layout_marginLeft="10dip"
-        android:layout_gravity="left"
-        android:text="321312312"/>
-    <CheckBox
-        android:layout_width="match_parent"
-        android:layout_height="40dip"
-        android:layout_marginTop="16dip"
-        android:layout_marginLeft="10dip"
-        android:layout_gravity="left"
-        android:text="321312312"/>
-    <CheckBox
-        android:layout_width="match_parent"
-        android:layout_height="40dip"
-        android:layout_marginTop="16dip"
-        android:layout_marginLeft="10dip"
-        android:layout_gravity="left"
-        android:text="321312312"/>
+        android:layout_height="wrap_content"
+        android:spinnersShown="true"
+        android:calendarViewShown="false"/>
 
 </LinearLayout>

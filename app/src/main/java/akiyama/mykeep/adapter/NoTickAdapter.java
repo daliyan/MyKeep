@@ -3,15 +3,12 @@ package akiyama.mykeep.adapter;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import java.util.List;
 
@@ -37,7 +34,6 @@ public class NoTickAdapter extends RecyclerView.Adapter<NoTickAdapter.ViewHolder
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         if(mDataset!=null && mDataset.size()>0){
-            holder.mSelectCb.setChecked(true);
             holder.mContentEt.setTypeface(AppContext.getRobotoSlabLight());
             holder.mContentTextWatch.updatePosition(position);//必须在setText之前updatePosition，否则会触发onTextChanged方法让位置错乱
             holder.mContentEt.setText(mDataset.get(position));
@@ -65,7 +61,7 @@ public class NoTickAdapter extends RecyclerView.Adapter<NoTickAdapter.ViewHolder
                     CheckBox checkBox = ((CheckBox)v);
                     checkBox.setChecked(!checkBox.isChecked());
                     if(mNoTickCallback!=null){
-                        mNoTickCallback.onNoTickCheckItme(holder.getAdapterPosition());
+                        mNoTickCallback.onNoTickCheckItem(holder.getAdapterPosition());
                     }
                 }
             });
@@ -117,7 +113,7 @@ public class NoTickAdapter extends RecyclerView.Adapter<NoTickAdapter.ViewHolder
                 mSelectCb = (CheckBox) v.findViewById(R.id.no_tick_select_cb);
                 mContentEt = (EditText) v.findViewById(R.id.no_tick_content_et);
                 mCancelIv = (ImageView) v.findViewById(R.id.no_tick_cancel_iv);
-
+                mSelectCb.setChecked(false);
                 SvgHelper.setImageDrawable(mMoveIv, R.raw.ic_apps_24px);
                 this.mContentTextWatch = mContentTextWatch;
                 mContentEt.addTextChangedListener(mContentTextWatch);
@@ -151,7 +147,7 @@ public class NoTickAdapter extends RecyclerView.Adapter<NoTickAdapter.ViewHolder
 
     public interface NoTickCallback{
         public void onNoTickRemoveItem(int position);
-        public void onNoTickCheckItme(int position);
+        public void onNoTickCheckItem(int position);
     }
 }
 

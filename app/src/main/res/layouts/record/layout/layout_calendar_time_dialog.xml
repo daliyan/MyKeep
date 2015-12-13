@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/white_normal">
 
-
+<!--
     <akiyama.mykeep.view.calendar.DayPickerView
         android:id="@+id/pickerView"
         android:layout_width="match_parent"
@@ -50,6 +50,10 @@
         android:layout_height="0.3dip"
         android:background="#000000"
         android:layout_marginLeft="10dip"
-        android:layout_marginRight="10dip"/>
+        android:layout_marginRight="10dip"/>-->
+    <fragment
+        android:id="@+id/fragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 </LinearLayout>
