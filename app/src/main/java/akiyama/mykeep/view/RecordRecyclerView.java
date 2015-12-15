@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -108,7 +109,6 @@ public class RecordRecyclerView extends LinearLayout implements View.OnClickList
                 if(mNoTickAdapter.getNullContentSize()>=NoTickAdapter.MAX_EMPTY_CONTENT){
                     mAddListLl.setVisibility(GONE);
                 }
-                //mNoTickAdapter
                 break;
         }
     }
@@ -196,8 +196,29 @@ public class RecordRecyclerView extends LinearLayout implements View.OnClickList
 
     @Override
     public void onNoTickRemoveItem(int position) {
+        autoRemoveFocus(position);
         mNoTickAdapter.removeItem(position);
         noTickInvalidate();
+
+    }
+
+    /**
+     * 删除项目后自动移动焦点，如果删除项a后面有b，则焦点自动移动到b,否则焦点移动到a的前一项c
+     */
+    private void autoRemoveFocus(int position){
+        if(position == mNoTickAdapter.getItemCount()-1){
+            //移动到前一个位置
+            EditText editText = (EditText) mNoTickLayoutManager.findViewByPosition(position-1).findViewById(R.id.no_tick_content_et);
+            if(editText!=null){
+                editText.requestFocus();
+            }
+        }else {
+            //移动到后一个位置position+1
+            EditText editText = (EditText) mNoTickLayoutManager.findViewByPosition(position+1).findViewById(R.id.no_tick_content_et);
+            if(editText!=null){
+                editText.requestFocus();
+            }
+        }
     }
 
     @Override
@@ -240,4 +261,5 @@ public class RecordRecyclerView extends LinearLayout implements View.OnClickList
         mTickRlv.requestLayout();
         mTickRlv.invalidate();
     }
+
 }

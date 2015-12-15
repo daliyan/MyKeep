@@ -16,7 +16,6 @@
         <activity
             android:name="akiyama.mykeep.widget.MainActivity"
             android:theme="@style/Theme.AppTheme.Main"
-            android:windowSoftInputMode="stateAlwaysHidden"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -32,8 +32,8 @@
 
     <ImageView
         android:id="@+id/no_tick_cancel_iv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:src="@drawable/ic_material_delete_dark"
         android:padding="5dip"/>
 

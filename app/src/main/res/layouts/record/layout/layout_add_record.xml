@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -9,6 +8,7 @@
     <include layout="@layout/layout_toolbar" />
 
     <ScrollView
+        android:id="@+id/body_sc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scrollbars="none">
@@ -22,7 +22,9 @@
                 android:id="@+id/record_title_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="15dip"
+                android:layout_marginLeft="15dip"
+                android:layout_marginTop="10dip"
+                android:layout_marginRight="10dip"
                 android:background="@color/trans"
                 android:maxLines="1"
                 android:textSize="20sp"

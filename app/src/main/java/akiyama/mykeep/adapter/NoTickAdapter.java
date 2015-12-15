@@ -1,6 +1,5 @@
 package akiyama.mykeep.adapter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -8,12 +7,12 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import akiyama.mykeep.AppContext;
@@ -30,11 +29,11 @@ public class NoTickAdapter extends RecyclerView.Adapter<NoTickAdapter.ViewHolder
      */
     public static final int MAX_EMPTY_CONTENT = 2;
     private InputMethodManager mImm;
+    List<EditText> mEditexts= new ArrayList<>();
     public NoTickAdapter(List<String> mDataset,Context context) {
         this.mDataset = mDataset;
         this.mContext = context;
         mImm = (InputMethodManager)mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-
     }
 
     @Override
@@ -44,9 +43,11 @@ public class NoTickAdapter extends RecyclerView.Adapter<NoTickAdapter.ViewHolder
         return vh;
     }
 
+
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         if(mDataset!=null && mDataset.size()>0){
+            holder.mContentEt.setTag(position);
             holder.mContentEt.setTypeface(AppContext.getRobotoSlabLight());
             holder.mContentTextWatch.updatePosition(position);//必须在setText之前updatePosition，否则会触发onTextChanged方法让位置错乱
             holder.mContentEt.setText(mDataset.get(position));
@@ -56,7 +57,7 @@ public class NoTickAdapter extends RecyclerView.Adapter<NoTickAdapter.ViewHolder
                 holder.mCancelIv.setVisibility(View.GONE);
             }
             /**
-             * 没有绘制完成，不能现实键盘，所以这里做一个延迟
+             * 没有绘制完成，不能显示键盘，所以这里做一个延迟
              * FIXME 后面看是否有什么方式解决
              */
             holder.mContentEt.postDelayed(new Runnable() {
@@ -72,6 +73,7 @@ public class NoTickAdapter extends RecyclerView.Adapter<NoTickAdapter.ViewHolder
                 @Override
                 public void onClick(View v) {
                     if(mNoTickCallback!=null){
+
                         //如果使用notifyItemxxx来删除位置，注意一定要使用getAdapterPosition()。否则因为视图和Adapter数据不一致导致出现错误的位置
                         //如果使用notifyDataSetChanged()来更新位置，则直接使用position否则会返回NO_POSITION而报错
                         mNoTickCallback.onNoTickRemoveItem(holder.getAdapterPosition());
@@ -103,7 +105,6 @@ public class NoTickAdapter extends RecyclerView.Adapter<NoTickAdapter.ViewHolder
         }
     }
 
-
     public void addItem(String content){
         mDataset.add(content);
         notifyItemInserted(mDataset.size());
@@ -117,6 +118,7 @@ public class NoTickAdapter extends RecyclerView.Adapter<NoTickAdapter.ViewHolder
     public void setNoTickCallback(NoTickCallback mNoTickCallback) {
         this.mNoTickCallback = mNoTickCallback;
     }
+
 
     @Override
     public int getItemCount() {
@@ -142,7 +144,6 @@ public class NoTickAdapter extends RecyclerView.Adapter<NoTickAdapter.ViewHolder
                 this.mContentTextWatch = mContentTextWatch;
                 mContentEt.addTextChangedListener(mContentTextWatch);
             }
-
         }
     }
 

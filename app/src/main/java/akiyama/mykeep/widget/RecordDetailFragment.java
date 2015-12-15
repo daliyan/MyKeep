@@ -21,6 +21,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
@@ -74,6 +75,7 @@ public class RecordDetailFragment extends BaseObserverFragment{
     private int mAddRecordType;//添加记录
     private EditText mTitleEt;
     private EditText mContentEt;
+    private ScrollView mScrollView;
     private LinearLayout mAlarmLl;
     private ImageView mAlarmIv;
     private TextView mAlarmTimeTv;
@@ -113,6 +115,7 @@ public class RecordDetailFragment extends BaseObserverFragment{
         mAlarmIv = (ImageView) view.findViewById(R.id.alarm_iv);
         mAlarmTimeTv = (TextView) view.findViewById(R.id.alarm_time_tv);
         mAlarmDateTv = (TextView) view.findViewById(R.id.alarm_date_tv);
+        mScrollView = (ScrollView) view.findViewById(R.id.body_sc);
     }
 
     @Override
