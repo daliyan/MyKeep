@@ -23,7 +23,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -77,7 +76,8 @@ public class RecordDetailFragment extends BaseObserverFragment{
     private EditText mContentEt;
     private LinearLayout mAlarmLl;
     private ImageView mAlarmIv;
-    private TextView mAlarmTv;
+    private TextView mAlarmTimeTv;
+    private TextView mAlarmDateTv;
     /**
      * 正常模式的VIEW
      */
@@ -111,8 +111,8 @@ public class RecordDetailFragment extends BaseObserverFragment{
         mFragemntToolBar = (Toolbar) view.findViewById(R.id.toolbar);
         mAlarmLl = (LinearLayout) view.findViewById(R.id.alarm_ll);
         mAlarmIv = (ImageView) view.findViewById(R.id.alarm_iv);
-        mAlarmTv = (TextView) view.findViewById(R.id.alarm_tv);
-
+        mAlarmTimeTv = (TextView) view.findViewById(R.id.alarm_time_tv);
+        mAlarmDateTv = (TextView) view.findViewById(R.id.alarm_date_tv);
     }
 
     @Override
@@ -127,7 +127,8 @@ public class RecordDetailFragment extends BaseObserverFragment{
         mContext = getActivity();
         mTitleEt.setTypeface(AppContext.getRobotoSlabLight());
         mUpdateTimeTv.setTypeface(AppContext.getRobotoSlabLight());
-        mAlarmTv.setTypeface(AppContext.getRobotoSlabLight());
+        mAlarmTimeTv.setTypeface(AppContext.getRobotoSlabLight());
+        mAlarmDateTv.setTypeface(AppContext.getRobotoSlabLight());
         setFragmentToolBarTitle("编辑记事");
     }
 
@@ -140,6 +141,8 @@ public class RecordDetailFragment extends BaseObserverFragment{
     public void setOnClick() {
         mLabelLsl.setOnClickListener(this);
         mAlarmLl.setOnClickListener(this);
+        mAlarmTimeTv.setOnClickListener(this);
+        mAlarmDateTv.setOnClickListener(this);
     }
 
     @Override
@@ -192,7 +195,23 @@ public class RecordDetailFragment extends BaseObserverFragment{
                 goAddLabelActivity();
                 break;
             case R.id.alarm_ll:
-                createAlarmDialog();
+                if(mAlarmTimeTv.getVisibility()==View.GONE){
+                    createAlarmDialog();
+                }
+                break;
+            case R.id.alarm_time_tv:
+                if(mAlarmTimeTv.getVisibility()==View.VISIBLE){
+                    showTimeDialog();
+                }else {
+                    createAlarmDialog();
+                }
+                break;
+            case R.id.alarm_date_tv:
+                if(mAlarmTimeTv.getVisibility()==View.VISIBLE){
+                    showDateDialog();
+                }else {
+                    createAlarmDialog();
+                }
                 break;
             default:
                 break;
@@ -391,11 +410,9 @@ public class RecordDetailFragment extends BaseObserverFragment{
         builder.setItems(R.array.alarm_list, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 if(which == 0){
-                    DialogFragment newFragment = new DatePickerFragment();
-                    newFragment.show(getFragmentManager(), "datePicker");
+                    showDateDialog();
                 }else if(which==1){
-                    DialogFragment newFragment = new TimePickerFragment();
-                    newFragment.show(getFragmentManager(), "timePicker");
+                    showTimeDialog();
                 }
             }
         });
@@ -403,6 +420,17 @@ public class RecordDetailFragment extends BaseObserverFragment{
         builder.create().show();
     }
 
+    private void showTimeDialog(){
+        mAlarmTimeTv.setVisibility(View.VISIBLE);
+        DialogFragment newFragment = new TimePickerFragment();
+        newFragment.show(getFragmentManager(), "timePicker");
+    }
+
+    private void showDateDialog(){
+        mAlarmTimeTv.setVisibility(View.VISIBLE);
+        DialogFragment newFragment = new DatePickerFragment();
+        newFragment.show(getFragmentManager(), "datePicker");
+    }
 
     private class TimePickerFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
 
@@ -414,7 +442,9 @@ public class RecordDetailFragment extends BaseObserverFragment{
             return new TimePickerDialog(getActivity(), this, hour, minute, DateFormat.is24HourFormat(getActivity()));
         }
 
+        @Override
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            mAlarmTimeTv.setText(hourOfDay + ":" + minute);
         }
     }
 
@@ -427,13 +457,12 @@ public class RecordDetailFragment extends BaseObserverFragment{
             int year = c.get(Calendar.YEAR);
             int month = c.get(Calendar.MONTH);
             int day = c.get(Calendar.DAY_OF_MONTH);
-
-            // Create a new instance of DatePickerDialog and return it
             return new DatePickerDialog(getActivity(), this, year, month, day);
         }
 
+        @Override
         public void onDateSet(DatePicker view, int year, int month, int day) {
-            // Do something with the date chosen by the user
+            mAlarmDateTv.setText(year+"年"+month+"月"+day+"日");
         }
     }
 
