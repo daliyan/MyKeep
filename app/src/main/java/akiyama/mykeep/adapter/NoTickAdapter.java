@@ -1,11 +1,15 @@
 package akiyama.mykeep.adapter;
 
+import android.app.Activity;
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -18,10 +22,19 @@ import akiyama.mykeep.util.SvgHelper;
 
 public class NoTickAdapter extends RecyclerView.Adapter<NoTickAdapter.ViewHolder> {
     private static final String TAG = "NoTickAdapter";
+    private Context mContext;
     private List<String> mDataset;
     private NoTickCallback mNoTickCallback;
-    public NoTickAdapter(List<String> mDataset) {
+    /**
+     * 允许存在的最大空项数量
+     */
+    public static final int MAX_EMPTY_CONTENT = 2;
+    private InputMethodManager mImm;
+    public NoTickAdapter(List<String> mDataset,Context context) {
         this.mDataset = mDataset;
+        this.mContext = context;
+        mImm = (InputMethodManager)mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+
     }
 
     @Override
@@ -37,12 +50,23 @@ public class NoTickAdapter extends RecyclerView.Adapter<NoTickAdapter.ViewHolder
             holder.mContentEt.setTypeface(AppContext.getRobotoSlabLight());
             holder.mContentTextWatch.updatePosition(position);//必须在setText之前updatePosition，否则会触发onTextChanged方法让位置错乱
             holder.mContentEt.setText(mDataset.get(position));
-            holder.mContentEt.requestFocus();
-            if(holder.mContentEt.hasFocus()){
+            if (holder.mContentEt.requestFocus()) {
                 holder.mCancelIv.setVisibility(View.VISIBLE);
-            }else{
+            } else {
                 holder.mCancelIv.setVisibility(View.GONE);
             }
+            /**
+             * 没有绘制完成，不能现实键盘，所以这里做一个延迟
+             * FIXME 后面看是否有什么方式解决
+             */
+            holder.mContentEt.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if(holder.mContentEt.requestFocus()){
+                        mImm.showSoftInput(holder.mContentEt,InputMethodManager.SHOW_FORCED);
+                    }
+                }
+            },50);
 
             holder.mCancelIv.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -122,6 +146,20 @@ public class NoTickAdapter extends RecyclerView.Adapter<NoTickAdapter.ViewHolder
         }
     }
 
+    /**
+     * 获取空内容列表数量
+     * @return
+     */
+    public int getNullContentSize(){
+        int count = 0;
+        for(String content:mDataset){
+            if(content.equals("")){
+                count++;
+            }
+        }
+        return count;
+    }
+
     private class ContentTextWatch implements TextWatcher{
 
         private int position;
@@ -137,6 +175,9 @@ public class NoTickAdapter extends RecyclerView.Adapter<NoTickAdapter.ViewHolder
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             mDataset.set(position,s.toString());
+            if(mNoTickCallback!=null){
+                mNoTickCallback.onNoTickTextChanged();
+            }
         }
 
         @Override
@@ -148,6 +189,11 @@ public class NoTickAdapter extends RecyclerView.Adapter<NoTickAdapter.ViewHolder
     public interface NoTickCallback{
         public void onNoTickRemoveItem(int position);
         public void onNoTickCheckItem(int position);
+
+        /**
+         * 获取当前项目的Text发生改变
+         */
+        public void onNoTickTextChanged();
     }
 }
 

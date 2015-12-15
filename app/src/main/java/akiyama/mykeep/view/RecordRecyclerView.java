@@ -46,7 +46,6 @@ public class RecordRecyclerView extends LinearLayout implements View.OnClickList
     private RecyclerView mTickRlv;
     private LinearLayout mAddListLl;
     private ImageView mAddListIv;
-    private InputMethodManager mImm;
     private TickAdapter mTickAdapter;
     private NoTickAdapter mNoTickAdapter;
     public RecordRecyclerView(Context context) {
@@ -69,7 +68,6 @@ public class RecordRecyclerView extends LinearLayout implements View.OnClickList
         setOrientation(VERTICAL);
         mNoTick = new ArrayList<>();
         mTick = new ArrayList<>();
-
         mView = LayoutInflater.from(context).inflate(R.layout.layout_recordlist_view, this);
 
         mNoTickRlv = (RecyclerView) mView.findViewById(R.id.record_list_noTick_rv);
@@ -78,7 +76,6 @@ public class RecordRecyclerView extends LinearLayout implements View.OnClickList
         mAddListLl = (LinearLayout) mView.findViewById(R.id.add_list_item_ll);
         mAddListIv = (ImageView)mView.findViewById(R.id.add_list_iv);
         mAddListLl.setOnClickListener(this);
-        mImm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
         SvgHelper.setImageDrawable(mAddListIv,R.raw.ic_playlist_add_24px);
 
         mNoTickLayoutManager = new MyLinearLayoutManager(mNoTickRlv);
@@ -96,10 +93,9 @@ public class RecordRecyclerView extends LinearLayout implements View.OnClickList
         mTickAdapter.setTickCallback(this);
         mTickRlv.setAdapter(mTickAdapter);
 
-        mNoTickAdapter = new NoTickAdapter(mNoTick);
+        mNoTickAdapter = new NoTickAdapter(mNoTick,mContext);
         mNoTickAdapter.setNoTickCallback(this);
         mNoTickRlv.setAdapter(mNoTickAdapter);
-
     }
 
     @Override
@@ -109,6 +105,10 @@ public class RecordRecyclerView extends LinearLayout implements View.OnClickList
             case R.id.add_list_item_ll:
                 mNoTickAdapter.addItem("");
                 noTickInvalidate();
+                if(mNoTickAdapter.getNullContentSize()>=NoTickAdapter.MAX_EMPTY_CONTENT){
+                    mAddListLl.setVisibility(GONE);
+                }
+                //mNoTickAdapter
                 break;
         }
     }
@@ -206,6 +206,16 @@ public class RecordRecyclerView extends LinearLayout implements View.OnClickList
         tickInvalidate();
         mNoTickAdapter.removeItem(position);
         noTickInvalidate();
+    }
+
+    /**
+     * 当前列表项空内容数量
+     */
+    @Override
+    public void onNoTickTextChanged() {
+        if(mNoTickAdapter.getNullContentSize()< NoTickAdapter.MAX_EMPTY_CONTENT){
+            mAddListLl.setVisibility(VISIBLE);
+        }
     }
 
     @Override
