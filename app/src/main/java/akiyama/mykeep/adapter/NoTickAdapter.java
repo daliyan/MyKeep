@@ -29,7 +29,6 @@ public class NoTickAdapter extends RecyclerView.Adapter<NoTickAdapter.ViewHolder
      */
     public static final int MAX_EMPTY_CONTENT = 2;
     private InputMethodManager mImm;
-    List<EditText> mEditexts= new ArrayList<>();
     public NoTickAdapter(List<String> mDataset,Context context) {
         this.mDataset = mDataset;
         this.mContext = context;
@@ -47,7 +46,6 @@ public class NoTickAdapter extends RecyclerView.Adapter<NoTickAdapter.ViewHolder
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         if(mDataset!=null && mDataset.size()>0){
-            holder.mContentEt.setTag(position);
             holder.mContentEt.setTypeface(AppContext.getRobotoSlabLight());
             holder.mContentTextWatch.updatePosition(position);//必须在setText之前updatePosition，否则会触发onTextChanged方法让位置错乱
             holder.mContentEt.setText(mDataset.get(position));

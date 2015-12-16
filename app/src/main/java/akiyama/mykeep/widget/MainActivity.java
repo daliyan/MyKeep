@@ -185,8 +185,6 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         mRecordLabelAdapter = new RecordByLabelAdapter(getFragmentManager(),mLabelList);
         mRecordVp.setAdapter(mRecordLabelAdapter);
         mRecordVp.setOffscreenPageLimit(0);
-        /*mTabLy.setTabsFromPagerAdapter(mRecordLabelAdapter);
-        mRecordVp.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLy));*/
         mTabLy.setupWithViewPager(mRecordVp);
         mDetailFragment = new RecordDetailFragment();
         mFragmentManager = getFragmentManager();
@@ -202,9 +200,8 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
                         mDetailFragment.saveOrUpdateRecordToDb();
                     }
                     getFragmentManager().popBackStack();
-                    mCurrentFragment = MAIN;
-                    //mDetailContentLy.setVisibility(View.GONE);
                     mDetailFragment = null;//设置为NULL，让下一次进入界面的时候重新渲染
+                    setStatusBarView(getResources().getColor(R.color.main_bg));
                     break;
                 default:
                     getFragmentManager().popBackStack();
@@ -336,7 +333,7 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
             case R.id.action_delete_record:
                 break;
             case R.id.action_select_style:
-                mDetailFragment.showPickDialog();
+                mDetailFragment.showPriorityDialog();
                 break;
         }
         return true;

@@ -8,6 +8,7 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -24,6 +25,7 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -31,6 +33,7 @@ import java.util.List;
 
 import akiyama.mykeep.AppContext;
 import akiyama.mykeep.R;
+import akiyama.mykeep.base.BaseActivity;
 import akiyama.mykeep.base.BaseObserverFragment;
 import akiyama.mykeep.common.Constants;
 import akiyama.mykeep.common.DbConfig;
@@ -49,6 +52,8 @@ import akiyama.mykeep.util.StringUtil;
 import akiyama.mykeep.util.SvgHelper;
 import akiyama.mykeep.view.LabelsLayout;
 import akiyama.mykeep.view.RecordRecyclerView;
+import akiyama.mykeep.view.colorpicker.ColorPickerDialog;
+import akiyama.mykeep.view.colorpicker.ColorPickerSwatch;
 import akiyama.mykeep.vo.SearchVo;
 import akiyama.mykeep.vo.ViewPivot;
 
@@ -94,11 +99,6 @@ public class RecordDetailFragment extends BaseObserverFragment{
     private RecordModel mEditRecordModel;
     private RecordModel mStartRecord = new RecordModel();//刚刚进入添加记录页面的时候的数据，为了比较数据是否发生改变
     private RecordController rc=new RecordController();
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
     @Override
     public int onSetLayoutId() {
@@ -316,7 +316,6 @@ public class RecordDetailFragment extends BaseObserverFragment{
     }
 
 
-
     private void saveRecordTask(final RecordModel record){
         final String labelName = record.getLabelNames();
         new SaveSingleDbTask(mContext,rc,false){
@@ -391,22 +390,12 @@ public class RecordDetailFragment extends BaseObserverFragment{
         }
     }
 
-
-    public void showPickDialog(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(getActivity(),R.style.Theme_AlertDialog));
-        builder.setTitle("记事等级");
-        View dialogView = getActivity().getLayoutInflater().inflate(R.layout.layout_pick_dialog, null);
-        builder.setView(dialogView).setPositiveButton(R.string.signin, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-
-            }
-        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-            }
-        });
-        builder.create().show();
+    private void setLayoutColor(int color){
+        getView().setBackgroundColor(color);
+        mFragemntToolBar.setBackgroundColor(color);
+        ((BaseActivity)getActivity()).setStatusBarView(color);
     }
+
 
     private void createAlarmDialog(){
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -422,6 +411,26 @@ public class RecordDetailFragment extends BaseObserverFragment{
 
         builder.create().show();
     }
+
+
+    /**
+     * 显示优先级对话框
+     */
+    public void showPriorityDialog(){
+        int[] colors = new int[] {Color.parseColor("#e0e0e0"), Color.parseColor("#ff8a80"), Color.parseColor("#ffd180"),
+                Color.parseColor("#ffff8d"), Color.parseColor("#cfd8de"), Color.parseColor("#80d8ff")};
+        ColorPickerDialog colorPickerDialog = ColorPickerDialog.newInstance(R.string.colorPicker_title,colors,Color.parseColor("#e0e0e0"),3,2);
+        colorPickerDialog.setOnColorSelectedListener(new ColorPickerSwatch.OnColorSelectedListener() {
+
+            @Override
+            public void onColorSelected(int color) {
+                setLayoutColor(color);
+            }
+        });
+        colorPickerDialog.show(getFragmentManager(), "colorpicker");
+    }
+
+
 
     private void showTimeDialog(){
         mAlarmTimeTv.setVisibility(View.VISIBLE);
@@ -450,6 +459,7 @@ public class RecordDetailFragment extends BaseObserverFragment{
             mAlarmTimeTv.setText(hourOfDay + ":" + minute);
         }
     }
+
 
     public class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 

@@ -9,4 +9,9 @@
     <dimen name="header_month_height">50dip</dimen>
     <dimen name="selected_day_radius">16dip</dimen>
     <dimen name="calendar_height">270dip</dimen>
+
+    <dimen name="color_swatch_large">64.0dip</dimen>
+    <dimen name="color_swatch_small">48.0dip</dimen>
+    <dimen name="color_swatch_margins_large">8.0dip</dimen>
+    <dimen name="color_swatch_margins_small">4.0dip</dimen>
 </resources>

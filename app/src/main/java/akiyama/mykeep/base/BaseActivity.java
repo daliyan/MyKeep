@@ -1,6 +1,7 @@
 package akiyama.mykeep.base;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -11,6 +12,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 
@@ -31,7 +33,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     private final static String TAG="BaseActivity";
     protected final Activity mContext=this;
     protected Toolbar mToolbar;
-
+    protected InputMethodManager mImm;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,12 +47,13 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
             mToolbar= (Toolbar) findViewById(R.id.toolbar);
             ((ViewGroup)findViewById(android.R.id.content)).getChildAt(0).setFitsSystemWindows(true);
         }
+        mImm = (InputMethodManager)mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
         findView();
         initSvgView();
         initView();
         iniToolBar();
         setOnClick();
-        setStatusBarView();
+        setStatusBarView(getResources().getColor(R.color.main_bg));
     }
 
     protected boolean hasToolBar(){
@@ -95,15 +98,15 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     }
 
     /**
-     * 设置状态栏的颜色，目前只是在4.4上面有效
+     * 设置状态栏的颜色，目前只是在4.4以上有效
      */
-    protected void setStatusBarView() {
+    public void setStatusBarView(int color) {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             SystemBarTintManager tintManager = new SystemBarTintManager(this);
             tintManager.setStatusBarTintEnabled(true);
             tintManager.setNavigationBarTintEnabled(false);
-            tintManager.setTintColor(getResources().getColor(R.color.main_bg));
+            tintManager.setTintColor(color);
         }
     }
 
