@@ -425,18 +425,6 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         startActivity(login);
     }
 
-    /**
-     * 跳转到添加记录界面
-     * @param recordMode 设置当前增加记事的模式：添加或者编辑
-     * @param recordType 设置当前记事的类型，如清单列表型、普通模式
-     */
-    private void goAddRecord(String recordMode, int recordType){
-        Intent addRecord=new Intent(this,AddRecordActivity.class);
-        addRecord.putExtra(AddRecordActivity.KEY_RECORD_MODE, recordMode);
-        addRecord.putExtra(AddRecordActivity.KEY_ADD_RECORD_TYPE, recordType);
-        startActivity(addRecord);
-    }
-
     private void goAddRecordFragment(String recordMode, int recordType){
         mCurrentFragment = DETAIL;
         FragmentTransaction ft = getFragmentManager().beginTransaction();

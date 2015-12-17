@@ -31,9 +31,6 @@
         <activity android:name="akiyama.mykeep.widget.LoginRegActivity"
             android:screenOrientation="portrait"/>
 
-        <activity android:name="akiyama.mykeep.widget.AddRecordActivity"
-            android:screenOrientation="portrait"/>
-
         <activity android:name=".widget.AddLabelActivity"
             android:screenOrientation="portrait"/>
 

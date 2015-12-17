@@ -2,6 +2,7 @@ package akiyama.mykeep.db.model;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -18,9 +19,26 @@ import akiyama.mykeep.util.DataProviderHelper;
  */
 public class RecordModel extends BaseModel{
 
-    public static final String NORMAL="normal";
-    public static final String IMPORTANT="important";
-    public static final String VERY_IMPORTANT="very_important";
+    public static final String DEFAULT_COLOR="#ffffff";
+    public static final int DEFAULT_VALUE=-1;
+
+    public static final String NORMAL_COLOR="#e0e0e0";
+    public static final int NORMAL_VALUE= 0;
+
+    public static final String X_NORMAL_COLOR="#cfd8de";
+    public static final int X_NORMAL_VALUE= 1;
+
+    public static final String XX_NORMAL_COLOR="#ffd180";
+    public static final int XX_NORMAL_VALUE= 2;
+
+    public static final String IMPORTANT="#ffff8d";
+    public static final int IMPORTANT_VALUE=3;
+
+    public static final String X_IMPORTANT="#80d8ff";
+    public static final int X_IMPORTANT_VALUE=4;
+
+    public static final String XX_IMPORTANT="#ff8a80";
+    public static final int XX_IMPORTANT_VALUE=5;
 
     public static final int RECORD_TYPE_NORMAL = 0;
     public static final int RECORD_TYPE_LIST = 1;
@@ -28,7 +46,7 @@ public class RecordModel extends BaseModel{
     private String title;
     private String content;
     private String alarmTime;
-    private String level;
+    private int level;
     private String userId;
     private String labelNames;//里面有多条label记录，使用","隔开
     private int recordType;//记事类型
@@ -41,7 +59,7 @@ public class RecordModel extends BaseModel{
         title=in.readString();
         content=in.readString();
         alarmTime=in.readString();
-        level=in.readString();
+        level=in.readInt();
         userId=in.readString();
         labelNames =in.readString();
         recordType = in.readInt();
@@ -80,7 +98,7 @@ public class RecordModel extends BaseModel{
         recordModel.title=DataProviderHelper.parseString(cursor,RecordColumns.TITLE);
         recordModel.content=DataProviderHelper.parseString(cursor,RecordColumns.CONTENT);
         recordModel.alarmTime=DataProviderHelper.parseString(cursor,RecordColumns.ALARMTIME);
-        recordModel.level=DataProviderHelper.parseString(cursor,RecordColumns.LEVEL);
+        recordModel.level=DataProviderHelper.parseInt(cursor,RecordColumns.LEVEL);
         recordModel.creatTime=DataProviderHelper.parseString(cursor,BaseColumns.CREATAT);
         recordModel.updateTime=DataProviderHelper.parseString(cursor,BaseColumns.UPDATEAT);
         recordModel.userId=DataProviderHelper.parseString(cursor,RecordColumns.USERID);
@@ -100,7 +118,7 @@ public class RecordModel extends BaseModel{
         dest.writeString(title);
         dest.writeString(content);
         dest.writeString(alarmTime);
-        dest.writeString(level);
+        dest.writeInt(level);
         dest.writeString(userId);
         dest.writeString(labelNames);
         dest.writeInt(recordType);
@@ -137,11 +155,37 @@ public class RecordModel extends BaseModel{
     }
 
     public void setLevel(String level) {
-        this.level = level;
+        if(level.equals(NORMAL_COLOR)){
+            this.level = NORMAL_VALUE;
+        }else if(level.equals(X_NORMAL_COLOR)){
+            this.level = X_NORMAL_VALUE;
+        }else if(level.equals(XX_NORMAL_COLOR)){
+            this.level = XX_NORMAL_VALUE;
+        }else if(level.equals(IMPORTANT)){
+            this.level = IMPORTANT_VALUE;
+        }else if(level.equals(X_IMPORTANT)){
+            this.level = X_IMPORTANT_VALUE;
+        }else if(level.equals(XX_IMPORTANT)){
+            this.level = XX_IMPORTANT_VALUE;
+        }
+        this.level = DEFAULT_VALUE;
     }
 
     public String getLevel() {
-        return level;
+        if(level == NORMAL_VALUE){
+            return NORMAL_COLOR;
+        }else if(level == X_NORMAL_VALUE){
+            return X_NORMAL_COLOR;
+        }else if(level == XX_NORMAL_VALUE){
+            return XX_NORMAL_COLOR;
+        }else if(level == IMPORTANT_VALUE){
+            return IMPORTANT;
+        }else if(level == X_IMPORTANT_VALUE){
+            return X_IMPORTANT;
+        }else if(level == XX_IMPORTANT_VALUE){
+            return XX_IMPORTANT;
+        }
+        return DEFAULT_COLOR;
     }
 
     public void setAlarmTime(String alarmTime) {

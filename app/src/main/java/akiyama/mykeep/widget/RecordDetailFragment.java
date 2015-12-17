@@ -1,5 +1,6 @@
 package akiyama.mykeep.widget;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -13,7 +14,6 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
-import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,10 +22,8 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -80,8 +78,8 @@ public class RecordDetailFragment extends BaseObserverFragment{
     private int mAddRecordType;//添加记录
     private EditText mTitleEt;
     private EditText mContentEt;
-    private ScrollView mScrollView;
     private LinearLayout mAlarmLl;
+    private LinearLayout mBodyLl;
     private ImageView mAlarmIv;
     private TextView mAlarmTimeTv;
     private TextView mAlarmDateTv;
@@ -96,6 +94,7 @@ public class RecordDetailFragment extends BaseObserverFragment{
     private RecordRecyclerView mContentRlv;
     private TextView mUpdateTimeTv;
     private LabelsLayout mLabelLsl;
+    private String mLevel = RecordModel.DEFAULT_COLOR;//当前记事的优先级
     private RecordModel mEditRecordModel;
     private RecordModel mStartRecord = new RecordModel();//刚刚进入添加记录页面的时候的数据，为了比较数据是否发生改变
     private RecordController rc=new RecordController();
@@ -110,12 +109,12 @@ public class RecordDetailFragment extends BaseObserverFragment{
         mTitleEt=(EditText) view.findViewById(R.id.record_title_et);
         mLabelLsl =(LabelsLayout) view.findViewById(R.id.label_lsl);
         mUpdateTimeTv = (TextView) view.findViewById(R.id.record_update_time_tv);
-        mFragemntToolBar = (Toolbar) view.findViewById(R.id.toolbar);
+        mFragmentToolBar = (Toolbar) view.findViewById(R.id.toolbar);
         mAlarmLl = (LinearLayout) view.findViewById(R.id.alarm_ll);
         mAlarmIv = (ImageView) view.findViewById(R.id.alarm_iv);
         mAlarmTimeTv = (TextView) view.findViewById(R.id.alarm_time_tv);
         mAlarmDateTv = (TextView) view.findViewById(R.id.alarm_date_tv);
-        mScrollView = (ScrollView) view.findViewById(R.id.body_sc);
+        mBodyLl =(LinearLayout) view.findViewById(R.id.body_ll);
     }
 
     @Override
@@ -172,7 +171,11 @@ public class RecordDetailFragment extends BaseObserverFragment{
             initTypeView(mAddRecordType);
             mStartRecord = mEditRecordModel;
             if(mEditRecordModel!=null){
+                mLevel = mEditRecordModel.getLevel();
                 mTitleEt.setText(mEditRecordModel.getTitle());
+                if(mLevel!=null){
+                    mBodyLl.setBackgroundColor(Color.parseColor(mLevel));
+                }
                 if(mAddRecordType == RecordModel.RECORD_TYPE_NORMAL){
                     mContentEt.setText(mEditRecordModel.getContent());
                 }else if(mAddRecordType == RecordModel.RECORD_TYPE_LIST){
@@ -187,6 +190,7 @@ public class RecordDetailFragment extends BaseObserverFragment{
             mStartRecord.setContent("");
             mStartRecord.setTitle("");
             mStartRecord.setLabelNames("");
+
         }
     }
 
@@ -251,9 +255,11 @@ public class RecordDetailFragment extends BaseObserverFragment{
         String title = mTitleEt.getText().toString();
         String content = getContentText();
         String labelNames = getCurrentLabel();
+        String level = mLevel;
         if(mStartRecord!=null && mStartRecord.getTitle().equals(title)
                 && mStartRecord.getContent().equals(content)
-                && mStartRecord.getLabelNames().equals(labelNames)){
+                && mStartRecord.getLabelNames().equals(labelNames)
+                && mStartRecord.getLevel().equals(level)){
             return;//内容没有发生改变，直接返回
         }
 
@@ -261,7 +267,7 @@ public class RecordDetailFragment extends BaseObserverFragment{
             RecordModel record=new RecordModel();
             record.setTitle(title);
             record.setContent(content);
-            record.setLevel(RecordModel.NORMAL);
+            record.setLevel(level);
             if(getCurrentLabel()!=null){
                 record.setLabelNames(getCurrentLabel());
             }
@@ -392,7 +398,7 @@ public class RecordDetailFragment extends BaseObserverFragment{
 
     private void setLayoutColor(int color){
         getView().setBackgroundColor(color);
-        mFragemntToolBar.setBackgroundColor(color);
+        mFragmentToolBar.setBackgroundColor(color);
         ((BaseActivity)getActivity()).setStatusBarView(color);
     }
 
@@ -417,13 +423,20 @@ public class RecordDetailFragment extends BaseObserverFragment{
      * 显示优先级对话框
      */
     public void showPriorityDialog(){
-        int[] colors = new int[] {Color.parseColor("#e0e0e0"), Color.parseColor("#ff8a80"), Color.parseColor("#ffd180"),
-                Color.parseColor("#ffff8d"), Color.parseColor("#cfd8de"), Color.parseColor("#80d8ff")};
-        ColorPickerDialog colorPickerDialog = ColorPickerDialog.newInstance(R.string.colorPicker_title,colors,Color.parseColor("#e0e0e0"),3,2);
+        int[] colors = new int[] {
+                Color.parseColor(RecordModel.NORMAL_COLOR),
+                Color.parseColor(RecordModel.X_NORMAL_COLOR),
+                Color.parseColor(RecordModel.XX_NORMAL_COLOR),
+                Color.parseColor(RecordModel.IMPORTANT),
+                Color.parseColor(RecordModel.X_IMPORTANT),
+                Color.parseColor(RecordModel.XX_IMPORTANT)
+        };
+        ColorPickerDialog colorPickerDialog = ColorPickerDialog.newInstance(R.string.colorPicker_title,colors,Color.parseColor(mLevel),3,2);
         colorPickerDialog.setOnColorSelectedListener(new ColorPickerSwatch.OnColorSelectedListener() {
 
             @Override
             public void onColorSelected(int color) {
+                mLevel =  String.format("#%06X", 0xFFFFFF & color);
                 setLayoutColor(color);
             }
         });

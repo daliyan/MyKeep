@@ -24,7 +24,7 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
     private static final String TAG = "BaseFragment";
     protected View mLayoutView;
     private boolean mIsInitDate = false;
-    protected Toolbar mFragemntToolBar;//详情页面的toolbar。因为需要toolbar的动画效果，所以可以不使用main页面的toolbar
+    protected Toolbar mFragmentToolBar;//详情页面的toolbar。因为需要toolbar的动画效果，所以可以不使用main页面的toolbar
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,13 +57,13 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
      */
     protected void setFragmentToolBarTitle(String title){
         if(!TextUtils.isEmpty(title)){
-            mFragemntToolBar.setTitle(title);
+            mFragmentToolBar.setTitle(title);
         }
     }
 
     protected void initFragmentToolBar(){
-        if(mFragemntToolBar!=null){
-            ((AppCompatActivity)getActivity()).setSupportActionBar(mFragemntToolBar);
+        if(mFragmentToolBar !=null){
+            ((AppCompatActivity)getActivity()).setSupportActionBar(mFragmentToolBar);
             ((AppCompatActivity)getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
             ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             final Drawable upArrow = getResources().getDrawable(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
@@ -120,7 +120,7 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
 
 
     protected void onFragmentBack(){
-        mFragemntToolBar.setNavigationOnClickListener(new View.OnClickListener() {
+        mFragmentToolBar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setBackEvent();

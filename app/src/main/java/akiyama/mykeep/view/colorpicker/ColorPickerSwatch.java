@@ -24,6 +24,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import akiyama.mykeep.R;
+import akiyama.mykeep.util.SvgHelper;
 
 /**
  * Creates a circular swatch of a specified color.  Adds a checkmark if marked as checked.
@@ -54,6 +55,7 @@ public class ColorPickerSwatch extends FrameLayout implements View.OnClickListen
         LayoutInflater.from(context).inflate(R.layout.color_picker_swatch, this);
         mSwatchImage = (ImageView) findViewById(R.id.color_picker_swatch);
         mCheckmarkImage = (ImageView) findViewById(R.id.color_picker_checkmark);
+        SvgHelper.setImageDrawable(mCheckmarkImage,R.raw.ic_done_24px);
         setColor(color);
         setChecked(checked);
         setOnClickListener(this);

@@ -149,14 +149,6 @@ public class RecordByLabelFragment extends BaseObserverFragment {
             mRecordModels.clear();
             mAdapter.refreshDate(mRecordModels);
         }else if(eventType.equals(EventType.EVENT_REFRESH_RECORD)){
-          /*  String labels = notifyInfo.getBundleString(Constants.KEY_LABEL_NAMES);
-            String[] labelNames = StringUtil.subStringBySymbol(labels, DbConfig.SPLIT_SYMBOL);
-            if(mLabelName!=null){
-                //“全部”标签组或者需要刷新的标签组刷新数据
-                if(StringUtil.isContains(labelNames,mLabelName) || mLabelName.equals(mContext.getString(R.string.all_label))){
-                    queryRecordByLabel(false);
-                }
-            }*/
             //不针对具体的标签刷新，直接全部刷新，一来可以避免针对不同标签做刷新可能引起的问题（在移除标签的时候并不好操作），二来全部刷新并也不会影响APP的性能，因为当前存活TAB页面很少（一到2个）
             queryRecordByLabel(false);
         }else if(eventType.equals(EventType.EVENT_SWITCH_VIEW)){
@@ -172,17 +164,6 @@ public class RecordByLabelFragment extends BaseObserverFragment {
                 EventType.EVENT_REFRESH_RECORD,
                 EventType.EVENT_SWITCH_VIEW
         };
-    }
-
-    /**
-     * 去编辑该条记录
-     * @param recordModel
-     */
-    private void goEditRecordActivity(RecordModel recordModel,View view){
-        Intent goEditRecord = new Intent(mContext,AddRecordActivity.class);
-        goEditRecord.putExtra(AddRecordActivity.KEY_RECORD_MODE, StatusMode.EDIT_RECORD_MODE);
-        goEditRecord.putExtra(AddRecordActivity.KEY_EDIT_RECORD_LIST, recordModel);
-        mContext.startActivity(goEditRecord);
     }
 
 
