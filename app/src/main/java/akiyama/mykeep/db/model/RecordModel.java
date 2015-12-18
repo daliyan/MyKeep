@@ -19,25 +19,25 @@ import akiyama.mykeep.util.DataProviderHelper;
  */
 public class RecordModel extends BaseModel{
 
-    public static final String DEFAULT_COLOR="#ffffff";
+    public static final String DEFAULT_COLOR="#FFFFFF";
     public static final int DEFAULT_VALUE=-1;
 
-    public static final String NORMAL_COLOR="#e0e0e0";
+    public static final String NORMAL_COLOR="#E0E0E0";
     public static final int NORMAL_VALUE= 0;
 
-    public static final String X_NORMAL_COLOR="#cfd8de";
+    public static final String X_NORMAL_COLOR="#CFD8DE";
     public static final int X_NORMAL_VALUE= 1;
 
-    public static final String XX_NORMAL_COLOR="#ffd180";
+    public static final String XX_NORMAL_COLOR="#FFD180";
     public static final int XX_NORMAL_VALUE= 2;
 
-    public static final String IMPORTANT="#ffff8d";
+    public static final String IMPORTANT="#FFFF8D";
     public static final int IMPORTANT_VALUE=3;
 
-    public static final String X_IMPORTANT="#80d8ff";
+    public static final String X_IMPORTANT="#80D8FF";
     public static final int X_IMPORTANT_VALUE=4;
 
-    public static final String XX_IMPORTANT="#ff8a80";
+    public static final String XX_IMPORTANT="#FF8A80";
     public static final int XX_IMPORTANT_VALUE=5;
 
     public static final int RECORD_TYPE_NORMAL = 0;
@@ -167,8 +167,9 @@ public class RecordModel extends BaseModel{
             this.level = X_IMPORTANT_VALUE;
         }else if(level.equals(XX_IMPORTANT)){
             this.level = XX_IMPORTANT_VALUE;
+        }else {
+            this.level = DEFAULT_VALUE;
         }
-        this.level = DEFAULT_VALUE;
     }
 
     public String getLevel() {

@@ -1,11 +1,14 @@
 package akiyama.mykeep.widget;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.view.ActionMode;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -51,6 +54,29 @@ public class RecordByLabelFragment extends BaseObserverFragment {
     private String mLabelName="";
     private Context mContext;
     private RecordController rc=new RecordController();
+    private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            MenuInflater inflater = mode.getMenuInflater();
+            inflater.inflate(R.menu.menu_main_edit, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            return false;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+
+        }
+    };
     @Override
     public int onSetLayoutId() {
         return R.layout.fragemnt_record_label_list;
@@ -120,14 +146,13 @@ public class RecordByLabelFragment extends BaseObserverFragment {
         mAdapter.setOnLongItemClick(new RecyclerAdapter.OnLongItemClick() {
             @Override
             public void onLongItemClick(View v, int position) {
-                switchActionBarMenu(StatusMode.MENU_EDIT);
-               // mAdapter.notifyItemRemoved(position);
-                LogUtil.e(TAG,"LongItem: "+v.hashCode()+" "+position);
-                v.setBackgroundColor(getResources().getColor(R.color.blue));
+                // Start the CAB using the ActionMode.Callback defined above
+               getActivity().startActionMode(mActionModeCallback);
             }
         });
 
     }
+
 
     private void switchActionBarMenu(String actionbarMode){
         Bundle bundle = new Bundle();

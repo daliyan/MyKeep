@@ -174,7 +174,7 @@ public class RecordDetailFragment extends BaseObserverFragment{
                 mLevel = mEditRecordModel.getLevel();
                 mTitleEt.setText(mEditRecordModel.getTitle());
                 if(mLevel!=null){
-                    mBodyLl.setBackgroundColor(Color.parseColor(mLevel));
+                    setLayoutColor(Color.parseColor(mLevel));
                 }
                 if(mAddRecordType == RecordModel.RECORD_TYPE_NORMAL){
                     mContentEt.setText(mEditRecordModel.getContent());
@@ -397,9 +397,12 @@ public class RecordDetailFragment extends BaseObserverFragment{
     }
 
     private void setLayoutColor(int color){
-        getView().setBackgroundColor(color);
-        mFragmentToolBar.setBackgroundColor(color);
-        ((BaseActivity)getActivity()).setStatusBarView(color);
+        mLayoutView.setBackgroundColor(color);
+        //默认颜色就不修改状态栏和toolbar颜色
+        if(color != Color.parseColor(RecordModel.DEFAULT_COLOR)){
+            mFragmentToolBar.setBackgroundColor(color);
+            ((BaseActivity)getActivity()).setStatusBarView(color);
+        }
     }
 
 
@@ -436,6 +439,7 @@ public class RecordDetailFragment extends BaseObserverFragment{
 
             @Override
             public void onColorSelected(int color) {
+                //大小写需要区分一下
                 mLevel =  String.format("#%06X", 0xFFFFFF & color);
                 setLayoutColor(color);
             }

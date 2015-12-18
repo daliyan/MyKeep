@@ -1,5 +1,11 @@
 package akiyama.mykeep.adapter;
 
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.support.annotation.DrawableRes;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -54,10 +60,12 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
                 holder.mTitleTv.setTypeface(AppContext.getRobotoSlabBold());
                 holder.mSubTitleTv.setTypeface(AppContext.getRobotoSlabLight());
                 holder.mUpdateTv.setTypeface(AppContext.getRobotoSlabThin());
+                //不要使用setBackgroundColor,该方法会覆盖掉设置的弧度等参数
+                holder.mCardView.setCardBackgroundColor(Color.parseColor(recordModel.getLevel()));
             }
         }
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+        holder.mCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mOnItemClick != null) {
@@ -66,7 +74,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             }
         });
 
-        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+        holder.mCardView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 if (mOnLongItemClick != null) {
