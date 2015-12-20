@@ -66,7 +66,7 @@ public class UserModel extends BaseModel{
         user.password=DataProviderHelper.parseString(cursor,UserColumns.PASSWORD);
         user.email=DataProviderHelper.parseString(cursor,UserColumns.EMAIL);
         user.password=DataProviderHelper.parseString(cursor,UserColumns.PHONE);
-        user.creatTime=DataProviderHelper.parseString(cursor,BaseColumns.CREATAT);
+        user.createTime =DataProviderHelper.parseString(cursor,BaseColumns.CREATAT);
         user.updateTime=DataProviderHelper.parseString(cursor,BaseColumns.UPDATEAT);
         user.profileImageUrl=DataProviderHelper.parseString(cursor,UserColumns.PROFILE_IMAGE_URL);
         return user;

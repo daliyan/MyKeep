@@ -12,9 +12,4 @@
         android:orderInCategory="100"
         app:showAsAction="always" />
 
-    <item android:id="@+id/action_main_priority"
-        android:title="@string/action_main_priority"
-        android:icon="@drawable/ic_invert_colors_white_24dp"
-        android:orderInCategory="100"
-        app:showAsAction="always" />
 </menu>

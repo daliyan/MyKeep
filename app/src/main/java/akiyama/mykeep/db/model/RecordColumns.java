@@ -18,8 +18,8 @@ public class RecordColumns extends BaseColumns{
     public final static String CONTENT="content";
     public final static String ALARMTIME="alarm_time";
     public final static String LEVEL="level";
-    public final static String USERID="user_id";
     public final static String LABELNAMES ="label_names";
+    public final static String USERID="user_id";
     public final static String RECORDTYPE = "record_type";//记事类型，例如 列表型、普通计事型
 
     public final static Uri CONTENT_URI=Uri.parse("content://"+ Constants.AUTHORITY+"/"+TABLE_NAME);

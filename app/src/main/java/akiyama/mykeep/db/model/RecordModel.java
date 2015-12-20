@@ -2,12 +2,10 @@ package akiyama.mykeep.db.model;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import akiyama.mykeep.common.DbConfig;
 import akiyama.mykeep.util.DataProviderHelper;
 
 /**
@@ -99,7 +97,7 @@ public class RecordModel extends BaseModel{
         recordModel.content=DataProviderHelper.parseString(cursor,RecordColumns.CONTENT);
         recordModel.alarmTime=DataProviderHelper.parseString(cursor,RecordColumns.ALARMTIME);
         recordModel.level=DataProviderHelper.parseInt(cursor,RecordColumns.LEVEL);
-        recordModel.creatTime=DataProviderHelper.parseString(cursor,BaseColumns.CREATAT);
+        recordModel.createTime =DataProviderHelper.parseString(cursor,BaseColumns.CREATAT);
         recordModel.updateTime=DataProviderHelper.parseString(cursor,BaseColumns.UPDATEAT);
         recordModel.userId=DataProviderHelper.parseString(cursor,RecordColumns.USERID);
         recordModel.labelNames =DataProviderHelper.parseString(cursor,RecordColumns.LABELNAMES);

@@ -23,7 +23,6 @@ import akiyama.mykeep.base.BaseObserverActivity;
 import akiyama.mykeep.controller.LabelController;
 import akiyama.mykeep.db.model.LabelModel;
 import akiyama.mykeep.event.EventType;
-import akiyama.mykeep.util.LogUtil;
 import akiyama.mykeep.util.LoginHelper;
 import akiyama.mykeep.util.StringUtil;
 import akiyama.mykeep.view.SearchLayout;
@@ -157,7 +156,7 @@ public class AddLabelActivity extends BaseObserverActivity implements SearchLayo
         LabelController labelController=new LabelController();
         LabelModel labelModel=new LabelModel();
         labelModel.setName(mSearchSly.getSearchText().replace(" ",""));//移除所有的空格
-        labelModel.setCreatTime(String.valueOf(Calendar.getInstance().getTimeInMillis()));
+        labelModel.setCreateTime(String.valueOf(Calendar.getInstance().getTimeInMillis()));
         labelModel.setUpdateTime(String.valueOf(Calendar.getInstance().getTimeInMillis()));
         labelModel.setUserId(LoginHelper.getCurrentUserId());
         new SaveSingleDbTask(mContext,labelController,false){

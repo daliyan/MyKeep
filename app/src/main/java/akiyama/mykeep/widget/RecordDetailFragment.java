@@ -1,6 +1,5 @@
 package akiyama.mykeep.widget;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -271,7 +270,7 @@ public class RecordDetailFragment extends BaseObserverFragment{
             if(getCurrentLabel()!=null){
                 record.setLabelNames(getCurrentLabel());
             }
-            record.setCreatTime(String.valueOf(Calendar.getInstance().getTimeInMillis()));
+            record.setCreateTime(String.valueOf(Calendar.getInstance().getTimeInMillis()));
             record.setUpdateTime(String.valueOf(Calendar.getInstance().getTimeInMillis()));
             record.setAlarmTime(String.valueOf(Calendar.getInstance().getTimeInMillis()));
             record.setUserId(LoginHelper.getCurrentUserId());

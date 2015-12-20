@@ -60,7 +60,7 @@ public class LabelModel extends BaseModel{
         LabelModel lm=new LabelModel();
         lm.id= DataProviderHelper.parseString(cursor, BaseColumns._ID);
         lm.updateTime=DataProviderHelper.parseString(cursor,BaseColumns.UPDATEAT);
-        lm.creatTime=DataProviderHelper.parseString(cursor,BaseColumns.CREATAT);
+        lm.createTime =DataProviderHelper.parseString(cursor,BaseColumns.CREATAT);
         lm.name= DataProviderHelper.parseString(cursor,LabelCoumnls.NAME);
         lm.userId=DataProviderHelper.parseString(cursor,LabelCoumnls.USERID);
         return lm;

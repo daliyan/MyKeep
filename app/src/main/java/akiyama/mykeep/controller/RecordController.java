@@ -2,6 +2,7 @@ package akiyama.mykeep.controller;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,9 @@ import akiyama.mykeep.db.model.BaseColumns;
 import akiyama.mykeep.db.model.BaseModel;
 import akiyama.mykeep.db.model.RecordColumns;
 import akiyama.mykeep.db.model.RecordModel;
+import akiyama.mykeep.util.DataProviderHelper;
+import akiyama.mykeep.util.LogUtil;
+import akiyama.mykeep.util.LoginHelper;
 import akiyama.mykeep.util.StringUtil;
 
 /**
@@ -21,6 +25,7 @@ import akiyama.mykeep.util.StringUtil;
  */
 public class RecordController extends BaseController implements IRecordController {
 
+    private static final String TAG = "RecordController";
     @Override
     public List<? extends BaseModel> getDbByUserId(Context context, String userId) {
         List<RecordModel> recordModels=new ArrayList<RecordModel>();
@@ -52,5 +57,21 @@ public class RecordController extends BaseController implements IRecordControlle
             }
         }
         return labelReords;
+    }
+
+    @Override
+    public boolean deleteById(Context context, String id, Class<? extends BaseModel> tClass) {
+        try {
+            Uri uri= DataProviderHelper.withAppendedId(tClass.newInstance().getContentUri(),id);
+            int row=context.getContentResolver().delete(uri,RecordColumns.USERID +  "="+ LoginHelper.getCurrentUserId(),null);
+            if(row>0){
+                return true;
+            }
+        } catch (InstantiationException e) {
+            LogUtil.e(TAG,"cause:"+e.getCause());
+        } catch (IllegalAccessException e) {
+            LogUtil.e(TAG, "cause:" + e.getCause());
+        }
+        return false;
     }
 }

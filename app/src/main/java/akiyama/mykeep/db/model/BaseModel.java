@@ -12,25 +12,25 @@ import android.os.Parcel;
 public abstract class BaseModel implements IModel{
 
     protected  String id;
-    protected  String creatTime;
+    protected  String createTime;
     protected  String updateTime;
 
     protected void readBase(Parcel in) {
         id = in.readString();
-        creatTime = in.readString();
+        createTime = in.readString();
         updateTime = in.readString();
     }
 
     protected void writeBase(Parcel dest, int flags) {
         dest.writeString(id);
-        dest.writeString(creatTime);
+        dest.writeString(createTime);
         dest.writeString(updateTime);
     }
 
     protected ContentValues convert() {
         ContentValues cv = new ContentValues();
         cv.put(BaseColumns._ID, id);
-        cv.put(BaseColumns.CREATAT, creatTime);
+        cv.put(BaseColumns.CREATAT, createTime);
         cv.put(BaseColumns.UPDATEAT, updateTime);
         return cv;
     }
@@ -43,12 +43,12 @@ public abstract class BaseModel implements IModel{
         return id;
     }
 
-    public void setCreatTime(String creatTime) {
-        this.creatTime = creatTime;
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
     }
 
-    public String getCreatTime() {
-        return creatTime;
+    public String getCreateTime() {
+        return createTime;
     }
 
     public void setUpdateTime(String updateTime) {

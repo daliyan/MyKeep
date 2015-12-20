@@ -5,4 +5,12 @@
         <item>设置日期</item>
         <item>设置时间</item>
     </array>
+
+    <array name="edit_record">
+        <item>删除记事</item>
+        <item>编辑记事</item>
+        <item>提醒</item>
+        <item>标签</item>
+        <item>记事颜色</item>
+    </array>
 </resources>

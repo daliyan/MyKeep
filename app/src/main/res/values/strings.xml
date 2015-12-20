@@ -57,4 +57,6 @@
     <string name="color_swatch_description_selected">Color %1$d selected</string>
     <string name="color_picker_default_title">Select a Color</string>
 
+    <string name="delete_snackbar_msg_success">已经删除一条记事</string>
+    <string name="delete_snackbar_msg_fail">删除失败</string>
 </resources>

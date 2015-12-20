@@ -4,8 +4,9 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import akiyama.mykeep.controller.IBaseController;
-import akiyama.mykeep.db.model.BaseModel;
+import akiyama.mykeep.controller.BaseController;
+import akiyama.mykeep.controller.RecordController;
+import akiyama.mykeep.db.model.RecordModel;
 
 /**
  * 插入保存单条数据的Task
@@ -13,25 +14,25 @@ import akiyama.mykeep.db.model.BaseModel;
  * @version 1.0
  * @since 2015-08-07  10:43
  */
-public abstract class UpdateSingleDbTask extends AsyncTask<BaseModel,Void,Boolean> {
+public abstract class DeleteSingleDbTask extends AsyncTask<String,Void,Boolean> {
 
-    private IBaseController mBaseController;
+    private BaseController mBaseController;
     private Context mContext;
     private ProgressDialog mProgressBar;
     private boolean mIsShowProgressBar;
-    public UpdateSingleDbTask(Context context, IBaseController baseController,boolean isShowProgressBar){
+    public DeleteSingleDbTask(Context context, BaseController baseController, boolean isShowProgressBar){
         this.mContext=context;
-        this.mBaseController=baseController;
+        this.mBaseController =baseController;
         this.mIsShowProgressBar = isShowProgressBar;
     }
     @Override
     protected void onPreExecute() {
-        updatePreExecute();
+        deletePreExecute();
     }
 
     @Override
-    protected Boolean doInBackground(BaseModel... params) {
-        if(mBaseController.updateById(mContext,params[0])){
+    protected Boolean doInBackground(String... params) {
+        if(mBaseController.deleteById(mContext,params[0], RecordModel.class)){
             return true;
         }
         return false;
@@ -39,7 +40,7 @@ public abstract class UpdateSingleDbTask extends AsyncTask<BaseModel,Void,Boolea
 
     @Override
     protected void onPostExecute(Boolean aBoolean) {
-        updatePostExecute(aBoolean);
+        deletePostExecute(aBoolean);
         if(mProgressBar!=null){
             mProgressBar.dismiss();
         }
@@ -48,10 +49,10 @@ public abstract class UpdateSingleDbTask extends AsyncTask<BaseModel,Void,Boolea
     /**
      * 保存数据前执行的操作
      */
-    protected void updatePreExecute(){
+    protected void deletePreExecute(){
         if(mIsShowProgressBar){
             mProgressBar=new ProgressDialog(mContext);
-            mProgressBar.setMessage("正在更新，请稍后......");
+            mProgressBar.setMessage("正在删除，请稍后......");
             mProgressBar.show();
         }
     }
@@ -60,5 +61,5 @@ public abstract class UpdateSingleDbTask extends AsyncTask<BaseModel,Void,Boolea
     /**
      * 保存数据成功后执行的操作
      */
-    public abstract void updatePostExecute(Boolean aBoolean);
+    public abstract void deletePostExecute(Boolean aBoolean);
 }

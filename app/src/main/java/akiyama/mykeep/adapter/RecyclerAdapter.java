@@ -1,35 +1,34 @@
 package akiyama.mykeep.adapter;
 
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.support.annotation.DrawableRes;
+import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 
 import akiyama.mykeep.AppContext;
 import akiyama.mykeep.R;
+import akiyama.mykeep.adapter.helper.ItemTouchHelperAdapter;
+import akiyama.mykeep.adapter.helper.ItemTouchHelperViewHolder;
+import akiyama.mykeep.adapter.helper.OnStartDragListener;
 import akiyama.mykeep.common.DbConfig;
 import akiyama.mykeep.db.model.RecordModel;
 import akiyama.mykeep.util.DateUtil;
 import akiyama.mykeep.util.LogUtil;
-import akiyama.mykeep.util.ResUtil;
 
-public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
+public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> implements ItemTouchHelperAdapter {
    private static final String TAG="RecyclerAdapter";
    private List<RecordModel> mDataset;
    private OnItemClick mOnItemClick;
    private OnLongItemClick mOnLongItemClick;
+    private OnStartDragListener mOnStartDragListener;
    public RecyclerAdapter(List<RecordModel> mDataset){
        this.mDataset=mDataset;
    }
@@ -69,7 +68,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             @Override
             public void onClick(View v) {
                 if (mOnItemClick != null) {
-                    mOnItemClick.onItemClick(v, holder.getPosition());
+                    mOnItemClick.onItemClick(v, holder.getAdapterPosition());
                 }
             }
         });
@@ -78,9 +77,29 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             @Override
             public boolean onLongClick(View v) {
                 if (mOnLongItemClick != null) {
-                    mOnLongItemClick.onLongItemClick(v, holder.getPosition());
+                    mOnLongItemClick.onLongItemClick(v, holder.getAdapterPosition());
                 }
+
+                if(mOnStartDragListener!=null){
+                    mOnStartDragListener.onStartDrag(holder);
+                }
+                
                 return true;
+            }
+        });
+
+        // Start a drag whenever the handle view it touched
+        holder.mUpdateTv.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN) {
+                    if(mOnStartDragListener!=null){
+                        mOnStartDragListener.onStartDrag(holder);
+                    }else {
+                        throw new NullPointerException("mOnStartDragListener is null,use setOnStartDragListener set mOnStartDragListener");
+                    }
+                }
+                return false;
             }
         });
 
@@ -91,7 +110,34 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         return mDataset.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    /**
+     * 拖动item
+     *
+     * @param fromPosition
+     * @param toPosition
+     * @return
+     */
+    @Override
+    public boolean onItemMove(int fromPosition, int toPosition) {
+        Collections.swap(mDataset, fromPosition, toPosition);
+        notifyItemMoved(fromPosition, toPosition);
+        return true;
+    }
+
+    /**
+     * @param position
+     */
+    @Override
+    public void onItemDismiss(int position) {
+        mDataset.remove(position);
+        notifyItemRemoved(position);
+    }
+
+    public void setOnStartDragListener(OnStartDragListener mOnStartDragListener) {
+        this.mOnStartDragListener = mOnStartDragListener;
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder {
         public TextView mTitleTv;
         public TextView mSubTitleTv;
         public TextView mUpdateTv;
@@ -103,14 +149,26 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             mUpdateTv =(TextView) v.findViewById(R.id.update_time_tv);
             mCardView = (CardView) v.findViewById(R.id.cardView);
         }
+
+        /**
+         * Called when the {@link ItemTouchHelper} first registers an item as being moved or swiped.
+         * Implementations should update the item view to indicate it's active state.
+         */
+        @Override
+        public void onItemSelected() {
+            itemView.setAlpha(0.5f);
+        }
+
+        /**
+         * Called when the {@link ItemTouchHelper} has completed the move or swipe, and the active item
+         * state should be cleared.
+         */
+        @Override
+        public void onItemClear() {
+            itemView.setAlpha(1.0f);
+        }
     }
 
-    /**
-     * 针对某些高版本系统出现设置cardElevation无效果的BUG
-     */
-    public void setElevation(){
-
-    }
     public void setOnItemClick(OnItemClick mOnItemClick) {
         this.mOnItemClick = mOnItemClick;
     }
@@ -129,14 +187,14 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
      * item接口点击回调
      */
     public interface OnItemClick{
-        public void onItemClick(View v,int position);
+        void onItemClick(View v,int position);
     }
 
     /**
      * 长按事件
      */
     public interface OnLongItemClick{
-        public void onLongItemClick(View v,int position);
+        void onLongItemClick(View v,int position);
     }
 }
 

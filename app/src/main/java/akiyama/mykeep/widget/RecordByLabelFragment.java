@@ -1,14 +1,14 @@
 package akiyama.mykeep.widget;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.view.ActionMode;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -16,9 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import akiyama.mykeep.R;
+import akiyama.mykeep.adapter.helper.OnStartDragListener;
 import akiyama.mykeep.adapter.RecyclerAdapter;
+import akiyama.mykeep.adapter.helper.RecyclerViewTouchCallback;
 import akiyama.mykeep.base.BaseObserverFragment;
-import akiyama.mykeep.common.StatusMode;
 import akiyama.mykeep.controller.RecordController;
 import akiyama.mykeep.db.model.BaseModel;
 import akiyama.mykeep.db.model.RecordModel;
@@ -26,6 +27,7 @@ import akiyama.mykeep.event.EventType;
 import akiyama.mykeep.event.NotifyInfo;
 import akiyama.mykeep.event.helper.KeepNotifyCenterHelper;
 import akiyama.mykeep.preferences.KeepPreferenceUtil;
+import akiyama.mykeep.task.DeleteSingleDbTask;
 import akiyama.mykeep.task.QueryByUserDbTask;
 import akiyama.mykeep.task.QueryRecordByLabelTask;
 import akiyama.mykeep.util.LogUtil;
@@ -39,44 +41,29 @@ import akiyama.mykeep.util.SvgHelper;
  * @version 1.0
  * @since 2015-08-31  14:01
  */
-public class RecordByLabelFragment extends BaseObserverFragment {
+public class RecordByLabelFragment extends BaseObserverFragment implements OnStartDragListener {
 
     public static final String TAG="RecordByLabelFragment";
     public static final String KEY_LABEL_NAME="key_label_name";//标签名称KEY值
     public static final String KEY_CHANGE_MENU="key_change_menu";//修改菜单标记
+
+    private static final int DELETE_RECORD = 0;
+    private static final int EDIT_RECORD = 1;
+    private static final int ALARM_RECORD = 2;
+    private static final int LABEL_RECORD = 3;
+    private static final int PRIORITY_RECORD = 4;
+
     private View mEmptyView;
     private ImageView mEmptyIv;
     private RecyclerView mRecyclerView;
     private RecyclerAdapter mAdapter;
     private List<RecordModel> mRecordModels;
     private StaggeredGridLayoutManager mLayoutManager;
+    private ItemTouchHelper mItemTouchHelper;
     private int mSpanCount = 1;
     private String mLabelName="";
     private Context mContext;
     private RecordController rc=new RecordController();
-    private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
-        @Override
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            MenuInflater inflater = mode.getMenuInflater();
-            inflater.inflate(R.menu.menu_main_edit, menu);
-            return true;
-        }
-
-        @Override
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            return false;
-        }
-
-        @Override
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            return false;
-        }
-
-        @Override
-        public void onDestroyActionMode(ActionMode mode) {
-
-        }
-    };
     @Override
     public int onSetLayoutId() {
         return R.layout.fragemnt_record_label_list;
@@ -113,9 +100,12 @@ public class RecordByLabelFragment extends BaseObserverFragment {
         mAdapter = new RecyclerAdapter(mRecordModels);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(mAdapter);
-
-
+        mAdapter.setOnStartDragListener(this);
+        ItemTouchHelper.Callback callback = new RecyclerViewTouchCallback(mAdapter);
+        mItemTouchHelper = new ItemTouchHelper(callback);
+        mItemTouchHelper.attachToRecyclerView(mRecyclerView);
     }
+
 
     @Override
     public void initDate() {
@@ -128,36 +118,20 @@ public class RecordByLabelFragment extends BaseObserverFragment {
         mAdapter.setOnItemClick(new RecyclerAdapter.OnItemClick() {
             @Override
             public void onItemClick(View v, int position) {
-                //如果View被选定，点击就取消选定状态
-                if(v.isSelected()){
-                    LogUtil.d(TAG, "onItem:" + v.hashCode());
-                    switchActionBarMenu(StatusMode.MENU_NORMAL);
-                }else{
-                    if (mRecordModels != null && mRecordModels.size() > position) {
-                        ((MainActivity)getActivity()).goEditRecordFragment(mRecordModels.get(position), v);
-                        //goEditRecordActivity(mRecordModels.get(position), v);
-                    }else {
-                        LogUtil.e(TAG,"setOnItemClick position is NV");
-                    }
-                }
+                goEditRecord(v, position);
             }
         });
 
         mAdapter.setOnLongItemClick(new RecyclerAdapter.OnLongItemClick() {
             @Override
             public void onLongItemClick(View v, int position) {
-                // Start the CAB using the ActionMode.Callback defined above
-               getActivity().startActionMode(mActionModeCallback);
+                //showEditMenu(v,position);
+                Bundle bundle = new Bundle();
+                bundle.putString(MainActivity.KEY_LONG_MENU_STATUS,MainActivity.LONG_MENU_STATUS);
+                KeepNotifyCenterHelper.getInstance().notifyLongEditMenu(bundle);
             }
         });
 
-    }
-
-
-    private void switchActionBarMenu(String actionbarMode){
-        Bundle bundle = new Bundle();
-        bundle.putString(KEY_CHANGE_MENU,actionbarMode);
-        KeepNotifyCenterHelper.getInstance().notifySwitchMenu(bundle);
     }
 
     @Override
@@ -191,6 +165,13 @@ public class RecordByLabelFragment extends BaseObserverFragment {
         };
     }
 
+    private void goEditRecord(View v, int position){
+        if (mRecordModels != null && mRecordModels.size() > position) {
+            ((MainActivity)getActivity()).goEditRecordFragment(mRecordModels.get(position), v);
+        }else {
+            LogUtil.e(TAG,"setOnItemClick position is NV");
+        }
+    }
 
     /**
      * 通过标签查询记录数据
@@ -216,6 +197,8 @@ public class RecordByLabelFragment extends BaseObserverFragment {
                     //设置空状态下的视图
                     if(models.size() >0){
                         mEmptyView.setVisibility(View.GONE);
+
+
                     }else{
                         mEmptyView.setVisibility(View.VISIBLE);
                     }
@@ -248,10 +231,64 @@ public class RecordByLabelFragment extends BaseObserverFragment {
 
 
     /**
+     * 根据id删除记录数据
+     */
+    public void deleteSingleRecord(boolean isShowProgress,final int position){
+        new DeleteSingleDbTask(mContext, rc,isShowProgress) {
+            @Override
+            public void deletePostExecute(Boolean aBoolean) {
+                if(aBoolean){
+                    mRecordModels.remove(position);
+                    mAdapter.notifyItemRemoved(position);
+                    Snackbar.make(getView(), R.string.delete_snackbar_msg_success, Snackbar.LENGTH_SHORT).show();
+                }else{
+                    Snackbar.make(getView(), R.string.delete_snackbar_msg_fail, Snackbar.LENGTH_SHORT).show();
+                }
+            }
+        }.execute(mRecordModels.get(position).getId());
+    }
+
+
+    /**
      * 切换记事本视图显示
      */
     private void refreshViewSpanCount(){
         mLayoutManager.setSpanCount(KeepPreferenceUtil.getInstance(mContext).getShowViewCount());
         mAdapter.refreshDate(mRecordModels);
+    }
+
+
+    private void showEditMenu(final View v, final int position){
+        AlertDialog.Builder editMenuBuilder = new AlertDialog.Builder(getActivity());
+        editMenuBuilder.setItems(R.array.edit_record, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which){
+                    case DELETE_RECORD:
+                        deleteSingleRecord(false,position);
+                        break;
+                    case EDIT_RECORD:
+                        goEditRecord(v, position);
+                        break;
+                    case ALARM_RECORD:
+                        break;
+                    case LABEL_RECORD:
+                        break;
+                    case PRIORITY_RECORD:
+                        break;
+                }
+            }
+        });
+        editMenuBuilder.show();
+    }
+
+    /**
+     * 开始拖动
+     *
+     * @param viewHolder
+     */
+    @Override
+    public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
+        mItemTouchHelper.startDrag(viewHolder);
     }
 }

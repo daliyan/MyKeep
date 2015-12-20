@@ -38,7 +38,7 @@ public class ImageModel extends BaseModel{
         ImageModel imageModel=new ImageModel();
         imageModel.id= DataProviderHelper.parseString(cursor, BaseColumns._ID);
         imageModel.updateTime=DataProviderHelper.parseString(cursor,BaseColumns.UPDATEAT);
-        imageModel.creatTime=DataProviderHelper.parseString(cursor,BaseColumns.CREATAT);
+        imageModel.createTime =DataProviderHelper.parseString(cursor,BaseColumns.CREATAT);
         imageModel.url=DataProviderHelper.parseString(cursor,ImageColumns.URL);
         imageModel.recordId=DataProviderHelper.parseString(cursor,ImageColumns.RECORD_ID);
         return imageModel;
@@ -51,7 +51,7 @@ public class ImageModel extends BaseModel{
         ImageModel imageModel=new ImageModel();
         imageModel.id= DataProviderHelper.parseString(cursor, BaseColumns._ID);
         imageModel.updateTime=DataProviderHelper.parseString(cursor,BaseColumns.UPDATEAT);
-        imageModel.creatTime=DataProviderHelper.parseString(cursor,BaseColumns.CREATAT);
+        imageModel.createTime=DataProviderHelper.parseString(cursor,BaseColumns.CREATAT);
         imageModel.url=DataProviderHelper.parseString(cursor,ImageColumns.URL);
         imageModel.recordId=DataProviderHelper.parseString(cursor,ImageColumns.RECORD_ID);
         return imageModel;

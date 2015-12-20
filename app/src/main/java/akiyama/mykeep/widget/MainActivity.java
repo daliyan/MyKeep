@@ -1,5 +1,6 @@
 package akiyama.mykeep.widget;
 
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
@@ -34,9 +35,6 @@ import akiyama.mykeep.db.model.RecordModel;
 import akiyama.mykeep.event.EventType;
 import akiyama.mykeep.event.NotifyInfo;
 
-
-
-
 import akiyama.mykeep.event.helper.KeepNotifyCenterHelper;
 import akiyama.mykeep.preferences.KeepPreferenceUtil;
 import akiyama.mykeep.task.QueryByUserDbTask;
@@ -47,10 +45,24 @@ import akiyama.mykeep.vo.ViewPivot;
 
 public class MainActivity extends BaseObserverActivity implements View.OnClickListener{
     private static final String TAG="MainActivity";
-
+    /**
+     * 当前页面在主页的某个fragment中
+     */
     private static final int MAIN = 0;
+    /**
+     * 在记事详情页面中，或者编辑或者添加
+     */
     private static final int DETAIL = 1;
-    private String mMenuMode=StatusMode.MENU_NORMAL;
+    /**
+     * 长按编辑某条记事本的时候
+     */
+    private static final int LONG_EDIT_RECORD = 2;
+    /**
+     * 用来表示记事项状态
+     */
+    public static final String KEY_LONG_MENU_STATUS = "key_long_menu_status";
+    public static final String LONG_MENU_STATUS = "long_menu_status";
+    public static final String NORMAL_MENU_STATUS = "normal_menu_status";
     /**
      * 单行视图
      */
@@ -59,6 +71,7 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
      * 多行视图
      */
     private static final int MANY_VIEW=2;
+
     private DrawerLayout mDrawerDl;//侧滑菜单布局控件
     private ActionBarDrawerToggle mDrawerToggle;
 
@@ -212,6 +225,18 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         }
     }
 
+    /**
+     *
+     */
+    private void setDetailPressed(){
+        if(mDetailFragment!=null){
+            mDetailFragment.saveOrUpdateRecordToDb();
+        }
+        getFragmentManager().popBackStack();
+        mDetailFragment = null;//设置为NULL，让下一次进入界面的时候重新渲染
+        setStatusBarView(getResources().getColor(R.color.main_bg));
+    }
+
 
     @Override
     protected void setOnClick(){
@@ -227,106 +252,103 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if(mCurrentFragment == MAIN){
-            getMenuInflater().inflate(R.menu.menu_main, menu);
-            MenuItem login=menu.findItem(R.id.action_login);
-            MenuItem switchView = menu.findItem(R.id.action_switch_view);
-            AVUser avUser=LoginHelper.getCurrentUser();
-
-            if(avUser!=null){
-                login.setTitle(getResources().getString(R.string.loginOut));
-            }else{
-                login.setTitle(getResources().getString(R.string.action_login));
-            }
-
-            if(isSingleView()){
-                switchView.setTitle(getResources().getString(R.string.many_view));
-            }else {
-                switchView.setTitle(getResources().getString(R.string.single_view));
-            }
-        }else if(mCurrentFragment == DETAIL){
-            getMenuInflater().inflate(R.menu.menu_add_record,menu);
+        Toast.makeText(mContext,""+mCurrentFragment,Toast.LENGTH_LONG).show();
+        switch (mCurrentFragment){
+            case MAIN:
+                createMainMenu(menu);
+                break;
+            case DETAIL:
+                createDetailMenu(menu);
+                break;
+            case LONG_EDIT_RECORD:
+                createLongEditMenu(menu);
+                break;
         }
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    protected void onChange(NotifyInfo notifyInfo) {
-        String eventType = notifyInfo.getEventType();
-        if(eventType.equals(EventType.EVENT_LOGIN)){
-            supportInvalidateOptionsMenu();
-            mUserNameTv.setText(LoginHelper.getCurrentUser().getUsername());
-            queryLabeles();
-        }else if(eventType.equals(EventType.EVENT_LOGINOUT)){
-            supportInvalidateOptionsMenu();
-            mUserNameTv.setText(getResources().getString(R.string.no_login));
-            queryLabeles();
-        }else if(eventType.equals(EventType.EVENT_CHANGE_LABEL)){
-            queryLabeles();//标签发生改变，刷新标签记录
-        }else if(eventType.equals(EventType.EVENT_CHANGE_MAIN_MENU)){
-            mMenuMode = notifyInfo.getBundleString(RecordByLabelFragment.KEY_CHANGE_MENU);
-            supportInvalidateOptionsMenu();
-            mDrawerToggle.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
-        }
-    }
-
-    @Override
-    protected String[] getObserverEventType() {
-        return new String[]{
-                EventType.EVENT_LOGIN,
-                EventType.EVENT_LOGINOUT,
-                EventType.EVENT_CHANGE_LABEL,
-                EventType.EVENT_CHANGE_MAIN_MENU
-        };
-    }
-
-    private void setDrawer(){
-        //创建返回键，并实现打开关/闭监听
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerDl, mToolbar, R.string.open, R.string.close) {
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-            }
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                super.onDrawerClosed(drawerView);
-            }
-        };
-        mDrawerToggle.syncState();
-        mDrawerDl.setDrawerListener(mDrawerToggle);
-    }
-
-    /**
-     * 设置用户信息
-     */
-    private void setUserInfo(){
-        if(LoginHelper.isLogin()){
-            mUserNameTv.setText(LoginHelper.getCurrentUser().getUsername());
-        }else{
-            mUserNameTv.setText(getResources().getString(R.string.no_login));
-        }
-
+        return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(mCurrentFragment==DETAIL && mDetailFragment!=null){
             return setDetailMenuSelect(item);
-        }else{
-           return setMainMenuSelect(item);
+        }else if(mCurrentFragment==LONG_EDIT_RECORD){
+            return setLongEditSelect(item);
+        }else {
+            return setMainMenuSelect(item);
         }
     }
+
+
+    /**
+     * 创建主页默认toolbar菜单
+     * @param menu
+     */
+    private void createMainMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        MenuItem login=menu.findItem(R.id.action_login);
+        MenuItem switchView = menu.findItem(R.id.action_switch_view);
+        AVUser avUser=LoginHelper.getCurrentUser();
+        if(avUser!=null){
+            login.setTitle(getResources().getString(R.string.loginOut));
+        }else{
+            login.setTitle(getResources().getString(R.string.action_login));
+        }
+        if(isSingleView()){
+            switchView.setTitle(getResources().getString(R.string.many_view));
+        }else {
+            switchView.setTitle(getResources().getString(R.string.single_view));
+        }
+    }
+
+    /**
+     * 详情页面的toolbar菜单
+     * @param menu
+     */
+    private void createDetailMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.menu_add_record,menu);
+    }
+
+    /**
+     * 长按编辑记事项菜单
+     * @param menu
+     */
+    private void createLongEditMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.menu_main_edit,menu);
+    }
+
 
     /**
      * 详情页面的toolbar菜单跳转
      * @param item
      * @return
+     *
+     *
+     *
      */
     private boolean setDetailMenuSelect(MenuItem item){
         int id=item.getItemId();
         switch (id){
             case R.id.action_add_label:
                 mDetailFragment.goAddLabelActivity();
+                break;
+            case R.id.action_share_content:
+                break;
+            case R.id.action_delete_record:
+                break;
+            case R.id.action_select_style:
+                mDetailFragment.showPriorityDialog();
+                break;
+        }
+        return true;
+    }
+
+
+    private boolean setLongEditSelect(MenuItem item){
+        int id=item.getItemId();
+        switch (id){
+            case R.id.action_main_delete:
+                Fragment mCurrentFragment = mRecordLabelAdapter.getItem(mRecordVp.getCurrentItem());
+                //((RecordByLabelFragment) mCurrentFragment).deleteSingleRecord(false,);
                 break;
             case R.id.action_share_content:
                 break;
@@ -371,6 +393,70 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
                 break;
         }
         return true;
+    }
+
+    @Override
+    protected void onChange(NotifyInfo notifyInfo) {
+        String eventType = notifyInfo.getEventType();
+        Toast.makeText(mContext,eventType,Toast.LENGTH_LONG).show();
+        if(eventType.equals(EventType.EVENT_LOGIN)){
+            supportInvalidateOptionsMenu();
+            mUserNameTv.setText(LoginHelper.getCurrentUser().getUsername());
+            queryLabeles();
+        }else if(eventType.equals(EventType.EVENT_LOGINOUT)){
+            supportInvalidateOptionsMenu();
+            mUserNameTv.setText(getResources().getString(R.string.no_login));
+            queryLabeles();
+        }else if(eventType.equals(EventType.EVENT_CHANGE_LABEL)){
+            queryLabeles();//标签发生改变，刷新标签记录
+        }else if(eventType.equals(EventType.EVENT_CHANGE_MAIN_MENU)){
+            String status = notifyInfo.getBundleString(KEY_LONG_MENU_STATUS);
+            //Toast.makeText(mContext,status,Toast.LENGTH_LONG).show();
+            if(status.equals(LONG_MENU_STATUS)){
+                mCurrentFragment = LONG_EDIT_RECORD;
+            }else if(status.equals(NORMAL_MENU_STATUS)){
+                mCurrentFragment = MAIN;
+            }
+            invalidateOptionsMenu();
+        }
+    }
+
+    @Override
+    protected String[] getObserverEventType() {
+        return new String[]{
+                EventType.EVENT_LOGIN,
+                EventType.EVENT_LOGINOUT,
+                EventType.EVENT_CHANGE_LABEL,
+                EventType.EVENT_CHANGE_MAIN_MENU
+        };
+    }
+
+    private void setDrawer(){
+        //创建返回键，并实现打开关/闭监听
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerDl, mToolbar, R.string.open, R.string.close) {
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+            }
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+            }
+        };
+        mDrawerToggle.syncState();
+        mDrawerDl.setDrawerListener(mDrawerToggle);
+    }
+
+    /**
+     * 设置用户信息
+     */
+    private void setUserInfo(){
+        if(LoginHelper.isLogin()){
+            mUserNameTv.setText(LoginHelper.getCurrentUser().getUsername());
+        }else{
+            mUserNameTv.setText(getResources().getString(R.string.no_login));
+        }
+
     }
 
     @Override
@@ -458,10 +544,13 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         int[] location = new int[2];
         view.getLocationOnScreen(location);
         bundle.putParcelable(RecordDetailFragment.KEY_PIVOT_XY,new ViewPivot(location[0]+(view.getWidth()/2),location[1]+(view.getHeight()/2)));
-        mDetailFragment.setArguments(bundle);
-        ft.replace(R.id.detail_ll, mDetailFragment, "mDetailFragment");
-        ft.addToBackStack(null);
-        ft.commit();
+        if(mDetailFragment.getArguments()==null){
+            mDetailFragment.setArguments(bundle);
+            ft.replace(R.id.detail_ll, mDetailFragment, "mDetailFragment");
+            ft.addToBackStack(null);
+            ft.commit();
+        }
+
     }
 
     /**

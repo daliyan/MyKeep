@@ -76,10 +76,10 @@ public class KeepNotifyCenterHelper {
     }
 
     /**
-     * 通知到主页切换到actionbar item
+     * 显示记事项长按菜单
      */
-    public void notifySwitchMenu(Bundle bundle) {
-        notifyObserver(new NotifyInfo(EventType.EVENT_CHANGE_MAIN_MENU, bundle));
+    public void notifyLongEditMenu(Bundle bundle) {
+        notifyObserver(new NotifyInfo(EventType.EVENT_CHANGE_MAIN_MENU,bundle));
     }
 
     public void notifySwitchView(){
