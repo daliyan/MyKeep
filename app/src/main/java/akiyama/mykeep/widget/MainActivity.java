@@ -1,9 +1,10 @@
 package akiyama.mykeep.widget;
 
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
@@ -43,7 +44,7 @@ import akiyama.mykeep.util.SvgHelper;
 import akiyama.mykeep.vo.ViewPivot;
 
 
-public class MainActivity extends BaseObserverActivity implements View.OnClickListener{
+public class MainActivity extends BaseObserverActivity implements View.OnClickListener {
     private static final String TAG="MainActivity";
     /**
      * 当前页面在主页的某个fragment中
@@ -56,13 +57,7 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
     /**
      * 长按编辑某条记事本的时候
      */
-    private static final int LONG_EDIT_RECORD = 2;
-    /**
-     * 用来表示记事项状态
-     */
-    public static final String KEY_LONG_MENU_STATUS = "key_long_menu_status";
-    public static final String LONG_MENU_STATUS = "long_menu_status";
-    public static final String NORMAL_MENU_STATUS = "normal_menu_status";
+    public static final int LONG_EDIT_RECORD = 2;
     /**
      * 单行视图
      */
@@ -113,6 +108,7 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
     private FragmentTransaction mTransaction;
     private FragmentManager mFragmentManager;
     private int mCurrentFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -205,40 +201,6 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
     }
 
     @Override
-    public void onBackPressed() {
-        if(getFragmentManager().getBackStackEntryCount() >0){
-            switch (mCurrentFragment){
-                case DETAIL:
-                    if(mDetailFragment!=null){
-                        mDetailFragment.saveOrUpdateRecordToDb();
-                    }
-                    getFragmentManager().popBackStack();
-                    mDetailFragment = null;//设置为NULL，让下一次进入界面的时候重新渲染
-                    setStatusBarView(getResources().getColor(R.color.main_bg));
-                    break;
-                default:
-                    getFragmentManager().popBackStack();
-                    break;
-            }
-        }else{
-            super.onBackPressed();
-        }
-    }
-
-    /**
-     *
-     */
-    private void setDetailPressed(){
-        if(mDetailFragment!=null){
-            mDetailFragment.saveOrUpdateRecordToDb();
-        }
-        getFragmentManager().popBackStack();
-        mDetailFragment = null;//设置为NULL，让下一次进入界面的时候重新渲染
-        setStatusBarView(getResources().getColor(R.color.main_bg));
-    }
-
-
-    @Override
     protected void setOnClick(){
         mLoginLl.setOnClickListener(this);
         mRecordView.setOnClickListener(this);
@@ -249,10 +211,70 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         mAddNormalRecordFab.setOnClickListener(this);
     }
 
+    private void refreshToolBar(int currentFragment){
+        mCurrentFragment = currentFragment;
+        invalidateOptionsMenu();
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        if(getFragmentManager().getBackStackEntryCount() >0){
+            setBackStackPressed();
+        }else{
+            setNormalPressed();
+        }
+    }
+
+    /**
+     * 设置有回推fragment的返回按钮响应事件
+     */
+    private void setBackStackPressed(){
+        switch (mCurrentFragment){
+            case DETAIL:
+                if(mDetailFragment!=null){
+                    mDetailFragment.saveOrUpdateRecordToDb();
+                }
+                getFragmentManager().popBackStack();
+                mDetailFragment = null;//设置为NULL，让下一次进入界面的时候重新渲染
+                setStatusBarView(getResources().getColor(R.color.main_bg));
+                bindMainToolBar();
+                break;
+            default:
+                getFragmentManager().popBackStack();
+                break;
+        }
+    }
+
+    /**
+     * 无fragment回退栈情况下
+     */
+    private void setNormalPressed(){
+        if(mCurrentFragment==LONG_EDIT_RECORD){
+            refreshToolBar(MAIN);//如果当前界面是长按状态的话，按返回键就重新刷新主菜单
+        }else {
+            super.onBackPressed();
+        }
+    }
+
+    /**
+     * 从fragment返回可能需要重新绑定Toolbar
+     */
+    private void bindMainToolBar(){
+        iniToolBar();//因为在fragment中已经绑定过toolbar了，重新绑定toolbar
+        setDrawer();//重新监听侧滑菜单
+        refreshToolBar(MAIN);
+    }
+
+    /**
+     * 长按菜单
+     */
+    public void refreshLongToolBar(){
+        refreshToolBar(LONG_EDIT_RECORD);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        Toast.makeText(mContext,""+mCurrentFragment,Toast.LENGTH_LONG).show();
         switch (mCurrentFragment){
             case MAIN:
                 createMainMenu(menu);
@@ -313,7 +335,7 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
      * @param menu
      */
     private void createLongEditMenu(Menu menu){
-        getMenuInflater().inflate(R.menu.menu_main_edit,menu);
+        getMenuInflater().inflate(R.menu.menu_long_click_edit,menu);
     }
 
 
@@ -347,8 +369,7 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         int id=item.getItemId();
         switch (id){
             case R.id.action_main_delete:
-                Fragment mCurrentFragment = mRecordLabelAdapter.getItem(mRecordVp.getCurrentItem());
-                //((RecordByLabelFragment) mCurrentFragment).deleteSingleRecord(false,);
+                 mRecordLabelAdapter.getCurrentFragment().deleteRecord();
                 break;
             case R.id.action_share_content:
                 break;
@@ -378,8 +399,6 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
                     goLogin();
                 }
                 break;
-            case R.id.action_add:
-                break;
             case R.id.action_switch_view:
                 if(isSingleView()){
                     KeepPreferenceUtil.getInstance(this).setShowViewCount(MANY_VIEW);
@@ -398,7 +417,6 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
     @Override
     protected void onChange(NotifyInfo notifyInfo) {
         String eventType = notifyInfo.getEventType();
-        Toast.makeText(mContext,eventType,Toast.LENGTH_LONG).show();
         if(eventType.equals(EventType.EVENT_LOGIN)){
             supportInvalidateOptionsMenu();
             mUserNameTv.setText(LoginHelper.getCurrentUser().getUsername());
@@ -409,15 +427,6 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
             queryLabeles();
         }else if(eventType.equals(EventType.EVENT_CHANGE_LABEL)){
             queryLabeles();//标签发生改变，刷新标签记录
-        }else if(eventType.equals(EventType.EVENT_CHANGE_MAIN_MENU)){
-            String status = notifyInfo.getBundleString(KEY_LONG_MENU_STATUS);
-            //Toast.makeText(mContext,status,Toast.LENGTH_LONG).show();
-            if(status.equals(LONG_MENU_STATUS)){
-                mCurrentFragment = LONG_EDIT_RECORD;
-            }else if(status.equals(NORMAL_MENU_STATUS)){
-                mCurrentFragment = MAIN;
-            }
-            invalidateOptionsMenu();
         }
     }
 
@@ -553,6 +562,7 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
 
     }
 
+
     /**
      * 查询当前用户的所有标签
      */
@@ -577,4 +587,5 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         }
         return false;
     }
+
 }

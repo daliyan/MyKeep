@@ -14,6 +14,8 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
@@ -23,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -322,12 +325,11 @@ public class RecordDetailFragment extends BaseObserverFragment{
 
 
     private void saveRecordTask(final RecordModel record){
-        final String labelName = record.getLabelNames();
         new SaveSingleDbTask(mContext,rc,false){
             @Override
             public void savePostExecute(Boolean aBoolean) {
                 if(aBoolean){
-                    notifyRecordChange(labelName);
+                    notifyRecordChange();
                     initContentText();
                 }
             }
@@ -340,7 +342,7 @@ public class RecordDetailFragment extends BaseObserverFragment{
             @Override
             public void updatePostExecute(Boolean aBoolean) {
                 if(aBoolean){
-                    notifyRecordChange(labelName);
+                    notifyRecordChange();
                     mTitleEt.setText("");
                     initContentText();
                 }
@@ -348,10 +350,8 @@ public class RecordDetailFragment extends BaseObserverFragment{
         }.execute(record);
     }
 
-    private void notifyRecordChange(String labelNames){
-        Bundle bundle = new Bundle();
-        bundle.putString(Constants.KEY_LABEL_NAMES,labelNames);
-        KeepNotifyCenterHelper.getInstance().notifyRefreshRecord(bundle);
+    private void notifyRecordChange(){
+        KeepNotifyCenterHelper.getInstance().notifyRefreshRecord();
     }
 
 

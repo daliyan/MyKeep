@@ -41,7 +41,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         if(mDataset!=null && mDataset.size()>0){
             RecordModel recordModel=mDataset.get(position);
             if(recordModel!=null){
@@ -81,28 +81,12 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
                 }
 
                 if(mOnStartDragListener!=null){
-                    mOnStartDragListener.onStartDrag(holder);
+                    mOnStartDragListener.onStartDrag(holder,position);
                 }
                 
                 return true;
             }
         });
-
-        // Start a drag whenever the handle view it touched
-        holder.mUpdateTv.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN) {
-                    if(mOnStartDragListener!=null){
-                        mOnStartDragListener.onStartDrag(holder);
-                    }else {
-                        throw new NullPointerException("mOnStartDragListener is null,use setOnStartDragListener set mOnStartDragListener");
-                    }
-                }
-                return false;
-            }
-        });
-
     }
 
     @Override

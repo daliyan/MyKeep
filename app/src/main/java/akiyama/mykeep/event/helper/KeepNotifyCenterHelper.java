@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import akiyama.mykeep.event.EventType;
 import akiyama.mykeep.event.NotifyInfo;
+import akiyama.mykeep.widget.RecordByLabelFragment;
 
 /**
  * 事件通知中心，所有的事件调用该处方法作为统一入口，便于管理
@@ -50,8 +51,8 @@ public class KeepNotifyCenterHelper {
     /**
      * 刷新记录信息
      */
-    public void notifyRefreshRecord(Bundle bundle){
-        notifyObserver(new NotifyInfo(EventType.EVENT_REFRESH_RECORD,bundle));
+    public void notifyRefreshRecord(){
+        notifyObserver(new NotifyInfo(EventType.EVENT_REFRESH_RECORD));
     }
 
     /**
@@ -85,4 +86,5 @@ public class KeepNotifyCenterHelper {
     public void notifySwitchView(){
         notifyObserver(new NotifyInfo(EventType.EVENT_SWITCH_VIEW));
     }
+
 }

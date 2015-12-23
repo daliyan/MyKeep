@@ -92,6 +92,7 @@ public class SearchAdapter extends RecyclerViewAdapter<SearchAdapter.ViewHolder>
             holder.mSelectLabelCb.setChecked(mSearchVoList.get(position).getIsCheck());
             SvgHelper.setImageDrawable( holder.mNameIconIv,R.raw.ic_label_outline_24px);
         }
+        holder.mSelectLabelCb.setOnClickListener(null);
         /**
          * 设置单击事件，需要用自定义的单击事件来实现，否则由于滑动冲突会导致单击失效
          */

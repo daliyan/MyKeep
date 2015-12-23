@@ -6,6 +6,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
 import android.support.v13.app.FragmentStatePagerAdapter;
+import android.view.ViewGroup;
 
 import java.util.List;
 
@@ -22,6 +23,7 @@ import akiyama.mykeep.widget.RecordByLabelFragment;
 public class RecordByLabelAdapter extends FragmentStatePagerAdapter {
 
     private List<LabelModel> mLabelModelList;
+    private RecordByLabelFragment mCurrentFragment = null;
     public RecordByLabelAdapter(FragmentManager fm,List<LabelModel> labelModelList) {
         super(fm);
         this.mLabelModelList = labelModelList;
@@ -49,5 +51,21 @@ public class RecordByLabelAdapter extends FragmentStatePagerAdapter {
     public void refreshList(List<LabelModel> labelModelList){
         this.mLabelModelList = labelModelList;
         notifyDataSetChanged();
+    }
+
+    @Override
+    public void setPrimaryItem(ViewGroup container, int position, Object object) {
+        if (mCurrentFragment != object) {
+            mCurrentFragment = (RecordByLabelFragment) object;
+        }
+        super.setPrimaryItem(container, position, object);
+    }
+
+    /**
+     * 获取当前显示的fragment
+     * @return
+     */
+    public RecordByLabelFragment getCurrentFragment() {
+        return mCurrentFragment;
     }
 }

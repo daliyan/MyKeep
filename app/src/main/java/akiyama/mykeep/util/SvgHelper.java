@@ -3,6 +3,7 @@ package akiyama.mykeep.util;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.view.View;
 import android.widget.ImageView;
@@ -48,4 +49,10 @@ public class SvgHelper {
         }
         imageView.setImageDrawable(svg.getDrawable());
     }
+
+    public static Drawable getDrawable(Context context, int svgId){
+        SVG svg = new SVGBuilder().readFromResource(context.getResources(), svgId).build();
+        return svg.getDrawable();
+    }
+
 }

@@ -57,7 +57,8 @@ public class RecyclerViewTouchCallback extends ItemTouchHelper.Callback{
      */
     @Override
     public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-        if (recyclerView.getLayoutManager() instanceof GridLayoutManager || recyclerView.getLayoutManager() instanceof StaggeredGridLayoutManager) {
+        if (recyclerView.getLayoutManager() instanceof GridLayoutManager
+                || recyclerView.getLayoutManager() instanceof StaggeredGridLayoutManager) {
             final int dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT;
             final int swipeFlags = 0;
             return makeMovementFlags(dragFlags, swipeFlags);
@@ -156,9 +157,7 @@ public class RecyclerViewTouchCallback extends ItemTouchHelper.Callback{
     @Override
     public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
         super.clearView(recyclerView, viewHolder);
-
         viewHolder.itemView.setAlpha(ALPHA_FULL);
-
         if (viewHolder instanceof ItemTouchHelperViewHolder) {
             // Tell the view holder it's time to restore the idle state
             ItemTouchHelperViewHolder itemViewHolder = (ItemTouchHelperViewHolder) viewHolder;

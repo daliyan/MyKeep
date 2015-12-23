@@ -9,8 +9,10 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +47,6 @@ public class RecordByLabelFragment extends BaseObserverFragment implements OnSta
 
     public static final String TAG="RecordByLabelFragment";
     public static final String KEY_LABEL_NAME="key_label_name";//标签名称KEY值
-    public static final String KEY_CHANGE_MENU="key_change_menu";//修改菜单标记
 
     private static final int DELETE_RECORD = 0;
     private static final int EDIT_RECORD = 1;
@@ -64,6 +65,7 @@ public class RecordByLabelFragment extends BaseObserverFragment implements OnSta
     private String mLabelName="";
     private Context mContext;
     private RecordController rc=new RecordController();
+    private int mCurrentSelectItem;
     @Override
     public int onSetLayoutId() {
         return R.layout.fragemnt_record_label_list;
@@ -125,10 +127,7 @@ public class RecordByLabelFragment extends BaseObserverFragment implements OnSta
         mAdapter.setOnLongItemClick(new RecyclerAdapter.OnLongItemClick() {
             @Override
             public void onLongItemClick(View v, int position) {
-                //showEditMenu(v,position);
-                Bundle bundle = new Bundle();
-                bundle.putString(MainActivity.KEY_LONG_MENU_STATUS,MainActivity.LONG_MENU_STATUS);
-                KeepNotifyCenterHelper.getInstance().notifyLongEditMenu(bundle);
+                ((MainActivity)getActivity()).refreshLongToolBar();
             }
         });
 
@@ -161,7 +160,8 @@ public class RecordByLabelFragment extends BaseObserverFragment implements OnSta
                 EventType.EVENT_LOGIN,
                 EventType.EVENT_LOGINOUT,
                 EventType.EVENT_REFRESH_RECORD,
-                EventType.EVENT_SWITCH_VIEW
+                EventType.EVENT_SWITCH_VIEW,
+                EventType.EVENT_DELETE_RECORD
         };
     }
 
@@ -197,8 +197,6 @@ public class RecordByLabelFragment extends BaseObserverFragment implements OnSta
                     //设置空状态下的视图
                     if(models.size() >0){
                         mEmptyView.setVisibility(View.GONE);
-
-
                     }else{
                         mEmptyView.setVisibility(View.VISIBLE);
                     }
@@ -233,19 +231,28 @@ public class RecordByLabelFragment extends BaseObserverFragment implements OnSta
     /**
      * 根据id删除记录数据
      */
-    public void deleteSingleRecord(boolean isShowProgress,final int position){
+    private void deleteSingleRecord(boolean isShowProgress,final int position){
+        String id = mRecordModels.get(position).getId();
         new DeleteSingleDbTask(mContext, rc,isShowProgress) {
             @Override
             public void deletePostExecute(Boolean aBoolean) {
                 if(aBoolean){
                     mRecordModels.remove(position);
                     mAdapter.notifyItemRemoved(position);
+                    KeepNotifyCenterHelper.getInstance().notifyRefreshRecord();
                     Snackbar.make(getView(), R.string.delete_snackbar_msg_success, Snackbar.LENGTH_SHORT).show();
                 }else{
                     Snackbar.make(getView(), R.string.delete_snackbar_msg_fail, Snackbar.LENGTH_SHORT).show();
                 }
             }
-        }.execute(mRecordModels.get(position).getId());
+        }.execute(id);
+    }
+
+    /**
+     * 删除当前页面的长按选定的记录
+     */
+    public void deleteRecord(){
+        deleteSingleRecord(false,mCurrentSelectItem);
     }
 
 
@@ -288,7 +295,8 @@ public class RecordByLabelFragment extends BaseObserverFragment implements OnSta
      * @param viewHolder
      */
     @Override
-    public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
+    public void onStartDrag(RecyclerView.ViewHolder viewHolder,int position) {
         mItemTouchHelper.startDrag(viewHolder);
+        mCurrentSelectItem = position;
     }
 }
