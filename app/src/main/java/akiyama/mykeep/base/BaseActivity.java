@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -81,7 +82,15 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         }
     }
 
-
+    /**
+     * 隐藏当前activity的键盘
+     */
+     public void hideKeyBoard(){
+         View v = ((Activity) mContext).getCurrentFocus();
+         if (v == null)
+             return;
+         mImm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+     }
 
 
     protected void setBackListener(){

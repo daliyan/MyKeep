@@ -133,7 +133,7 @@ public class RecordDetailFragment extends BaseObserverFragment{
         mUpdateTimeTv.setTypeface(AppContext.getRobotoSlabLight());
         mAlarmTimeTv.setTypeface(AppContext.getRobotoSlabLight());
         mAlarmDateTv.setTypeface(AppContext.getRobotoSlabLight());
-        setFragmentToolBarTitle("编辑记事");
+
     }
 
     @Override
@@ -168,6 +168,7 @@ public class RecordDetailFragment extends BaseObserverFragment{
     private void setInitUiByMode(){
         mMode = getArguments().getString(KEY_RECORD_MODE);
         if(mMode!=null && mMode.equals(StatusMode.EDIT_RECORD_MODE)){
+            setFragmentToolBarTitle("编辑记事");
             mEditRecordModel = getArguments().getParcelable(KEY_EDIT_RECORD_LIST);
             mAddRecordType = mEditRecordModel.getRecordType();
             initTypeView(mAddRecordType);
@@ -187,6 +188,7 @@ public class RecordDetailFragment extends BaseObserverFragment{
                 mUpdateTimeTv.setText("修改时间："+DateUtil.getDate(mEditRecordModel.getUpdateTime()));
             }
         }else if(mMode!=null && mMode.equals(StatusMode.ADD_RECORD_MODE)){
+            setFragmentToolBarTitle("添加记事");
             mAddRecordType = getArguments().getInt(KEY_ADD_RECORD_TYPE,RecordModel.RECORD_TYPE_NORMAL);
             initTypeView(mAddRecordType);
             mStartRecord.setContent("");

@@ -95,8 +95,10 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
     private LinearLayout mDetailContentLy;
     private RecordDetailFragment mDetailFragment;
     private FloatingActionsMenu mAddRecordMenuFam;//记事菜单
-    private FloatingActionButton mAddNormalRecordFab;//增加普通计事
-    private FloatingActionButton mAddListRecordFab;//添加列表数据
+    private TextView mAddNormalRecordTv;//增加普通计事
+    private ImageView mAddListRecordIv;//添加列表数据
+    private ImageView mAddVoiceIv;
+    private ImageView mAddPhoneIv;
 
     private ViewPager mRecordVp;
     private TabLayout mTabLy;
@@ -152,10 +154,10 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         mTabLy = (TabLayout) findViewById(R.id.pager_strip_tsv);
 
         mDetailContentLy = (LinearLayout) findViewById(R.id.detail_ll);
-        mAddRecordMenuFam = (FloatingActionsMenu) findViewById(R.id.add_record_fam);
-        mAddNormalRecordFab = (FloatingActionButton) findViewById(R.id.add_normal_record_fab);
-        mAddListRecordFab = (FloatingActionButton) findViewById(R.id.add_list_record_fab);
-
+        mAddNormalRecordTv = (TextView) findViewById(R.id.add_normal_tv);
+        mAddListRecordIv = (ImageView) findViewById(R.id.add_list_iv);
+        mAddVoiceIv = (ImageView) findViewById(R.id.add_voice_iv);
+        mAddPhoneIv = (ImageView) findViewById(R.id.add_phone_iv);
     }
 
     /**
@@ -180,6 +182,12 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
 
         mHelpTv.setText(getResources().getString(R.string.item_menu_6));
         SvgHelper.setImageDrawable(mHelpIv, R.raw.ic_help_24px);
+        //添加列表菜单
+        SvgHelper.setImageDrawable(mAddListRecordIv,R.raw.ic_format_list_bulleted_48px);
+        //添加语音记事
+        SvgHelper.setImageDrawable(mAddVoiceIv,R.raw.ic_mic_none_48px);
+        //添加相片记事
+        SvgHelper.setImageDrawable(mAddPhoneIv,R.raw.ic_photo_camera_48px);
     }
 
     @Override
@@ -207,8 +215,8 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         mRecycleView.setOnClickListener(this);
         mSettingView.setOnClickListener(this);
         mFiledView.setOnClickListener(this);
-        mAddListRecordFab.setOnClickListener(this);
-        mAddNormalRecordFab.setOnClickListener(this);
+        mAddNormalRecordTv.setOnClickListener(this);
+        mAddListRecordIv.setOnClickListener(this);
     }
 
     private void refreshToolBar(int currentFragment){
@@ -238,6 +246,7 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
                 getFragmentManager().popBackStack();
                 mDetailFragment = null;//设置为NULL，让下一次进入界面的时候重新渲染
                 setStatusBarView(getResources().getColor(R.color.main_bg));
+                hideKeyBoard();
                 bindMainToolBar();
                 break;
             default:
@@ -496,10 +505,10 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
                 mRecycleView.setBackgroundResource(R.color.white);
                 mSettingView.setBackgroundResource(R.color.light_gray);
                 break;
-            case R.id.add_normal_record_fab:
+            case R.id.add_normal_tv:
                 goAddRecordFragment(StatusMode.ADD_RECORD_MODE, RecordModel.RECORD_TYPE_NORMAL);
                 break;
-            case R.id.add_list_record_fab:
+            case R.id.add_list_iv:
                 goAddRecordFragment(StatusMode.ADD_RECORD_MODE, RecordModel.RECORD_TYPE_LIST);
                 break;
             case R.id.login_ll:
@@ -523,7 +532,7 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
     private void goAddRecordFragment(String recordMode, int recordType){
         mCurrentFragment = DETAIL;
         FragmentTransaction ft = getFragmentManager().beginTransaction();
-        //ft.setCustomAnimations(R.anim.abc_fade_in, R.anim.abc_fade_out, R.anim.abc_fade_in, R.anim.abc_fade_out);
+        ft.setCustomAnimations(R.anim.fragment_bottom_enter, R.anim.fragment_bottom_exit,R.anim.fragment_bottom_enter, R.anim.fragment_bottom_exit);
         if(mDetailFragment == null){
             mDetailFragment = new RecordDetailFragment();
         }
@@ -531,12 +540,15 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         Bundle bundle= new Bundle();
         bundle.putString(RecordDetailFragment.KEY_RECORD_MODE, recordMode);
         bundle.putInt(RecordDetailFragment.KEY_ADD_RECORD_TYPE, recordType);
-        mDetailFragment.setArguments(bundle);
-        ft.replace(R.id.detail_ll, mDetailFragment, "mDetailFragment");
-        ft.addToBackStack(null);
-        ft.commit();
-        //setToolBarTitle("添加记事");
-        supportInvalidateOptionsMenu();
+        if(mDetailFragment.getArguments()==null){
+            mDetailFragment.setArguments(bundle);
+            ft.replace(R.id.detail_ll, mDetailFragment, "mDetailFragment");
+            ft.addToBackStack(null);
+            ft.commit();
+            //setToolBarTitle("添加记事");
+            supportInvalidateOptionsMenu();
+        }
+
     }
 
     public void goEditRecordFragment(RecordModel recordModel,View view){
@@ -574,6 +586,11 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
                     mLabelList =(List<LabelModel>) models;
                     mLabelList.add(0,new LabelModel(getString(R.string.all_label),LoginHelper.getCurrentUserId()));
                     mRecordLabelAdapter.refreshList(mLabelList);
+                    if(mLabelList.size()==1){
+                        mTabLy.setVisibility(View.GONE);
+                    }else {
+                        mTabLy.setVisibility(View.VISIBLE);
+                    }
                     mTabLy.setTabsFromPagerAdapter(mRecordLabelAdapter);
                 }
             }

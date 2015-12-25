@@ -23,36 +23,56 @@
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:background="@color/common_bg0">
 
                 <android.support.v4.view.ViewPager
                     android:id="@+id/content_vp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
-                <com.getbase.floatingactionbutton.FloatingActionsMenu
-                    android:id="@+id/add_record_fam"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:fab_addButtonColorNormal="@color/main_bg"
-                    app:fab_addButtonColorPressed="@color/blue"
-                    android:layout_gravity="bottom|right">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50dip"
+                    android:orientation="horizontal"
+                    android:layout_gravity="bottom|center_vertical"
+                    android:gravity="center_vertical"
+                    android:background="@color/common_bg1">
 
-                    <android.support.design.widget.FloatingActionButton
-                        android:id="@+id/add_normal_record_fab"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_material_note_dark"
-                        app:backgroundTint="@color/deep_orange" />
+                    <TextView
+                        android:id="@+id/add_normal_tv"
+                        android:layout_width="0dip"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center|left"
+                        android:paddingLeft="10dip"
+                        android:textColor="@color/grey"
+                        android:textSize="@dimen/text_size_day"
+                        android:text="@string/menu_add_record"/>
 
-                    <android.support.design.widget.FloatingActionButton
-                        android:id="@+id/add_list_record_fab"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_material_list_dark"
-                        app:backgroundTint="@color/deep_orange" />
+                    <ImageView
+                        android:id="@+id/add_list_iv"
+                        android:layout_width="30dip"
+                        android:layout_height="30dip"
+                        android:layout_margin="5dip"
+                        android:gravity="center" />
 
-                </com.getbase.floatingactionbutton.FloatingActionsMenu>
+                    <ImageView
+                        android:id="@+id/add_voice_iv"
+                        android:layout_width="30dip"
+                        android:layout_height="30dip"
+                        android:layout_margin="5dip"
+                        android:gravity="center" />
+
+                    <ImageView
+                        android:id="@+id/add_phone_iv"
+                        android:layout_width="30dip"
+                        android:layout_height="30dip"
+                        android:layout_margin="5dip"
+                        android:gravity="center" />
+
+                </LinearLayout>
+
             </FrameLayout>
 
 

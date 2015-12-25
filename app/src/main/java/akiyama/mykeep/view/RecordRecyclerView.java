@@ -6,6 +6,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -22,6 +23,8 @@ import java.util.List;
 import akiyama.mykeep.R;
 import akiyama.mykeep.adapter.NoTickAdapter;
 import akiyama.mykeep.adapter.TickAdapter;
+import akiyama.mykeep.adapter.helper.OnStartDragListener;
+import akiyama.mykeep.adapter.helper.RecyclerViewTouchCallback;
 import akiyama.mykeep.common.DbConfig;
 import akiyama.mykeep.util.DimUtil;
 import akiyama.mykeep.util.StringUtil;
@@ -34,9 +37,11 @@ import akiyama.mykeep.util.SvgHelper;
  * @version 1.0
  * @since 2015-09-08  10:44
  */
-public class RecordRecyclerView extends LinearLayout implements View.OnClickListener,NoTickAdapter.NoTickCallback,TickAdapter.TickCallback{
+public class RecordRecyclerView extends LinearLayout implements View.OnClickListener,
+        NoTickAdapter.NoTickCallback,
+        TickAdapter.TickCallback,OnStartDragListener {
     private static final String TAG_NOTICK_VALUE="□ ";
-    private static final String TAG_TICK_VALUE="";
+    private static final String TAG_TICK_VALUE="■ ";
     private View mView;
     private Context mContext;
     private List<String> mNoTick;//未打勾的列表数据
@@ -49,6 +54,7 @@ public class RecordRecyclerView extends LinearLayout implements View.OnClickList
     private ImageView mAddListIv;
     private TickAdapter mTickAdapter;
     private NoTickAdapter mNoTickAdapter;
+    private ItemTouchHelper mItemTouchHelper;
     public RecordRecyclerView(Context context) {
         super(context);
         init(context);
@@ -97,6 +103,12 @@ public class RecordRecyclerView extends LinearLayout implements View.OnClickList
         mNoTickAdapter = new NoTickAdapter(mNoTick,mContext);
         mNoTickAdapter.setNoTickCallback(this);
         mNoTickRlv.setAdapter(mNoTickAdapter);
+
+        mNoTickAdapter.setOnStartDragListener(this);
+        ItemTouchHelper.Callback noTickCallback = new RecyclerViewTouchCallback(mNoTickAdapter);
+        mItemTouchHelper = new ItemTouchHelper(noTickCallback);
+        mItemTouchHelper.attachToRecyclerView(mNoTickRlv);
+
     }
 
     @Override
@@ -262,4 +274,14 @@ public class RecordRecyclerView extends LinearLayout implements View.OnClickList
         mTickRlv.invalidate();
     }
 
+    /**
+     * 开始拖动
+     *
+     * @param viewHolder
+     * @param position
+     */
+    @Override
+    public void onStartDrag(RecyclerView.ViewHolder viewHolder, int position) {
+        mItemTouchHelper.startDrag(viewHolder);
+    }
 }

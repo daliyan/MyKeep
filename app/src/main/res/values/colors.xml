@@ -38,4 +38,9 @@
     <color name="text_normal">#727476</color>
     <color name="text_select">#2d89d9</color>
     <color name="logo_fill_color">#000000</color>
+
+    <color name="common_bg">#f8f8f8</color>
+    <color name="common_bg0">#e6e6e6</color>
+    <color name="common_bg1">#fafafa</color>
+
 </resources>

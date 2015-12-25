@@ -59,4 +59,7 @@
 
     <string name="delete_snackbar_msg_success">已经删除一条记事</string>
     <string name="delete_snackbar_msg_fail">删除失败</string>
+
+
+    <string name="menu_add_record">添加记事...</string>
 </resources>

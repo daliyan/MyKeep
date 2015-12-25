@@ -56,9 +56,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
                 holder.mSubTitleTv.setText(content);
                 holder.mUpdateTv.setText(DateUtil.getDate(recordModel.getUpdateTime()));
 
-                holder.mTitleTv.setTypeface(AppContext.getRobotoSlabBold());
+                holder.mTitleTv.setTypeface(AppContext.getRobotoSlabLight());
                 holder.mSubTitleTv.setTypeface(AppContext.getRobotoSlabLight());
-                holder.mUpdateTv.setTypeface(AppContext.getRobotoSlabThin());
+                holder.mUpdateTv.setTypeface(AppContext.getRobotoSlabLight());
                 //不要使用setBackgroundColor,该方法会覆盖掉设置的弧度等参数
                 holder.mCardView.setCardBackgroundColor(Color.parseColor(recordModel.getLevel()));
             }
