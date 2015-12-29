@@ -1,5 +1,6 @@
 package akiyama.mykeep.widget;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -8,8 +9,11 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
@@ -27,6 +31,8 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.facebook.drawee.view.SimpleDraweeView;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -38,11 +44,14 @@ import akiyama.mykeep.base.BaseObserverFragment;
 import akiyama.mykeep.common.Constants;
 import akiyama.mykeep.common.DbConfig;
 import akiyama.mykeep.common.StatusMode;
+import akiyama.mykeep.controller.ImageController;
 import akiyama.mykeep.controller.RecordController;
+import akiyama.mykeep.db.model.ImageModel;
 import akiyama.mykeep.db.model.RecordModel;
 import akiyama.mykeep.event.EventType;
 import akiyama.mykeep.event.NotifyInfo;
 import akiyama.mykeep.event.helper.KeepNotifyCenterHelper;
+import akiyama.mykeep.task.SaveRecordSingleDbTask;
 import akiyama.mykeep.task.SaveSingleDbTask;
 import akiyama.mykeep.task.UpdateSingleDbTask;
 import akiyama.mykeep.util.DateUtil;
@@ -74,6 +83,8 @@ public class RecordDetailFragment extends BaseObserverFragment{
     public static final String KEY_EDIT_RECORD_LIST="ket_edit_record_list";//编辑模式下带的参数
     public static final String KEY_ADD_RECORD_TYPE ="key_add_record_type";//添加记录的类型，如列表、普通、音频、视屏 etc
     public static final String KEY_PIVOT_XY = "pivot_x_y";//列表页面的pivot xy值，用来现实fragment动画效果
+    public static final int REQUEST_SELECT_IMAGE = 0;
+    public static final int REQUEST_SELECT_CAMERA = 1;
     private String mAlarmsTime;
     private Context mContext;
     private String mMode = StatusMode.ADD_RECORD_MODE;//默认是记录添加模式
@@ -100,6 +111,8 @@ public class RecordDetailFragment extends BaseObserverFragment{
     private RecordModel mEditRecordModel;
     private RecordModel mStartRecord = new RecordModel();//刚刚进入添加记录页面的时候的数据，为了比较数据是否发生改变
     private RecordController rc=new RecordController();
+    private SimpleDraweeView mSimpleDraweeView;
+    private String mUrl = null;
 
     @Override
     public int onSetLayoutId() {
@@ -117,6 +130,7 @@ public class RecordDetailFragment extends BaseObserverFragment{
         mAlarmTimeTv = (TextView) view.findViewById(R.id.alarm_time_tv);
         mAlarmDateTv = (TextView) view.findViewById(R.id.alarm_date_tv);
         mBodyLl =(LinearLayout) view.findViewById(R.id.body_ll);
+        mSimpleDraweeView = (SimpleDraweeView) view.findViewById(R.id.record_view_dv);
     }
 
     @Override
@@ -280,6 +294,7 @@ public class RecordDetailFragment extends BaseObserverFragment{
             record.setAlarmTime(String.valueOf(Calendar.getInstance().getTimeInMillis()));
             record.setUserId(LoginHelper.getCurrentUserId());
             record.setRecordType(mAddRecordType);
+
             if(mMode.equals(StatusMode.ADD_RECORD_MODE)){
                 saveRecordTask(record);
             }else if(mMode.equals(StatusMode.EDIT_RECORD_MODE)){
@@ -287,6 +302,10 @@ public class RecordDetailFragment extends BaseObserverFragment{
                 updateRecordTask(record);
             }
         }
+    }
+
+    public void setSelectImage(Uri uri){
+        mSimpleDraweeView.setImageURI(uri);
     }
 
     private String getContentText(){
@@ -336,6 +355,7 @@ public class RecordDetailFragment extends BaseObserverFragment{
                 }
             }
         }.execute(record);
+
     }
 
     private void updateRecordTask(RecordModel record){
@@ -448,7 +468,63 @@ public class RecordDetailFragment extends BaseObserverFragment{
         colorPickerDialog.show(getFragmentManager(), "colorpicker");
     }
 
+    /**
+     * 调用相机获取图像
+     */
+    public void showPhoneDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        View view = getActivity().getLayoutInflater().inflate(R.layout.layout_select_image_dialog,null);
+        builder.setView(view);
+        builder.setTitle("选择照片");
+        LinearLayout phoneLl= (LinearLayout)view.findViewById(R.id.photo_ll);
+        LinearLayout galleryLl= (LinearLayout)view.findViewById(R.id.gallery_ll);
+        ImageView phoneIv =(ImageView) view.findViewById(R.id.photo_iv);
+        ImageView galleryIv =(ImageView) view.findViewById(R.id.gallery_iv);
+        SvgHelper.setImageDrawable(phoneIv,R.raw.ic_photo_camera_48px);
+        SvgHelper.setImageDrawable(galleryIv,R.raw.ic_photo_album_24px);
+        final AlertDialog alertDialog = builder.create();
+        phoneLl.setOnClickListener(new View.OnClickListener() {
+            @Override
 
+
+            public void onClick(View v) {
+                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(cameraIntent, REQUEST_SELECT_CAMERA);
+                alertDialog.dismiss();
+            }
+        });
+
+        galleryLl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+                //注意要通过activity来
+                startActivityForResult(intent, REQUEST_SELECT_IMAGE);
+                alertDialog.dismiss();
+            }
+        });
+        alertDialog.show();
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_SELECT_IMAGE) {
+            Uri photoUri = data.getData();
+            mUrl = photoUri.toString();
+            if (photoUri != null) {
+                try {
+                    setSelectImage(photoUri);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }else if(resultCode == Activity.RESULT_OK && requestCode == REQUEST_SELECT_CAMERA){
+            Bitmap photo = (Bitmap)data.getExtras().get("data");
+            mSimpleDraweeView.setImageBitmap(photo);
+        }
+    }
 
     private void showTimeDialog(){
         mAlarmTimeTv.setVisibility(View.VISIBLE);

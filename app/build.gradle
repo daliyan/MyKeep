@@ -53,9 +53,10 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:23.0.+'
     compile 'akiyama.swipe:library:2.1'
     compile 'com.github.japgolly.android:svg-android:2.0.6'
-    compile 'com.getbase:floatingactionbutton:1.10.0'
     compile 'com.readystatesoftware.systembartint:systembartint:1.0.3'
     compile 'de.hdodenhof:circleimageview:1.3.0'
     compile 'com.nineoldandroids:library:2.4.+'
     compile 'cn.leancloud.android:avoscloud-sdk:v3.3+'
+    compile 'com.facebook.fresco:fresco:0.8.1+'
+
 }

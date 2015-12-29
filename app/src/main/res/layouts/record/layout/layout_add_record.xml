@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:id="@+id/body_sc"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -32,6 +33,14 @@
                 android:textColor="@color/black"
                 android:textStyle="bold"
                 android:hint="@string/record_title" />
+
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/record_view_dv"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_margin="15dp"
+                fresco:actualImageScaleType="focusCrop"
+                fresco:placeholderImage="@drawable/head"/>
 
             <ViewStub
                 android:id="@+id/record_content_normal_vs"

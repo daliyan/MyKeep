@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/photo_ll"
+        android:layout_width="match_parent"
+        android:layout_height="50dip"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:id="@+id/photo_iv"
+            android:layout_width="25dip"
+            android:layout_height="25dip"
+            android:layout_margin="5dip"/>
+
+        <TextView
+            android:id="@+id/photo_tv"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginLeft="5dip"
+            android:textSize="16sp"
+            android:textColor="@color/list_title"
+            android:text="@string/photo"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/gallery_ll"
+        android:layout_width="match_parent"
+        android:layout_height="50dip"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:id="@+id/gallery_iv"
+            android:layout_width="25dip"
+            android:layout_height="25dip"
+            android:layout_margin="5dip"/>
+
+        <TextView
+            android:id="@+id/gallery_tv"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginLeft="5dip"
+            android:textSize="16sp"
+            android:textColor="@color/list_title"
+            android:text="@string/gallery"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>

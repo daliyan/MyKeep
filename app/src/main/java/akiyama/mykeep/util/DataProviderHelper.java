@@ -29,6 +29,10 @@ public class DataProviderHelper {
         return Uri.withAppendedPath(baseUri, "id/" + id);
     }
 
+    /*public static String getId(Uri uri){
+        uri.get
+    }*/
+
     /**
      * 返回user_id的ContentUri
      * @param baseUri

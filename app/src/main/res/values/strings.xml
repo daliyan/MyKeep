@@ -62,4 +62,6 @@
 
 
     <string name="menu_add_record">添加记事...</string>
+    <string name="photo">拍照</string>
+    <string name="gallery">从相册中...</string>
 </resources>

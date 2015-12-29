@@ -3,10 +3,10 @@ package akiyama.mykeep.widget;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
+import android.provider.MediaStore;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -20,7 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.avos.avoscloud.AVUser;
-import com.getbase.floatingactionbutton.FloatingActionsMenu;
+import com.facebook.drawee.backends.pipeline.Fresco;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,6 +67,8 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
      */
     private static final int MANY_VIEW=2;
 
+
+
     private DrawerLayout mDrawerDl;//侧滑菜单布局控件
     private ActionBarDrawerToggle mDrawerToggle;
 
@@ -94,7 +96,6 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
     private LinearLayout mLoginLl;
     private LinearLayout mDetailContentLy;
     private RecordDetailFragment mDetailFragment;
-    private FloatingActionsMenu mAddRecordMenuFam;//记事菜单
     private TextView mAddNormalRecordTv;//增加普通计事
     private ImageView mAddListRecordIv;//添加列表数据
     private ImageView mAddVoiceIv;
@@ -114,6 +115,7 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fresco.initialize(mContext);
         setContentView(R.layout.activity_main);
         setDrawer();
         setUserInfo();
@@ -366,6 +368,9 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
                 break;
             case R.id.action_delete_record:
                 break;
+            case R.id.action_camera:
+                mDetailFragment.showPhoneDialog();
+                break;
             case R.id.action_select_style:
                 mDetailFragment.showPriorityDialog();
                 break;
@@ -604,5 +609,4 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         }
         return false;
     }
-
 }
