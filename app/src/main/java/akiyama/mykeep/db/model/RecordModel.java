@@ -41,6 +41,7 @@ public class RecordModel extends BaseModel{
     public static final int RECORD_TYPE_NORMAL = 0;
     public static final int RECORD_TYPE_LIST = 1;
 
+    private String recordId;//用来标识一条记录的主键
     private String title;
     private String content;
     private String alarmTime;
@@ -54,6 +55,7 @@ public class RecordModel extends BaseModel{
 
     public RecordModel(Parcel in){
         readBase(in);
+        recordId = in.readString();
         title=in.readString();
         content=in.readString();
         alarmTime=in.readString();
@@ -66,6 +68,7 @@ public class RecordModel extends BaseModel{
     @Override
     public ContentValues values() {
         ContentValues cv=convert();
+        cv.put(RecordColumns.RECORDID,recordId);
         cv.put(RecordColumns.TITLE,title);
         cv.put(RecordColumns.CONTENT,content);
         cv.put(RecordColumns.ALARMTIME,alarmTime);
@@ -93,6 +96,7 @@ public class RecordModel extends BaseModel{
         }
         RecordModel recordModel=new RecordModel();
         recordModel.id= DataProviderHelper.parseString(cursor,BaseColumns._ID);
+        recordModel.recordId =  DataProviderHelper.parseString(cursor,RecordColumns.RECORDID);
         recordModel.title=DataProviderHelper.parseString(cursor,RecordColumns.TITLE);
         recordModel.content=DataProviderHelper.parseString(cursor,RecordColumns.CONTENT);
         recordModel.alarmTime=DataProviderHelper.parseString(cursor,RecordColumns.ALARMTIME);
@@ -113,6 +117,7 @@ public class RecordModel extends BaseModel{
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         writeBase(dest,flags);
+        dest.writeString(recordId);
         dest.writeString(title);
         dest.writeString(content);
         dest.writeString(alarmTime);
@@ -135,6 +140,15 @@ public class RecordModel extends BaseModel{
             return new RecordModel[size];
         }
     };
+
+    /**
+     *
+     * @param recordId
+     */
+    public void setRecordId(String recordId) {
+        this.recordId = recordId;
+    }
+
 
     public void setTitle(String title) {
         this.title = title;
@@ -218,4 +232,6 @@ public class RecordModel extends BaseModel{
     public void setRecordType(int recordType) {
         this.recordType = recordType;
     }
+
+
 }

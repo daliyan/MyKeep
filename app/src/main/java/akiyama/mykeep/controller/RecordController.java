@@ -41,22 +41,22 @@ public class RecordController extends BaseController implements IRecordControlle
     }
 
     @Override
-    public List<RecordModel> getRecodrByUserAndLabel(Context context, String userId,String labelName) {
+    public List<RecordModel> getRecordByUserAndLabel(Context context, String userId, String labelName) {
         List<RecordModel> recordModels= (List<RecordModel>) getDbByUserId(context,userId);
-        List<RecordModel> labelReords=new ArrayList<>();
+        List<RecordModel> labelRecords=new ArrayList<>();
         if(recordModels!=null &&recordModels.size() >0){
             for(RecordModel recordModel:recordModels){
                 String[] labelNames = StringUtil.subStringBySymbol(recordModel.getLabelNames(), DbConfig.SPLIT_SYMBOL);
                 if(labelNames!=null){
                     for(String label:labelNames){
                         if(label.equals(labelName)){
-                            labelReords.add(recordModel);
+                            labelRecords.add(recordModel);
                         }
                     }
                 }
             }
         }
-        return labelReords;
+        return labelRecords;
     }
 
     @Override

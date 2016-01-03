@@ -7,7 +7,6 @@ import android.os.AsyncTask;
 import java.util.ArrayList;
 import java.util.List;
 
-import akiyama.mykeep.controller.BaseController;
 import akiyama.mykeep.controller.RecordController;
 import akiyama.mykeep.db.model.BaseModel;
 import akiyama.mykeep.db.model.RecordModel;
@@ -39,7 +38,7 @@ public abstract class QueryRecordByLabelTask extends AsyncTask<String,Void,List<
     protected List<RecordModel> doInBackground(String... params) {
         List<RecordModel> models=new ArrayList<RecordModel>();
         if(params[0]!=null){
-           models=mRecordController.getRecodrByUserAndLabel(mContext,params[0],params[1]);
+           models=mRecordController.getRecordByUserAndLabel(mContext,params[0],params[1]);
         }
         return models;
     }

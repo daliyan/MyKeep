@@ -20,6 +20,5 @@ public interface IRecordController {
      * @param userId
      * @return
      */
-    public List<RecordModel> getRecodrByUserAndLabel(Context context,String labelName,String userId);
-
+    List<RecordModel> getRecordByUserAndLabel(Context context, String labelName, String userId);
 }

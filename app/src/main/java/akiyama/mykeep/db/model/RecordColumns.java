@@ -14,6 +14,7 @@ import akiyama.mykeep.common.Constants;
 public class RecordColumns extends BaseColumns{
 
     public final static String TABLE_NAME="record";
+    public final static String RECORDID="record_id";
     public final static String TITLE="title";
     public final static String CONTENT="content";
     public final static String ALARMTIME="alarm_time";
@@ -27,6 +28,7 @@ public class RecordColumns extends BaseColumns{
     public static final String CREATE_TABLE = "create table "
             + TABLE_NAME + " ( "
             + _ID + " integer primary key autoincrement, "
+            + RECORDID + " text not null, "
             + TITLE + " text, "
             + CONTENT + " text not null, "
             + ALARMTIME + " text not null, "
