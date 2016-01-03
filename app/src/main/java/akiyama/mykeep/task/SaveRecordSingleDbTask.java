@@ -28,7 +28,7 @@ public abstract class SaveRecordSingleDbTask extends SaveSingleDbTask{
         if(uri!=null){
             for(int i=0;i<mUrls.size();i++){
                 ImageModel imageModel = new ImageModel();
-                mBaseController.insert(mUrls)
+               // mBaseController.insert(mUrls);
             }
             return true;
         }
