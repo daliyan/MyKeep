@@ -68,7 +68,7 @@ public class RecordModel extends BaseModel{
     @Override
     public ContentValues values() {
         ContentValues cv=convert();
-        cv.put(RecordColumns.RECORDID,recordId);
+        //cv.put(RecordColumns.RECORDID,recordId);
         cv.put(RecordColumns.TITLE,title);
         cv.put(RecordColumns.CONTENT,content);
         cv.put(RecordColumns.ALARMTIME,alarmTime);
@@ -96,7 +96,7 @@ public class RecordModel extends BaseModel{
         }
         RecordModel recordModel=new RecordModel();
         recordModel.id= DataProviderHelper.parseString(cursor,BaseColumns._ID);
-        recordModel.recordId =  DataProviderHelper.parseString(cursor,RecordColumns.RECORDID);
+        //recordModel.recordId =  DataProviderHelper.parseString(cursor,RecordColumns.RECORDID);
         recordModel.title=DataProviderHelper.parseString(cursor,RecordColumns.TITLE);
         recordModel.content=DataProviderHelper.parseString(cursor,RecordColumns.CONTENT);
         recordModel.alarmTime=DataProviderHelper.parseString(cursor,RecordColumns.ALARMTIME);

@@ -4,9 +4,11 @@
     android:id="@+id/cardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:clickable="true"
     app:cardUseCompatPadding="true"
-    app:cardCornerRadius="3dp"
-    app:cardElevation="5dp">
+    app:cardElevation="2dip"
+    app:cardCornerRadius="1dip"
+    android:foreground="?android:attr/selectableItemBackground">
 
     <LinearLayout
         android:layout_width="match_parent"

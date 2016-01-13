@@ -24,8 +24,7 @@ public class ImageColumns extends BaseColumns{
             + URL + " text not null, "
             + RECORD_ID + " text not null, "
             + CREATAT + " text not null, "
-            + UPDATEAT + " text not null, "
-            + "FOREIGN KEY"+"("+RECORD_ID+")"+" REFERENCES "+RecordColumns.TABLE_NAME+"("+RecordColumns._ID+")"+")";
+            + UPDATEAT + " text not null)";
     public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE
             + "/vnd.mykeep.image";
     public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE

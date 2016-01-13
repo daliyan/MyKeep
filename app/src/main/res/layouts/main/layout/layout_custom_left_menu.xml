@@ -70,6 +70,7 @@
             android:orientation="horizontal"
             android:background="@color/left_menu_bottom_bg"
             android:layout_alignParentBottom="true"
+            android:clickable="true"
             android:gravity="bottom">
 
             <include

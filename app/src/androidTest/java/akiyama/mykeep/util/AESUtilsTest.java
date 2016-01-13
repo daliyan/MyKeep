@@ -1,17 +1,15 @@
-package akiyama.mykeep;
+package akiyama.mykeep.util;
 
 import android.test.ApplicationTestCase;
+import android.test.InstrumentationTestCase;
 
+import akiyama.mykeep.AppContext;
 import akiyama.mykeep.util.AESUtils;
 
 /**
  * Created by Administrator on 2016/1/3.
  */
-public class AESUtilsTest extends ApplicationTestCase<AppContext> {
-    public AESUtilsTest(Class<AppContext> applicationClass) {
-        super(applicationClass);
-    }
-
+public class AESUtilsTest extends InstrumentationTestCase {
 
     public void testAes(){
         try {
