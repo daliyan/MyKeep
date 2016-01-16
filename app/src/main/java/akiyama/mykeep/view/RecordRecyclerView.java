@@ -155,11 +155,21 @@ public class RecordRecyclerView extends LinearLayout implements View.OnClickList
                 }
             }
         }
-
-        mNoTickAdapter.notifyDataSetChanged();
-        mTickAdapter.notifyDataSetChanged();
+        refreshRecyclerView();
     }
 
+    /**
+     * 刷新列表
+     */
+    public void refreshRecyclerView(){
+        if(mNoTick.size()>0){
+            mNoTickAdapter.notifyDataSetChanged();
+        }
+
+        if(mTick.size()>0){
+            mTickAdapter.notifyDataSetChanged();
+        }
+    }
 
     /**
      * 获取格式化后的字符数据

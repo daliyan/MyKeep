@@ -13,13 +13,12 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
@@ -29,7 +28,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 
@@ -41,17 +39,13 @@ import akiyama.mykeep.AppContext;
 import akiyama.mykeep.R;
 import akiyama.mykeep.base.BaseActivity;
 import akiyama.mykeep.base.BaseObserverFragment;
-import akiyama.mykeep.common.Constants;
 import akiyama.mykeep.common.DbConfig;
 import akiyama.mykeep.common.StatusMode;
-import akiyama.mykeep.controller.ImageController;
 import akiyama.mykeep.controller.RecordController;
-import akiyama.mykeep.db.model.ImageModel;
 import akiyama.mykeep.db.model.RecordModel;
 import akiyama.mykeep.event.EventType;
 import akiyama.mykeep.event.NotifyInfo;
 import akiyama.mykeep.event.helper.KeepNotifyCenterHelper;
-import akiyama.mykeep.task.SaveRecordSingleDbTask;
 import akiyama.mykeep.task.SaveSingleDbTask;
 import akiyama.mykeep.task.UpdateSingleDbTask;
 import akiyama.mykeep.util.DateUtil;
@@ -111,7 +105,7 @@ public class RecordDetailFragment extends BaseObserverFragment{
     private RecordModel mEditRecordModel;
     private RecordModel mStartRecord = new RecordModel();//刚刚进入添加记录页面的时候的数据，为了比较数据是否发生改变
     private RecordController rc=new RecordController();
-    private SimpleDraweeView mSimpleDraweeView;
+    private SimpleDraweeView mSimpleDraweView;
     private String mUrl = null;
 
     @Override
@@ -130,7 +124,7 @@ public class RecordDetailFragment extends BaseObserverFragment{
         mAlarmTimeTv = (TextView) view.findViewById(R.id.alarm_time_tv);
         mAlarmDateTv = (TextView) view.findViewById(R.id.alarm_date_tv);
         mBodyLl =(LinearLayout) view.findViewById(R.id.body_ll);
-        mSimpleDraweeView = (SimpleDraweeView) view.findViewById(R.id.record_view_dv);
+        mSimpleDraweView = (SimpleDraweeView) view.findViewById(R.id.record_view_dv);
     }
 
     @Override
@@ -182,34 +176,41 @@ public class RecordDetailFragment extends BaseObserverFragment{
     private void setInitUiByMode(){
         mMode = getArguments().getString(KEY_RECORD_MODE);
         if(mMode!=null && mMode.equals(StatusMode.EDIT_RECORD_MODE)){
-            setFragmentToolBarTitle("编辑记事");
-            mEditRecordModel = getArguments().getParcelable(KEY_EDIT_RECORD_LIST);
-            mAddRecordType = mEditRecordModel.getRecordType();
-            initTypeView(mAddRecordType);
-            mStartRecord = mEditRecordModel;
-            if(mEditRecordModel!=null){
-                mLevel = mEditRecordModel.getLevel();
-                mTitleEt.setText(mEditRecordModel.getTitle());
-                if(mLevel!=null){
-                    setLayoutColor(Color.parseColor(mLevel));
-                }
-                if(mAddRecordType == RecordModel.RECORD_TYPE_NORMAL){
-                    mContentEt.setText(mEditRecordModel.getContent());
-                }else if(mAddRecordType == RecordModel.RECORD_TYPE_LIST){
-                    mContentRlv.setFormatText(mEditRecordModel.getContent());
-                }
-                mLabelLsl.setLabels(StringUtil.subStringBySymbol(mEditRecordModel.getLabelNames(), DbConfig.SPLIT_SYMBOL));
-                mUpdateTimeTv.setText("修改时间："+DateUtil.getDate(mEditRecordModel.getUpdateTime()));
-            }
+            initEditDate();
         }else if(mMode!=null && mMode.equals(StatusMode.ADD_RECORD_MODE)){
-            setFragmentToolBarTitle("添加记事");
-            mAddRecordType = getArguments().getInt(KEY_ADD_RECORD_TYPE,RecordModel.RECORD_TYPE_NORMAL);
-            initTypeView(mAddRecordType);
-            mStartRecord.setContent("");
-            mStartRecord.setTitle("");
-            mStartRecord.setLabelNames("");
-
+            initAddDate();
         }
+    }
+
+    private void initEditDate(){
+        setFragmentToolBarTitle("编辑记事");
+        mEditRecordModel = getArguments().getParcelable(KEY_EDIT_RECORD_LIST);
+        mAddRecordType = mEditRecordModel.getRecordType();
+        initTypeView(mAddRecordType);
+        mStartRecord = mEditRecordModel;
+        if(mEditRecordModel!=null){
+            mLevel = mEditRecordModel.getLevel();
+            mTitleEt.setText(mEditRecordModel.getTitle());
+            if(mLevel!=null){
+                setLayoutColor(Color.parseColor(mLevel));
+            }
+            if(mAddRecordType == RecordModel.RECORD_TYPE_NORMAL){
+                mContentEt.setText(mEditRecordModel.getContent());
+            }else if(mAddRecordType == RecordModel.RECORD_TYPE_LIST){
+                mContentRlv.setFormatText(mEditRecordModel.getContent());
+            }
+            mLabelLsl.setLabels(StringUtil.subStringBySymbol(mEditRecordModel.getLabelNames(), DbConfig.SPLIT_SYMBOL));
+            mUpdateTimeTv.setText("修改时间："+DateUtil.getDate(mEditRecordModel.getUpdateTime()));
+        }
+    }
+
+    private void initAddDate(){
+        setFragmentToolBarTitle("添加记事");
+        mAddRecordType = getArguments().getInt(KEY_ADD_RECORD_TYPE,RecordModel.RECORD_TYPE_NORMAL);
+        initTypeView(mAddRecordType);
+        mStartRecord.setContent("");
+        mStartRecord.setTitle("");
+        mStartRecord.setLabelNames("");
     }
 
     @Override
@@ -305,7 +306,7 @@ public class RecordDetailFragment extends BaseObserverFragment{
     }
 
     public void setSelectImage(Uri uri){
-        mSimpleDraweeView.setImageURI(uri);
+        mSimpleDraweView.setImageURI(uri);
     }
 
     private String getContentText(){
@@ -522,7 +523,7 @@ public class RecordDetailFragment extends BaseObserverFragment{
             }
         }else if(resultCode == Activity.RESULT_OK && requestCode == REQUEST_SELECT_CAMERA){
             Bitmap photo = (Bitmap)data.getExtras().get("data");
-            mSimpleDraweeView.setImageBitmap(photo);
+            mSimpleDraweView.setImageBitmap(photo);
         }
     }
 
