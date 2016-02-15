@@ -1,14 +1,12 @@
-package akiyama.mykeep.controller;
+package akiyama.mykeep.dbservice;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.net.Uri;
 
 import java.util.List;
 
 import akiyama.mykeep.db.model.BaseModel;
 import akiyama.mykeep.db.model.IModel;
-import akiyama.mykeep.db.model.RecordModel;
 
 /**
  *

@@ -1,4 +1,4 @@
-package akiyama.mykeep.controller;
+package akiyama.mykeep.dbservice;
 
 import android.content.Context;
 

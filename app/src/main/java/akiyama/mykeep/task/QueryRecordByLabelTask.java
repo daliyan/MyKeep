@@ -7,7 +7,7 @@ import android.os.AsyncTask;
 import java.util.ArrayList;
 import java.util.List;
 
-import akiyama.mykeep.controller.RecordController;
+import akiyama.mykeep.dbservice.RecordController;
 import akiyama.mykeep.db.model.BaseModel;
 import akiyama.mykeep.db.model.RecordModel;
 

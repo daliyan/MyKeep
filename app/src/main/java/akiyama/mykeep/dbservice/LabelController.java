@@ -1,8 +1,7 @@
-package akiyama.mykeep.controller;
+package akiyama.mykeep.dbservice;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.net.Uri;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,8 +10,6 @@ import akiyama.mykeep.db.model.BaseColumns;
 import akiyama.mykeep.db.model.BaseModel;
 import akiyama.mykeep.db.model.LabelCoumnls;
 import akiyama.mykeep.db.model.LabelModel;
-import akiyama.mykeep.util.DataProviderHelper;
-import akiyama.mykeep.util.LogUtil;
 
 /**
  * 标签访问数据库

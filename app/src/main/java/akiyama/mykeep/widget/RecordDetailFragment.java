@@ -13,7 +13,6 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -41,7 +40,7 @@ import akiyama.mykeep.base.BaseActivity;
 import akiyama.mykeep.base.BaseObserverFragment;
 import akiyama.mykeep.common.DbConfig;
 import akiyama.mykeep.common.StatusMode;
-import akiyama.mykeep.controller.RecordController;
+import akiyama.mykeep.dbservice.RecordController;
 import akiyama.mykeep.db.model.RecordModel;
 import akiyama.mykeep.event.EventType;
 import akiyama.mykeep.event.NotifyInfo;
@@ -70,7 +69,7 @@ import akiyama.mykeep.vo.ViewPivot;
  * @version 1.0
  * @since 2015-11-12  09:42
  */
-public class RecordDetailFragment extends BaseObserverFragment{
+public class RecordDetailFragment extends BaseObserverFragment implements DateFragment.OnTimeSetListener{
 
     private static final String TAG="AddRecordActivity";
     public static final String KEY_RECORD_MODE ="key_record_mode";//编辑状态
@@ -79,7 +78,7 @@ public class RecordDetailFragment extends BaseObserverFragment{
     public static final String KEY_PIVOT_XY = "pivot_x_y";//列表页面的pivot xy值，用来现实fragment动画效果
     public static final int REQUEST_SELECT_IMAGE = 0;
     public static final int REQUEST_SELECT_CAMERA = 1;
-    private String mAlarmsTime;
+    private long mAlarmsTime = 0;
     private Context mContext;
     private String mMode = StatusMode.ADD_RECORD_MODE;//默认是记录添加模式
     private int mAddRecordType;//添加记录
@@ -88,7 +87,6 @@ public class RecordDetailFragment extends BaseObserverFragment{
     private LinearLayout mAlarmLl;
     private LinearLayout mBodyLl;
     private ImageView mAlarmIv;
-    private TextView mAlarmTimeTv;
     private TextView mAlarmDateTv;
     /**
      * 正常模式的VIEW
@@ -121,7 +119,6 @@ public class RecordDetailFragment extends BaseObserverFragment{
         mFragmentToolBar = (Toolbar) view.findViewById(R.id.toolbar);
         mAlarmLl = (LinearLayout) view.findViewById(R.id.alarm_ll);
         mAlarmIv = (ImageView) view.findViewById(R.id.alarm_iv);
-        mAlarmTimeTv = (TextView) view.findViewById(R.id.alarm_time_tv);
         mAlarmDateTv = (TextView) view.findViewById(R.id.alarm_date_tv);
         mBodyLl =(LinearLayout) view.findViewById(R.id.body_ll);
         mSimpleDraweView = (SimpleDraweeView) view.findViewById(R.id.record_view_dv);
@@ -139,9 +136,7 @@ public class RecordDetailFragment extends BaseObserverFragment{
         mContext = getActivity();
         mTitleEt.setTypeface(AppContext.getRobotoSlabLight());
         mUpdateTimeTv.setTypeface(AppContext.getRobotoSlabLight());
-        mAlarmTimeTv.setTypeface(AppContext.getRobotoSlabLight());
         mAlarmDateTv.setTypeface(AppContext.getRobotoSlabLight());
-
     }
 
     @Override
@@ -153,8 +148,6 @@ public class RecordDetailFragment extends BaseObserverFragment{
     public void setOnClick() {
         mLabelLsl.setOnClickListener(this);
         mAlarmLl.setOnClickListener(this);
-        mAlarmTimeTv.setOnClickListener(this);
-        mAlarmDateTv.setOnClickListener(this);
     }
 
     @Override
@@ -194,6 +187,8 @@ public class RecordDetailFragment extends BaseObserverFragment{
             if(mLevel!=null){
                 setLayoutColor(Color.parseColor(mLevel));
             }
+            mAlarmsTime = Long.parseLong(mEditRecordModel.getAlarmTime());
+            mAlarmDateTv.setText(formatTime(mEditRecordModel.getAlarmTime()));
             if(mAddRecordType == RecordModel.RECORD_TYPE_NORMAL){
                 mContentEt.setText(mEditRecordModel.getContent());
             }else if(mAddRecordType == RecordModel.RECORD_TYPE_LIST){
@@ -221,23 +216,7 @@ public class RecordDetailFragment extends BaseObserverFragment{
                 goAddLabelActivity();
                 break;
             case R.id.alarm_ll:
-                if(mAlarmTimeTv.getVisibility()==View.GONE){
-                    createAlarmDialog();
-                }
-                break;
-            case R.id.alarm_time_tv:
-                if(mAlarmTimeTv.getVisibility()==View.VISIBLE){
-                    showTimeDialog();
-                }else {
-                    createAlarmDialog();
-                }
-                break;
-            case R.id.alarm_date_tv:
-                if(mAlarmTimeTv.getVisibility()==View.VISIBLE){
-                    showDateDialog();
-                }else {
-                    createAlarmDialog();
-                }
+                showDateDialog();
                 break;
             default:
                 break;
@@ -278,7 +257,8 @@ public class RecordDetailFragment extends BaseObserverFragment{
         if(mStartRecord!=null && mStartRecord.getTitle().equals(title)
                 && mStartRecord.getContent().equals(content)
                 && mStartRecord.getLabelNames().equals(labelNames)
-                && mStartRecord.getLevel().equals(level)){
+                && mStartRecord.getLevel().equals(level)
+                && mStartRecord.getAlarmTime().equals(mAlarmsTime)){
             return;//内容没有发生改变，直接返回
         }
 
@@ -292,7 +272,8 @@ public class RecordDetailFragment extends BaseObserverFragment{
             }
             record.setCreateTime(String.valueOf(Calendar.getInstance().getTimeInMillis()));
             record.setUpdateTime(String.valueOf(Calendar.getInstance().getTimeInMillis()));
-            record.setAlarmTime(String.valueOf(Calendar.getInstance().getTimeInMillis()));
+            //默认提醒时间是0
+            record.setAlarmTime(String.valueOf(mAlarmsTime));
             record.setUserId(LoginHelper.getCurrentUserId());
             record.setRecordType(mAddRecordType);
 
@@ -428,22 +409,6 @@ public class RecordDetailFragment extends BaseObserverFragment{
     }
 
 
-    private void createAlarmDialog(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setItems(R.array.alarm_list, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                if(which == 0){
-                    showDateDialog();
-                }else if(which==1){
-                    showTimeDialog();
-                }
-            }
-        });
-
-        builder.create().show();
-    }
-
-
     /**
      * 显示优先级对话框
      */
@@ -518,7 +483,7 @@ public class RecordDetailFragment extends BaseObserverFragment{
                 try {
                     setSelectImage(photoUri);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    LogUtil.e(TAG,e.getStackTrace().toString());
                 }
             }
         }else if(resultCode == Activity.RESULT_OK && requestCode == REQUEST_SELECT_CAMERA){
@@ -527,51 +492,49 @@ public class RecordDetailFragment extends BaseObserverFragment{
         }
     }
 
-    private void showTimeDialog(){
-        mAlarmTimeTv.setVisibility(View.VISIBLE);
-        DialogFragment newFragment = new TimePickerFragment();
-        newFragment.show(getFragmentManager(), "timePicker");
-    }
-
     private void showDateDialog(){
-        mAlarmTimeTv.setVisibility(View.VISIBLE);
-        DialogFragment newFragment = new DatePickerFragment();
-        newFragment.show(getFragmentManager(), "datePicker");
+        DateFragment dateFragment = new DateFragment();
+        dateFragment.setOnTimeSetListener(this);
+        dateFragment.show(getFragmentManager(), "datePicker");
     }
 
-    private class TimePickerFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            final Calendar c = Calendar.getInstance();
-            int hour = c.get(Calendar.HOUR_OF_DAY);
-            int minute = c.get(Calendar.MINUTE);
-            return new TimePickerDialog(getActivity(), this, hour, minute, DateFormat.is24HourFormat(getActivity()));
+    @Override
+    public void onInitDateTimeSet(DatePicker datePicker, TimePicker timePicker) {
+        if(mAlarmsTime!=0){
+            Calendar dateTime = Calendar.getInstance();
+            dateTime.setTimeInMillis(mAlarmsTime);
+            int year = dateTime.get(Calendar.YEAR);
+            int month = dateTime.get(Calendar.MONTH);
+            int day = dateTime.get(Calendar.DAY_OF_MONTH);
+            int hourOfDay = dateTime.get(Calendar.HOUR_OF_DAY);
+            int minute = dateTime.get(Calendar.MINUTE);
+            if(datePicker!=null && timePicker!=null){
+                datePicker.updateDate(year,month,day);
+                timePicker.setIs24HourView(true);
+                timePicker.setCurrentHour(hourOfDay);
+                timePicker.setCurrentMinute(minute);
+            }
         }
 
-        @Override
-        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-            mAlarmTimeTv.setText(hourOfDay + ":" + minute);
-        }
     }
 
+    @Override
+    public void onDateTimeSet(int year, int month, int day, int hourOfDay, int minute) {
+        Calendar dateTime = Calendar.getInstance();
+        dateTime.set(year,month,day,hourOfDay,hourOfDay,minute);
+        mAlarmsTime = dateTime.getTimeInMillis();
+        mAlarmDateTv.setText(year+"年"+(month+1)+"月"+day+"日"+" "+hourOfDay+":"+minute);
+    }
 
-    public class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            // Use the current date as the default date in the picker
-            final Calendar c = Calendar.getInstance();
-            int year = c.get(Calendar.YEAR);
-            int month = c.get(Calendar.MONTH);
-            int day = c.get(Calendar.DAY_OF_MONTH);
-            return new DatePickerDialog(getActivity(), this, year, month, day);
-        }
-
-        @Override
-        public void onDateSet(DatePicker view, int year, int month, int day) {
-            mAlarmDateTv.setText(year+"年"+month+"月"+day+"日");
-        }
+    private String formatTime(String timeInMillis){
+        Calendar dateTime = Calendar.getInstance();
+        dateTime.setTimeInMillis(Long.parseLong(timeInMillis));
+        int year = dateTime.get(Calendar.YEAR);
+        int month = dateTime.get(Calendar.MONTH);
+        int day = dateTime.get(Calendar.DAY_OF_MONTH);
+        int hourOfDay = dateTime.get(Calendar.HOUR_OF_DAY);
+        int minute = dateTime.get(Calendar.MINUTE);
+        return year+"年"+(month+1)+"月"+day+"日"+" "+hourOfDay+":"+minute;
     }
 
 }

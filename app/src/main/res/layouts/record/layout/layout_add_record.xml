@@ -85,13 +85,6 @@
                     android:layout_marginLeft="5dp"
                     android:text="时间提醒"/>
 
-                <TextView
-                    android:id="@+id/alarm_time_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"/>
-
-
             </LinearLayout>
 
             <TextView

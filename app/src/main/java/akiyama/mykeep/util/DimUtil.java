@@ -14,6 +14,10 @@ public class DimUtil {
         return Resources.getSystem().getDisplayMetrics().widthPixels;
     }
 
+    public static int getScreenHeight(){
+        return Resources.getSystem().getDisplayMetrics().heightPixels;
+    }
+
     public static int pxToDip(int px){
         final float scale = Resources.getSystem().getDisplayMetrics().density;
         return (int) (px / scale + 0.5f);

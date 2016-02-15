@@ -20,7 +20,7 @@ import akiyama.mykeep.task.QueryByUserDbTask;
 import akiyama.mykeep.task.SaveSingleDbTask;
 import akiyama.mykeep.adapter.SearchAdapter;
 import akiyama.mykeep.base.BaseObserverActivity;
-import akiyama.mykeep.controller.LabelController;
+import akiyama.mykeep.dbservice.LabelController;
 import akiyama.mykeep.db.model.LabelModel;
 import akiyama.mykeep.event.EventType;
 import akiyama.mykeep.util.LoginHelper;

@@ -4,7 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import akiyama.mykeep.controller.IBaseController;
+import akiyama.mykeep.dbservice.IBaseController;
 import akiyama.mykeep.db.model.BaseModel;
 
 /**
