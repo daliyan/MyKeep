@@ -1,4 +1,4 @@
-package akiyama.mykeep.widget;
+package akiyama.mykeep.ui;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -29,6 +29,7 @@ import akiyama.mykeep.preferences.KeepPreferenceUtil;
 import akiyama.mykeep.task.DeleteSingleDbTask;
 import akiyama.mykeep.task.QueryByUserDbTask;
 import akiyama.mykeep.task.QueryRecordByLabelTask;
+import akiyama.mykeep.ui.main.MainActivity;
 import akiyama.mykeep.util.LogUtil;
 import akiyama.mykeep.util.LoginHelper;
 import akiyama.mykeep.util.SvgHelper;

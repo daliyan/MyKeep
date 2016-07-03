@@ -4,7 +4,6 @@ import android.os.Bundle;
 
 import akiyama.mykeep.event.EventType;
 import akiyama.mykeep.event.NotifyInfo;
-import akiyama.mykeep.widget.RecordByLabelFragment;
 
 /**
  * 事件通知中心，所有的事件调用该处方法作为统一入口，便于管理

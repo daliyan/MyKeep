@@ -1,4 +1,4 @@
-package akiyama.mykeep.widget;
+package akiyama.mykeep.ui;
 
 import android.os.Bundle;
 import android.text.TextUtils;

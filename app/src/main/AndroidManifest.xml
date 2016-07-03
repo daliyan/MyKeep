@@ -15,7 +15,7 @@
         android:theme="@style/Theme.AppTheme"
         android:name="akiyama.mykeep.AppContext">
         <activity
-            android:name="akiyama.mykeep.widget.MainActivity"
+            android:name=".ui.main.MainActivity"
             android:theme="@style/Theme.AppTheme.Main"
             android:configChanges="keyboardHidden"
             android:windowSoftInputMode="stateHidden"
@@ -30,13 +30,13 @@
                 android:value="akiyama.mykeep.widget.SearchResultsActivity" />
         </activity>
 
-        <activity android:name="akiyama.mykeep.widget.LoginRegActivity"
+        <activity android:name="akiyama.mykeep.ui.LoginRegActivity"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".widget.AddLabelActivity"
+        <activity android:name=".ui.AddLabelActivity"
             android:screenOrientation="portrait"/>
 
-        <activity android:name="akiyama.mykeep.widget.SearchResultsActivity">
+        <activity android:name="akiyama.mykeep.ui.SearchResultsActivity">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
                 <category android:name="android.intent.category.DEFAULT" />
