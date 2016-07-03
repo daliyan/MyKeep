@@ -9,9 +9,10 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.akiyama.base.AppContext;
+
 import java.util.List;
 
-import akiyama.mykeep.AppContext;
 import akiyama.mykeep.R;
 
 public class TickAdapter extends RecyclerView.Adapter<TickAdapter.ViewHolder> {

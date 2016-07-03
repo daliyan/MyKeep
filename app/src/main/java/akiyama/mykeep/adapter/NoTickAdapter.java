@@ -8,16 +8,15 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-import java.util.ArrayList;
+import com.akiyama.base.AppContext;
+
 import java.util.Collections;
 import java.util.List;
 
-import akiyama.mykeep.AppContext;
 import akiyama.mykeep.R;
 import akiyama.mykeep.adapter.helper.ItemTouchHelperAdapter;
 import akiyama.mykeep.adapter.helper.ItemTouchHelperViewHolder;

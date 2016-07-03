@@ -2,9 +2,8 @@ package akiyama.mykeep.preferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.text.TextUtils;
 
-import akiyama.mykeep.util.StringUtil;
+import com.akiyama.base.utils.StringUtil;
 
 
 /**

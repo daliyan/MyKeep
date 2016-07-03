@@ -2,7 +2,7 @@ package akiyama.mykeep.util;
 
 import com.avos.avoscloud.AVUser;
 
-import akiyama.mykeep.common.UserLoginConfig;
+import com.akiyama.base.common.UserLoginConfig;
 
 /**
  * 登录帮助类

@@ -1,10 +1,10 @@
 package akiyama.mykeep.util;
 
-import android.test.ApplicationTestCase;
 import android.test.InstrumentationTestCase;
 
+import com.akiyama.base.utils.AESUtils;
+
 import akiyama.mykeep.AppContext;
-import akiyama.mykeep.util.AESUtils;
 
 /**
  * Created by Administrator on 2016/1/3.

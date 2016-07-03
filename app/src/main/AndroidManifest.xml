@@ -13,7 +13,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/Theme.AppTheme"
-        android:name="akiyama.mykeep.AppContext">
+        android:name="com.akiyama.base.AppContext">
         <activity
             android:name=".ui.main.MainActivity"
             android:theme="@style/Theme.AppTheme.Main"
@@ -47,7 +47,7 @@
 
 
         <provider
-            android:name="akiyama.mykeep.db.DataProvider"
+            android:name="com.akiyama.data.db.DataProvider"
             android:authorities="akiyama.mykeep.provider"
             android:exported="false" />
 

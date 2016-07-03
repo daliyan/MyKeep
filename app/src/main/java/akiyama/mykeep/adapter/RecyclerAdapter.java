@@ -1,11 +1,9 @@
 package akiyama.mykeep.adapter;
 
 import android.graphics.Color;
-import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -13,15 +11,16 @@ import android.widget.TextView;
 import java.util.Collections;
 import java.util.List;
 
-import akiyama.mykeep.AppContext;
 import akiyama.mykeep.R;
 import akiyama.mykeep.adapter.helper.ItemTouchHelperAdapter;
 import akiyama.mykeep.adapter.helper.ItemTouchHelperViewHolder;
 import akiyama.mykeep.adapter.helper.OnStartDragListener;
-import akiyama.mykeep.common.DbConfig;
-import akiyama.mykeep.db.model.RecordModel;
+
+import com.akiyama.base.AppContext;
+import com.akiyama.base.common.DbConfig;
+import com.akiyama.data.db.model.RecordModel;
 import akiyama.mykeep.util.DateUtil;
-import akiyama.mykeep.util.LogUtil;
+import com.akiyama.base.utils.LogUtil;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> implements ItemTouchHelperAdapter {
    private static final String TAG="RecyclerAdapter";

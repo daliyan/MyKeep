@@ -4,16 +4,13 @@ package akiyama.mykeep.util;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.VectorDrawable;
 import android.os.Build;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.akiyama.base.AppContext;
 import com.larvalabs.svgandroid.SVG;
 import com.larvalabs.svgandroid.SVGBuilder;
-import com.larvalabs.svgandroid.SVGParseException;
-
-import akiyama.mykeep.AppContext;
 
 /**
  * FIXME

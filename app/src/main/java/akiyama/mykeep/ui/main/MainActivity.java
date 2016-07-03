@@ -25,21 +25,19 @@ import java.util.List;
 import akiyama.mykeep.R;
 import akiyama.mykeep.adapter.RecordByLabelAdapter;
 import akiyama.mykeep.base.BaseObserverActivity;
-import akiyama.mykeep.common.StatusMode;
-import akiyama.mykeep.dbservice.LabelController;
-import akiyama.mykeep.db.model.BaseModel;
-import akiyama.mykeep.db.model.LabelModel;
-import akiyama.mykeep.db.model.RecordModel;
+import com.akiyama.base.common.StatusMode;
+import com.akiyama.data.dbservice.LabelController;
+import com.akiyama.data.db.model.BaseModel;
+import com.akiyama.data.db.model.LabelModel;
+import com.akiyama.data.db.model.RecordModel;
 import akiyama.mykeep.event.EventType;
 import akiyama.mykeep.event.NotifyInfo;
 
 import akiyama.mykeep.event.helper.KeepNotifyCenterHelper;
-import akiyama.mykeep.preferences.KeepPreferenceUtil;
-import akiyama.mykeep.task.QueryByUserDbTask;
 import akiyama.mykeep.ui.LoginRegActivity;
 import akiyama.mykeep.ui.RecordDetailFragment;
 import akiyama.mykeep.util.LoginHelper;
-import akiyama.mykeep.util.Preconditions;
+import com.akiyama.base.utils.Preconditions;
 import akiyama.mykeep.util.SvgHelper;
 import akiyama.mykeep.vo.ViewPivot;
 

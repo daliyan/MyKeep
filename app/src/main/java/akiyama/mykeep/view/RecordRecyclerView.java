@@ -20,8 +20,8 @@ import akiyama.mykeep.adapter.NoTickAdapter;
 import akiyama.mykeep.adapter.TickAdapter;
 import akiyama.mykeep.adapter.helper.OnStartDragListener;
 import akiyama.mykeep.adapter.helper.RecyclerViewTouchCallback;
-import akiyama.mykeep.common.DbConfig;
-import akiyama.mykeep.util.StringUtil;
+import com.akiyama.base.common.DbConfig;
+import com.akiyama.base.utils.StringUtil;
 import akiyama.mykeep.util.SvgHelper;
 
 /**

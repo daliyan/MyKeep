@@ -22,29 +22,29 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.akiyama.base.AppContext;
 import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import akiyama.mykeep.AppContext;
 import akiyama.mykeep.R;
 import akiyama.mykeep.base.BaseActivity;
 import akiyama.mykeep.base.BaseObserverFragment;
-import akiyama.mykeep.common.DbConfig;
-import akiyama.mykeep.common.StatusMode;
-import akiyama.mykeep.dbservice.RecordController;
-import akiyama.mykeep.db.model.RecordModel;
+import com.akiyama.base.common.DbConfig;
+import com.akiyama.base.common.StatusMode;
+import com.akiyama.data.dbservice.RecordController;
+import com.akiyama.data.db.model.RecordModel;
 import akiyama.mykeep.event.EventType;
 import akiyama.mykeep.event.NotifyInfo;
 import akiyama.mykeep.event.helper.KeepNotifyCenterHelper;
 import akiyama.mykeep.task.SaveSingleDbTask;
 import akiyama.mykeep.task.UpdateSingleDbTask;
 import akiyama.mykeep.util.DateUtil;
-import akiyama.mykeep.util.LogUtil;
+import com.akiyama.base.utils.LogUtil;
 import akiyama.mykeep.util.LoginHelper;
-import akiyama.mykeep.util.StringUtil;
+import com.akiyama.base.utils.StringUtil;
 import akiyama.mykeep.util.SvgHelper;
 import akiyama.mykeep.view.LabelsLayout;
 import akiyama.mykeep.view.RecordRecyclerView;

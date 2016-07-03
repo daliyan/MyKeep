@@ -4,8 +4,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import akiyama.mykeep.dbservice.IBaseController;
-import akiyama.mykeep.db.model.IModel;
+import com.akiyama.data.dbservice.IBaseController;
+import com.akiyama.data.db.model.IModel;
 
 /**
  * 插入保存单条数据的Task

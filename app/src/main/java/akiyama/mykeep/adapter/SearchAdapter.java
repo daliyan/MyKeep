@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import akiyama.mykeep.R;
-import akiyama.mykeep.dbservice.LabelController;
+import com.akiyama.data.dbservice.LabelController;
 import akiyama.mykeep.event.helper.KeepNotifyCenterHelper;
 import akiyama.mykeep.util.DimUtil;
 import akiyama.mykeep.util.SvgHelper;

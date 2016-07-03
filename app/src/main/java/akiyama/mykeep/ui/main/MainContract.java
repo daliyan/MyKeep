@@ -8,8 +8,8 @@ import java.util.List;
 
 import akiyama.mykeep.BasePresenter;
 import akiyama.mykeep.BaseView;
-import akiyama.mykeep.db.model.BaseModel;
-import akiyama.mykeep.db.model.RecordModel;
+import com.akiyama.data.db.model.BaseModel;
+import com.akiyama.data.db.model.RecordModel;
 
 /**
  * Created by aspen on 16/7/3.

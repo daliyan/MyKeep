@@ -14,9 +14,9 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
+import com.akiyama.base.AppContext;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 
-import akiyama.mykeep.AppContext;
 import akiyama.mykeep.R;
 
 /**

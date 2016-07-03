@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
-import akiyama.mykeep.db.model.LabelModel;
+import com.akiyama.data.db.model.LabelModel;
 import akiyama.mykeep.ui.RecordByLabelFragment;
 
 /**

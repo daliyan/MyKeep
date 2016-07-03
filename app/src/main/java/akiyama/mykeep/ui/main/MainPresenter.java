@@ -1,17 +1,15 @@
 package akiyama.mykeep.ui.main;
 
-import android.view.View;
-
 import java.util.List;
 
-import akiyama.mykeep.AppContext;
-import akiyama.mykeep.R;
-import akiyama.mykeep.db.model.BaseModel;
-import akiyama.mykeep.dbservice.LabelController;
+
+import com.akiyama.base.AppContext;
+import com.akiyama.data.db.model.BaseModel;
+import com.akiyama.data.dbservice.LabelController;
 import akiyama.mykeep.preferences.KeepPreferenceUtil;
 import akiyama.mykeep.task.QueryDataByUserDbTask;
 import akiyama.mykeep.util.LoginHelper;
-import akiyama.mykeep.util.Preconditions;
+import com.akiyama.base.utils.Preconditions;
 
 /**
  * Created by aspen on 16/7/3.

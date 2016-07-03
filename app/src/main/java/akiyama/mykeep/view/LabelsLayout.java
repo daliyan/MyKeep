@@ -6,9 +6,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
-import akiyama.mykeep.AppContext;
 import akiyama.mykeep.R;
-import akiyama.mykeep.common.DbConfig;
+
+import com.akiyama.base.AppContext;
+import com.akiyama.base.common.DbConfig;
 import akiyama.mykeep.util.DimUtil;
 
 /**

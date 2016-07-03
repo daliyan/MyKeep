@@ -1,15 +1,13 @@
 package akiyama.mykeep.task;
 
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.os.AsyncTask;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import akiyama.mykeep.AppContext;
-import akiyama.mykeep.db.model.BaseModel;
-import akiyama.mykeep.dbservice.BaseController;
+import com.akiyama.base.AppContext;
+import com.akiyama.data.db.model.BaseModel;
+import com.akiyama.data.dbservice.BaseController;
 
 /**
  * 通过用户ID查询所有数据的Task
