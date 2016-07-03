@@ -23,8 +23,10 @@ import akiyama.mykeep.base.BaseObserverActivity;
 import com.akiyama.data.dbservice.LabelController;
 import com.akiyama.data.db.model.LabelModel;
 import akiyama.mykeep.event.EventType;
-import akiyama.mykeep.util.LoginHelper;
+
 import com.akiyama.base.utils.StringUtil;
+import com.akiyama.data.utils.LoginHelper;
+
 import akiyama.mykeep.view.SearchLayout;
 import akiyama.mykeep.vo.SearchVo;
 

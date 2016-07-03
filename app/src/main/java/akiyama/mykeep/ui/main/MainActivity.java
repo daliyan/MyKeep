@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.akiyama.data.utils.LoginHelper;
 import com.avos.avoscloud.AVUser;
 import com.facebook.drawee.backends.pipeline.Fresco;
 
@@ -36,7 +37,7 @@ import akiyama.mykeep.event.NotifyInfo;
 import akiyama.mykeep.event.helper.KeepNotifyCenterHelper;
 import akiyama.mykeep.ui.LoginRegActivity;
 import akiyama.mykeep.ui.RecordDetailFragment;
-import akiyama.mykeep.util.LoginHelper;
+
 import com.akiyama.base.utils.Preconditions;
 import akiyama.mykeep.util.SvgHelper;
 import akiyama.mykeep.vo.ViewPivot;

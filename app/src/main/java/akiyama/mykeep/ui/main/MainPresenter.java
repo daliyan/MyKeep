@@ -8,8 +8,9 @@ import com.akiyama.data.db.model.BaseModel;
 import com.akiyama.data.dbservice.LabelController;
 import akiyama.mykeep.preferences.KeepPreferenceUtil;
 import akiyama.mykeep.task.QueryDataByUserDbTask;
-import akiyama.mykeep.util.LoginHelper;
+
 import com.akiyama.base.utils.Preconditions;
+import com.akiyama.data.utils.LoginHelper;
 
 /**
  * Created by aspen on 16/7/3.

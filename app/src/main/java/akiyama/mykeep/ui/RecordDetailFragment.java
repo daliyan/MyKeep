@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.akiyama.base.AppContext;
+import com.akiyama.data.utils.LoginHelper;
 import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.ArrayList;
@@ -43,7 +44,6 @@ import akiyama.mykeep.task.SaveSingleDbTask;
 import akiyama.mykeep.task.UpdateSingleDbTask;
 import akiyama.mykeep.util.DateUtil;
 import com.akiyama.base.utils.LogUtil;
-import akiyama.mykeep.util.LoginHelper;
 import com.akiyama.base.utils.StringUtil;
 import akiyama.mykeep.util.SvgHelper;
 import akiyama.mykeep.view.LabelsLayout;

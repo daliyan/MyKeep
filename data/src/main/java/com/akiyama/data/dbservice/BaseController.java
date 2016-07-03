@@ -7,11 +7,16 @@ import android.net.Uri;
 
 import java.util.List;
 
+import com.akiyama.base.AppContext;
 import com.akiyama.base.utils.LogUtil;
 import com.akiyama.data.db.DataProviderHelper;
 import com.akiyama.data.db.SQLiteHelper;
 import com.akiyama.data.db.model.BaseModel;
 import com.akiyama.data.db.model.IModel;
+import com.squareup.sqlbrite.BriteContentResolver;
+import com.squareup.sqlbrite.SqlBrite;
+
+import rx.schedulers.Schedulers;
 
 /**
  * 提供基本的插入、删除、查询操作
@@ -22,6 +27,11 @@ import com.akiyama.data.db.model.IModel;
 public abstract class BaseController implements IBaseController {
 
     private static final String TAG="BaseController";
+    protected SqlBrite mSqlBrite = SqlBrite.create();
+    protected BriteContentResolver mBriteContentResolver;
+    public BaseController( ){
+        mBriteContentResolver = mSqlBrite.wrapContentProvider(AppContext.getInstance().getContentResolver(), Schedulers.io());
+    }
     @Override
     public int insert(Context context, List<? extends BaseModel> models) {
         if(models==null && models.size()==0){
@@ -51,7 +61,7 @@ public abstract class BaseController implements IBaseController {
         try {
             T model= tClass.newInstance();
             Uri uri= DataProviderHelper.withAppendedId(model.getContentUri(),id);
-            Cursor cursor=context.getContentResolver().query(uri,null,null,null,null);
+            Cursor cursor=mBriteContentResolver.createQuery(uri,null,null,null,null,false);
             if(cursor!=null && cursor.moveToFirst()){
                 if(model!=null){
                     model=tClass.newInstance().getModel(cursor);

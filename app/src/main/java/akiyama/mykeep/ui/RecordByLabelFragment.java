@@ -31,7 +31,8 @@ import akiyama.mykeep.task.QueryByUserDbTask;
 import akiyama.mykeep.task.QueryRecordByLabelTask;
 import akiyama.mykeep.ui.main.MainActivity;
 import com.akiyama.base.utils.LogUtil;
-import akiyama.mykeep.util.LoginHelper;
+import com.akiyama.data.utils.LoginHelper;
+
 import akiyama.mykeep.util.SvgHelper;
 
 /**
