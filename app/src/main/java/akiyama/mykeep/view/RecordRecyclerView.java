@@ -1,18 +1,13 @@
 package akiyama.mykeep.view;
 
 import android.content.Context;
-import android.graphics.Canvas;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -26,7 +21,6 @@ import akiyama.mykeep.adapter.TickAdapter;
 import akiyama.mykeep.adapter.helper.OnStartDragListener;
 import akiyama.mykeep.adapter.helper.RecyclerViewTouchCallback;
 import akiyama.mykeep.common.DbConfig;
-import akiyama.mykeep.util.DimUtil;
 import akiyama.mykeep.util.StringUtil;
 import akiyama.mykeep.util.SvgHelper;
 
@@ -47,8 +41,8 @@ public class RecordRecyclerView extends LinearLayout implements View.OnClickList
     private List<String> mNoTick;//未打勾的列表数据
     private List<String> mTick;//打勾的列表数据
     private RecyclerView mNoTickRlv;
-    private MyLinearLayoutManager mNoTickLayoutManager;
-    private MyLinearLayoutManager mTickLayoutManager;
+    private WrapLinearLayoutManager mNoTickLayoutManager;
+    private WrapLinearLayoutManager mTickLayoutManager;
     private RecyclerView mTickRlv;
     private LinearLayout mAddListLl;
     private ImageView mAddListIv;
@@ -85,8 +79,8 @@ public class RecordRecyclerView extends LinearLayout implements View.OnClickList
         mAddListLl.setOnClickListener(this);
         SvgHelper.setImageDrawable(mAddListIv,R.raw.ic_playlist_add_24px);
 
-        mNoTickLayoutManager = new MyLinearLayoutManager(mNoTickRlv);
-        mTickLayoutManager = new MyLinearLayoutManager(mContext);
+        mNoTickLayoutManager = new WrapLinearLayoutManager(mNoTickRlv);
+        mTickLayoutManager = new WrapLinearLayoutManager(mContext);
 
         mNoTickRlv.setHasFixedSize(true);
         mNoTickRlv.setLayoutManager(mNoTickLayoutManager);

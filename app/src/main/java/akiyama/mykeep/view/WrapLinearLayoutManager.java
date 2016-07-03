@@ -20,7 +20,7 @@ import akiyama.mykeep.BuildConfig;
  * @version 1.0
  * @since 2015-11-10  13:23
  */
-public class MyLinearLayoutManager extends android.support.v7.widget.LinearLayoutManager {
+public class WrapLinearLayoutManager extends android.support.v7.widget.LinearLayoutManager {
 
     private static boolean canMakeInsetsDirty = true;
     private static Field insetsDirtyField = null;
@@ -38,26 +38,26 @@ public class MyLinearLayoutManager extends android.support.v7.widget.LinearLayou
     private final Rect tmpRect = new Rect();
 
     @SuppressWarnings("UnusedDeclaration")
-    public MyLinearLayoutManager(Context context) {
+    public WrapLinearLayoutManager(Context context) {
         super(context);
         this.view = null;
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    public MyLinearLayoutManager(Context context, int orientation, boolean reverseLayout) {
+    public WrapLinearLayoutManager(Context context, int orientation, boolean reverseLayout) {
         super(context, orientation, reverseLayout);
         this.view = null;
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    public MyLinearLayoutManager(RecyclerView view) {
+    public WrapLinearLayoutManager(RecyclerView view) {
         super(view.getContext());
         this.view = view;
         this.overScrollMode = ViewCompat.getOverScrollMode(view);
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    public MyLinearLayoutManager(RecyclerView view, int orientation, boolean reverseLayout) {
+    public WrapLinearLayoutManager(RecyclerView view, int orientation, boolean reverseLayout) {
         super(view.getContext(), orientation, reverseLayout);
         this.view = view;
         this.overScrollMode = ViewCompat.getOverScrollMode(view);
