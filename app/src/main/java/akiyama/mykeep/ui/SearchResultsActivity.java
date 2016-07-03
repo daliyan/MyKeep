@@ -1,4 +1,4 @@
-package akiyama.mykeep.widget;
+package akiyama.mykeep.ui;
 
 import android.app.SearchManager;
 import android.content.Intent;
@@ -7,7 +7,6 @@ import android.view.View;
 
 import akiyama.mykeep.R;
 import akiyama.mykeep.base.BaseActivity;
-import akiyama.mykeep.util.SvgHelper;
 
 /**
  * FIXME

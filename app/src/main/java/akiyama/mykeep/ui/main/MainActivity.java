@@ -1,4 +1,4 @@
-package akiyama.mykeep.widget;
+package akiyama.mykeep.ui.main;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -36,12 +36,16 @@ import akiyama.mykeep.event.NotifyInfo;
 import akiyama.mykeep.event.helper.KeepNotifyCenterHelper;
 import akiyama.mykeep.preferences.KeepPreferenceUtil;
 import akiyama.mykeep.task.QueryByUserDbTask;
+import akiyama.mykeep.ui.LoginRegActivity;
+import akiyama.mykeep.ui.RecordDetailFragment;
 import akiyama.mykeep.util.LoginHelper;
+import akiyama.mykeep.util.Preconditions;
 import akiyama.mykeep.util.SvgHelper;
 import akiyama.mykeep.vo.ViewPivot;
 
 
-public class MainActivity extends BaseObserverActivity implements View.OnClickListener {
+public class MainActivity extends BaseObserverActivity
+        implements View.OnClickListener, MainContract.MainView {
     private static final String TAG="MainActivity";
     /**
      * 当前页面在主页的某个fragment中
@@ -55,17 +59,11 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
      * 长按编辑某条记事本的时候
      */
     public static final int LONG_EDIT_RECORD = 2;
-    /**
-     * 单行视图
-     */
-    private static final int SINGLE_VIEW=1;
-    /**
-     * 多行视图
-     */
-    private static final int MANY_VIEW=2;
 
 
 
+    private MainContract.Presenter mPresenter;
+    private MainPresenter mMainPresenter;
     private DrawerLayout mDrawerDl;//侧滑菜单布局控件
     private ActionBarDrawerToggle mDrawerToggle;
 
@@ -110,13 +108,20 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
     private int mCurrentFragment;
 
     @Override
+    public void setPresenter(MainContract.Presenter presenter) {
+        mPresenter = Preconditions.checkNotNull(presenter);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // 初始化Presenter
+        mMainPresenter = new MainPresenter(this);
+        mPresenter.start();
         Fresco.initialize(mContext);
         setContentView(R.layout.activity_main);
         setDrawer();
         setUserInfo();
-        queryLabeles();
     }
 
     @Override
@@ -268,7 +273,8 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
     /**
      * 从fragment返回可能需要重新绑定Toolbar
      */
-    private void bindMainToolBar(){
+    @Override
+    public void bindMainToolBar(){
         iniToolBar();//因为在fragment中已经绑定过toolbar了，重新绑定toolbar
         setDrawer();//重新监听侧滑菜单
         refreshToolBar(MAIN);
@@ -313,7 +319,8 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
      * 创建主页默认toolbar菜单
      * @param menu
      */
-    private void createMainMenu(Menu menu){
+    @Override
+    public void createMainMenu(Menu menu){
         getMenuInflater().inflate(R.menu.menu_main, menu);
         MenuItem login=menu.findItem(R.id.action_login);
         MenuItem switchView = menu.findItem(R.id.action_switch_view);
@@ -323,7 +330,7 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         }else{
             login.setTitle(getResources().getString(R.string.action_login));
         }
-        if(isSingleView()){
+        if(mPresenter.isSingleView()){
             switchView.setTitle(getResources().getString(R.string.many_view));
         }else {
             switchView.setTitle(getResources().getString(R.string.single_view));
@@ -334,7 +341,8 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
      * 详情页面的toolbar菜单
      * @param menu
      */
-    private void createDetailMenu(Menu menu){
+    @Override
+    public void createDetailMenu(Menu menu){
         getMenuInflater().inflate(R.menu.menu_add_record,menu);
     }
 
@@ -342,7 +350,8 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
      * 长按编辑记事项菜单
      * @param menu
      */
-    private void createLongEditMenu(Menu menu){
+    @Override
+    public void createLongEditMenu(Menu menu){
         getMenuInflater().inflate(R.menu.menu_long_click_edit,menu);
     }
 
@@ -351,11 +360,9 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
      * 详情页面的toolbar菜单跳转
      * @param item
      * @return
-     *
-     *
-     *
      */
-    private boolean setDetailMenuSelect(MenuItem item){
+    @Override
+    public boolean setDetailMenuSelect(MenuItem item){
         int id=item.getItemId();
         switch (id){
             case R.id.action_add_label:
@@ -375,8 +382,8 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         return true;
     }
 
-
-    private boolean setLongEditSelect(MenuItem item){
+    @Override
+    public boolean setLongEditSelect(MenuItem item){
         int id=item.getItemId();
         switch (id){
             case R.id.action_main_delete:
@@ -398,7 +405,8 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
      * @param item
      * @return
      */
-    private boolean setMainMenuSelect(MenuItem item){
+    @Override
+    public boolean setMainMenuSelect(MenuItem item){
         int id = item.getItemId();
         switch (id){
             case R.id.action_login:
@@ -411,11 +419,7 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
                 }
                 break;
             case R.id.action_switch_view:
-                if(isSingleView()){
-                    KeepPreferenceUtil.getInstance(this).setShowViewCount(MANY_VIEW);
-                } else {
-                    KeepPreferenceUtil.getInstance(this).setShowViewCount(SINGLE_VIEW);
-                }
+                mPresenter.switchShowViewModel();
                 supportInvalidateOptionsMenu();
                 KeepNotifyCenterHelper.getInstance().notifySwitchView();
                 break;
@@ -431,13 +435,13 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
         if(eventType.equals(EventType.EVENT_LOGIN)){
             supportInvalidateOptionsMenu();
             mUserNameTv.setText(LoginHelper.getCurrentUser().getUsername());
-            queryLabeles();
+            mPresenter.queryAllLabel();
         }else if(eventType.equals(EventType.EVENT_LOGINOUT)){
             supportInvalidateOptionsMenu();
             mUserNameTv.setText(getResources().getString(R.string.no_login));
-            queryLabeles();
+            mPresenter.queryAllLabel();
         }else if(eventType.equals(EventType.EVENT_CHANGE_LABEL)){
-            queryLabeles();//标签发生改变，刷新标签记录
+            mPresenter.queryAllLabel();//标签发生改变，刷新标签记录
         }
     }
 
@@ -526,12 +530,29 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
     /**
      *  去登录
      */
-    private void goLogin(){
+    @Override
+    public void goLogin(){
         Intent login=new Intent(this,LoginRegActivity.class);
         startActivity(login);
     }
 
-    private void goAddRecordFragment(String recordMode, int recordType){
+    @Override
+    public void refreshUi(List<? extends BaseModel> models) {
+        if(models!=null){
+            mLabelList =(List<LabelModel>) models;
+            mLabelList.add(0,new LabelModel(getString(R.string.all_label), LoginHelper.getCurrentUserId()));
+            mRecordLabelAdapter.refreshList(mLabelList);
+            if(mLabelList.size()==1){
+                mTabLy.setVisibility(View.GONE);
+            }else {
+                mTabLy.setVisibility(View.VISIBLE);
+            }
+            mTabLy.setTabsFromPagerAdapter(mRecordLabelAdapter);
+        }
+    }
+
+    @Override
+    public void goAddRecordFragment(String recordMode, int recordType){
         mCurrentFragment = DETAIL;
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.setCustomAnimations(R.anim.fragment_bottom_enter, R.anim.fragment_bottom_exit,R.anim.fragment_bottom_enter, R.anim.fragment_bottom_exit);
@@ -547,12 +568,12 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
             ft.replace(R.id.detail_ll, mDetailFragment, "mDetailFragment");
             ft.addToBackStack(null);
             ft.commit();
-            //setToolBarTitle("添加记事");
             supportInvalidateOptionsMenu();
         }
 
     }
 
+    @Override
     public void goEditRecordFragment(RecordModel recordModel,View view){
         mCurrentFragment = DETAIL;
         FragmentTransaction ft = getFragmentManager().beginTransaction();
@@ -576,34 +597,4 @@ public class MainActivity extends BaseObserverActivity implements View.OnClickLi
 
     }
 
-
-    /**
-     * 查询当前用户的所有标签
-     */
-    private void queryLabeles(){
-        new QueryByUserDbTask(mContext, mLc,false) {
-            @Override
-            public void queryPostExecute(List<? extends BaseModel> models) {
-                if(models!=null){
-                    mLabelList =(List<LabelModel>) models;
-                    mLabelList.add(0,new LabelModel(getString(R.string.all_label),LoginHelper.getCurrentUserId()));
-                    mRecordLabelAdapter.refreshList(mLabelList);
-                    if(mLabelList.size()==1){
-                        mTabLy.setVisibility(View.GONE);
-                    }else {
-                        mTabLy.setVisibility(View.VISIBLE);
-                    }
-                    mTabLy.setTabsFromPagerAdapter(mRecordLabelAdapter);
-                }
-            }
-        }.execute(LoginHelper.getCurrentUserId());
-    }
-
-
-    private boolean isSingleView(){
-        if(KeepPreferenceUtil.getInstance(this).getShowViewCount()==SINGLE_VIEW){
-            return true;
-        }
-        return false;
-    }
 }

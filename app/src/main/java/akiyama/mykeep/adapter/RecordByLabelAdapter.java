@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import java.util.List;
 
 import akiyama.mykeep.db.model.LabelModel;
-import akiyama.mykeep.widget.RecordByLabelFragment;
+import akiyama.mykeep.ui.RecordByLabelFragment;
 
 /**
  * 主页标签ViewPager适配器

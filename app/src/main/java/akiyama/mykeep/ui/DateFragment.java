@@ -1,4 +1,4 @@
-package akiyama.mykeep.widget;
+package akiyama.mykeep.ui;
 
 import android.app.DialogFragment;
 import android.content.Context;
