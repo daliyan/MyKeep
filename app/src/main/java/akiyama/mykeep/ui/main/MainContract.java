@@ -84,6 +84,7 @@ public interface MainContract {
     }
 
     interface Presenter extends BasePresenter{
+
         /**
          * 查询所有存在的标签
          */

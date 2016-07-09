@@ -439,9 +439,9 @@ public class MainActivity extends BaseObserverActivity
             supportInvalidateOptionsMenu();
             mUserNameTv.setText(getResources().getString(R.string.no_login));
             mPresenter.queryAllLabel();
-        }else if(eventType.equals(EventType.EVENT_CHANGE_LABEL)){
+        }/*else if(eventType.equals(EventType.EVENT_CHANGE_LABEL)){
             mPresenter.queryAllLabel();//标签发生改变，刷新标签记录
-        }
+        }*/
     }
 
     @Override

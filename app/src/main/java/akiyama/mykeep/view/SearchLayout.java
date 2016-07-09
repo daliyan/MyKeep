@@ -65,7 +65,7 @@ public class SearchLayout extends LinearLayout{
             @Override
             public void onClick(View v) {
                 if(mCreatLabelClickEvent!=null){
-                    mCreatLabelClickEvent.setCreatLabelClickEvent();//绑定mCreatLayout事件
+                    mCreatLabelClickEvent.setCreateLabelClickEvent();//绑定mCreatLayout事件
                 }
             }
         });
@@ -121,7 +121,7 @@ public class SearchLayout extends LinearLayout{
      * 一些item的事件接口
      */
     public interface CreatLabelClickEvent{
-        public void setCreatLabelClickEvent();//单击事件
+        public void setCreateLabelClickEvent();//单击事件
     }
 
 

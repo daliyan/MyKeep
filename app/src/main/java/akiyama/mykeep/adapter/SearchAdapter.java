@@ -36,7 +36,7 @@ public class SearchAdapter extends RecyclerViewAdapter<SearchAdapter.ViewHolder>
     private ArrayList<SearchVo> mSearchVoList;
     private ArrayList<SearchVo> mSearchFilterList = new ArrayList<>();
     private Context mContext;
-
+    private OnMenuOption mOnMenuOption;
     public SearchAdapter(Context context,ArrayList<SearchVo> searchVoList){
         this.mContext=context;
         this.mSearchVoList=searchVoList;
@@ -116,7 +116,10 @@ public class SearchAdapter extends RecyclerViewAdapter<SearchAdapter.ViewHolder>
             public void swipeMenuClickEvent(int swipePosition) {
                 switch (swipePosition){
                     case DELETE_LABEL:
-                        final LabelController labelController=new LabelController();
+                        if(mOnMenuOption!=null){
+                            mOnMenuOption.deleteLabel(position);
+                        }
+                        /*final LabelController labelController=new LabelController();
                         //直接在主线程中删除
                         boolean isDelete=labelController.deleteLabelByName(mContext,mSearchVoList.get(position).getName());
                         if(isDelete){
@@ -125,13 +128,28 @@ public class SearchAdapter extends RecyclerViewAdapter<SearchAdapter.ViewHolder>
                             KeepNotifyCenterHelper.getInstance().notifyLabelChange();
                         }else {
                             Toast.makeText(mContext,"删除失败，请重试！",Toast.LENGTH_SHORT).show();
-                        }
+                        }*/
                         break;
                     case EDIT_LABEL:
+                        if(mOnMenuOption!=null){
+                            mOnMenuOption.editLabel(position);
+                        }
+                        break;
+                    default:
                         break;
                 }
             }
         });
+    }
+
+    /**
+     * 移除删除项目
+     * @param position
+     */
+    public void removeItem(int position){
+        notifyItemRemoved(position);
+        mSearchVoList.remove(mSearchVoList.get(position));
+        KeepNotifyCenterHelper.getInstance().notifyLabelChange();
     }
 
     @Override
@@ -169,4 +187,13 @@ public class SearchAdapter extends RecyclerViewAdapter<SearchAdapter.ViewHolder>
            return mView;
        }
    }
+
+    public void setOnMenuOption(OnMenuOption onMenuOption) {
+        mOnMenuOption = onMenuOption;
+    }
+
+    public interface OnMenuOption{
+        void deleteLabel(int position);
+        void editLabel(int position);
+    }
 }

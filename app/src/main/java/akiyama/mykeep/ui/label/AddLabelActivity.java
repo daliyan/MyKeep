@@ -1,4 +1,4 @@
-package akiyama.mykeep.ui;
+package akiyama.mykeep.ui.label;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -36,7 +36,8 @@ import akiyama.mykeep.vo.SearchVo;
  * @version 1.0
  * @since 2015-07-15  17:22
  */
-public class AddLabelActivity extends BaseObserverActivity implements SearchLayout.CreatLabelClickEvent,TextWatcher{
+public class AddLabelActivity extends BaseObserverActivity implements SearchLayout.CreatLabelClickEvent,TextWatcher,
+        LabelContract.LabelView,SearchAdapter.OnMenuOption{
     //选定的Label标签，从上一个界面传递过来的,一般在编辑记录标签的时候会触发
     public static final String KEY_EXTRA_SELECT_LABEL="extra_select_label";
     //传递选择后的结果给其它界面
@@ -46,10 +47,13 @@ public class AddLabelActivity extends BaseObserverActivity implements SearchLayo
     private ArrayList<SearchVo> mSearchList;
     private ArrayList<SearchVo> mSelectLabels;//已经选定的Label标签
     private String mLabels;
+    private LabelContract.LabelPresenter mLabelPresenter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mLabelPresenter = new LabelPresenter(this);
         setContentView(R.layout.activity_add_label);
+        mLabelPresenter.start();
     }
 
     @Override
@@ -74,12 +78,18 @@ public class AddLabelActivity extends BaseObserverActivity implements SearchLayo
         mSearchList = new ArrayList<>();
         mSelectLabels =new ArrayList<>();
         initSelectLabel();
-        queryLabelFromDb();
         mSearchAdapter =new SearchAdapter(mContext,mSearchList);
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        mLabelPresenter.unsubscribe();
+    }
+
+    @Override
     protected void setOnClick() {
+        mSearchAdapter.setOnMenuOption(this);
         mSearchSly.setCreatLabelClickEvent(this);
         mSearchSly.setInputChangeListener(this);
         mSearchSly.setAdpter(mSearchAdapter);
@@ -123,7 +133,7 @@ public class AddLabelActivity extends BaseObserverActivity implements SearchLayo
     }
 
     @Override
-    public void setCreatLabelClickEvent() {
+    public void setCreateLabelClickEvent() {
         saveLabelToDb();
     }
 
@@ -161,50 +171,19 @@ public class AddLabelActivity extends BaseObserverActivity implements SearchLayo
         labelModel.setCreateTime(String.valueOf(Calendar.getInstance().getTimeInMillis()));
         labelModel.setUpdateTime(String.valueOf(Calendar.getInstance().getTimeInMillis()));
         labelModel.setUserId(LoginHelper.getCurrentUserId());
-        new SaveSingleDbTask(mContext,labelController,false){
-            @Override
-            public void savePostExecute(Boolean aBoolean) {
-                if(aBoolean){
-                    mSearchList.add(new SearchVo(mSearchSly.getSearchText(),true));//保存成功后直接添加一个项目到列表中，无需重新刷新
-                    mSearchSly.setSearchText("");
-                    InputMethodManager imm=(InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(mSearchSly.getWindowToken(), 0);
-                    KeepNotifyCenterHelper.getInstance().notifyLabelChange();
-                }
-
-            }
-        }.execute(labelModel);
+        mLabelPresenter.addLabel(labelModel);
     }
 
-    /**
-     * 查询标签操作
-     */
-   private void queryLabelFromDb(){
-       final LabelController labelController=new LabelController();
-       new QueryByUserDbTask(mContext,labelController,false){
-
-           @Override
-           public void queryPostExecute(List<? extends BaseModel> models) {
-                if(models!=null && models.size()>0){
-                    List<LabelModel> labelModels=(ArrayList<LabelModel>) models;
-                    if(labelModels==null){
-                        return;
-                    }
-
-                    if(mSearchList!=null && mSearchList.size()>0){
-                        mSearchList.clear();
-                    }
-
-                    switchListToVo(labelModels);
-                    if(mSelectLabels!=null){
-                        addSelectVoList();
-                    }
-                    mSearchAdapter.refreshDate(mSearchList);
-                }
-           }
-
-       }.execute(LoginHelper.getCurrentUserId());
-   }
+    @Override
+    public void refreshUi(boolean isAddSuccess) {
+        if(isAddSuccess){
+            mSearchList.add(new SearchVo(mSearchSly.getSearchText(),true));//保存成功后直接添加一个项目到列表中，无需重新刷新
+            mSearchSly.setSearchText("");
+            InputMethodManager imm=(InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(mSearchSly.getWindowToken(), 0);
+            //KeepNotifyCenterHelper.getInstance().notifyLabelChange();
+        }
+    }
 
     /**
      * 将LabelModel list数据转换成SearchVo的适配器数据
@@ -212,7 +191,7 @@ public class AddLabelActivity extends BaseObserverActivity implements SearchLayo
      */
     private void switchListToVo(List<LabelModel> labelModelList){
         for(int i=0;i<labelModelList.size();i++){
-            mSearchList.add(new SearchVo(labelModelList.get(i).getName(),false));
+            mSearchList.add(new SearchVo(labelModelList.get(i).getId(),labelModelList.get(i).getName(),false));
         }
     }
 
@@ -223,7 +202,7 @@ public class AddLabelActivity extends BaseObserverActivity implements SearchLayo
         for(int i=0;i<mSelectLabels.size();i++){
             for(int j=0;j<mSearchList.size();j++){
                 if(mSearchList.get(j).getName().equals(mSelectLabels.get(i).getName())){
-                    mSearchList.set(j,new SearchVo(mSelectLabels.get(i).getName(),true));
+                    mSearchList.set(j,new SearchVo(mSelectLabels.get(i).getId(),mSelectLabels.get(i).getName(),true));
                     break;
                 }
             }
@@ -258,4 +237,38 @@ public class AddLabelActivity extends BaseObserverActivity implements SearchLayo
         }
     }
 
+    @Override
+    public void setPresenter(LabelContract.LabelPresenter presenter) {
+
+    }
+
+    @Override
+    public void loadLabelUi(List<? extends BaseModel> models) {
+        if(models!=null && models.size()>0){
+            List<LabelModel> labelModels=(ArrayList<LabelModel>) models;
+            if(labelModels==null){
+                return;
+            }
+
+            if(mSearchList!=null && mSearchList.size()>0){
+                mSearchList.clear();
+            }
+
+            switchListToVo(labelModels);
+            if(mSelectLabels!=null){
+                addSelectVoList();
+            }
+            mSearchAdapter.refreshDate(mSearchList);
+        }
+    }
+
+    @Override
+    public void deleteLabel(int position) {
+        //mLabelPresenter.deleteLabel(mSearchList.get(position).getName());
+    }
+
+    @Override
+    public void editLabel(int position) {
+
+    }
 }

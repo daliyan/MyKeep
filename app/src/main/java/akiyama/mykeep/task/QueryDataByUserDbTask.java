@@ -25,9 +25,9 @@ public abstract class QueryDataByUserDbTask extends AsyncTask<String,Void,List<?
     @Override
     protected List<? extends BaseModel> doInBackground(String... params) {
         List<? extends BaseModel> models=new ArrayList<BaseModel>();
-        if(params[0]!=null){
+        /*if(params[0]!=null){
             models=mBaseController.getDbByUserId(AppContext.getInstance(), params[0]);
-        }
+        }*/
         return models;
     }
 

@@ -6,6 +6,8 @@ import java.util.List;
 
 import com.akiyama.data.db.model.BaseModel;
 
+import rx.Observable;
+
 /**
  * Created by Administrator on 2015/12/27.
  */
@@ -18,7 +20,7 @@ public class ImageController extends BaseController implements IImageController{
      * @return
      */
     @Override
-    public List<? extends BaseModel> getDbByUserId(Context context, String userId) {
+    public Observable<List<BaseModel>> getDbByUserId(Context context, String userId) {
         return null;
     }
 }

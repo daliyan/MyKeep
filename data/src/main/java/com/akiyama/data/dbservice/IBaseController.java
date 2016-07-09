@@ -8,6 +8,8 @@ import java.util.List;
 import com.akiyama.data.db.model.BaseModel;
 import com.akiyama.data.db.model.IModel;
 
+import rx.Observable;
+
 /**
  *
  * @author zhiwu_yan
@@ -39,7 +41,7 @@ public interface IBaseController {
      * @param <T>
      * @return
      */
-    public <T extends BaseModel> T query(Context context, String id,Class<T> tClass);
+    public Observable<BaseModel> query(Context context, String id, Class<BaseModel> tClass);
 
     /**
      * 通过ID删除数据

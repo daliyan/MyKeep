@@ -33,7 +33,7 @@
         <activity android:name="akiyama.mykeep.ui.LoginRegActivity"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.AddLabelActivity"
+        <activity android:name=".ui.label.AddLabelActivity"
             android:screenOrientation="portrait"/>
 
         <activity android:name="akiyama.mykeep.ui.SearchResultsActivity">

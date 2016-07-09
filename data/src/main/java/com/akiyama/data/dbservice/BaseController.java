@@ -14,8 +14,12 @@ import com.akiyama.data.db.SQLiteHelper;
 import com.akiyama.data.db.model.BaseModel;
 import com.akiyama.data.db.model.IModel;
 import com.squareup.sqlbrite.BriteContentResolver;
+import com.squareup.sqlbrite.BriteDatabase;
 import com.squareup.sqlbrite.SqlBrite;
 
+import rx.Observable;
+import rx.functions.Func1;
+import rx.functions.Func2;
 import rx.schedulers.Schedulers;
 
 /**
@@ -27,10 +31,21 @@ import rx.schedulers.Schedulers;
 public abstract class BaseController implements IBaseController {
 
     private static final String TAG="BaseController";
-    protected SqlBrite mSqlBrite = SqlBrite.create();
     protected BriteContentResolver mBriteContentResolver;
-    public BaseController( ){
-        mBriteContentResolver = mSqlBrite.wrapContentProvider(AppContext.getInstance().getContentResolver(), Schedulers.io());
+    private Func1<Cursor, BaseModel> mBaseModeFunction;
+    private final BriteDatabase mDatabaseHelper;
+    private BaseModel mModel;
+    public BaseController(){
+        SQLiteHelper sqLiteHelper = new SQLiteHelper(AppContext.getInstance());
+        SqlBrite sqlBrite = SqlBrite.create();
+        mDatabaseHelper = sqlBrite.wrapDatabaseHelper(sqLiteHelper, Schedulers.io());
+        mBriteContentResolver = sqlBrite.wrapContentProvider(AppContext.getInstance().getContentResolver(), Schedulers.io());
+        mBaseModeFunction = new Func1<Cursor,BaseModel>() {
+            @Override
+            public BaseModel call(Cursor cursor) {
+                return mModel.getModel(cursor);
+            }
+        };
     }
     @Override
     public int insert(Context context, List<? extends BaseModel> models) {
@@ -56,18 +71,16 @@ public abstract class BaseController implements IBaseController {
         return null;
     }
 
+
     @Override
-    public <T extends BaseModel> T query(Context context, String id, Class<T> tClass) {
+    public Observable<BaseModel> query(Context context, String id, Class<BaseModel> tClass) {
         try {
-            T model= tClass.newInstance();
-            Uri uri= DataProviderHelper.withAppendedId(model.getContentUri(),id);
-            Cursor cursor=mBriteContentResolver.createQuery(uri,null,null,null,null,false);
-            if(cursor!=null && cursor.moveToFirst()){
-                if(model!=null){
-                    model=tClass.newInstance().getModel(cursor);
-                    cursor.close();
-                    return model;
-                }
+            mModel= tClass.newInstance();
+            if(mModel instanceof BaseModel){
+                Uri uri= DataProviderHelper.withAppendedId((mModel.getContentUri()),id);
+                return mBriteContentResolver
+                        .createQuery(uri,null,null,null,null,false)
+                        .mapToOne(mBaseModeFunction);
             }
         } catch (InstantiationException e) {
             LogUtil.e(TAG,"cause:"+e.getCause());
@@ -129,5 +142,5 @@ public abstract class BaseController implements IBaseController {
      * 通过对应的用户ID获取对应的数据
      * @return
      */
-    public abstract List<? extends BaseModel> getDbByUserId(Context context, String userId);
+    public abstract Observable<List<BaseModel>> getDbByUserId(Context context, String userId);
 }

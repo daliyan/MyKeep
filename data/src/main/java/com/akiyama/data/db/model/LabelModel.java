@@ -6,7 +6,10 @@ import android.net.Uri;
 import android.os.Parcel;
 
 import com.akiyama.base.common.DbConfig;
+import com.akiyama.data.db.DataProvider;
 import com.akiyama.data.db.DataProviderHelper;
+
+import java.util.UUID;
 
 /**
  * FIXME
@@ -16,14 +19,16 @@ import com.akiyama.data.db.DataProviderHelper;
  * @since 2015-07-10  15:13
  */
 public class LabelModel extends BaseModel{
+    private String labelId;
     private String name;
     private String userId;
 
     public LabelModel(){
-
+        labelId = UUID.randomUUID().toString();
     }
 
     public LabelModel(String name,String userId){
+        labelId = UUID.randomUUID().toString();
         this.name = name;
         this.userId =userId;
     }
@@ -37,6 +42,7 @@ public class LabelModel extends BaseModel{
     @Override
     public ContentValues values() {
         ContentValues cv=convert();
+        cv.put(LabelCoumnls.LABEL_ID,labelId);
         cv.put(LabelCoumnls.NAME,name);
         cv.put(RecordColumns.USERID,userId);
         return cv;
@@ -61,6 +67,7 @@ public class LabelModel extends BaseModel{
         lm.id= DataProviderHelper.parseString(cursor, BaseColumns._ID);
         lm.updateTime=DataProviderHelper.parseString(cursor,BaseColumns.UPDATEAT);
         lm.createTime =DataProviderHelper.parseString(cursor,BaseColumns.CREATAT);
+        lm.labelId = DataProviderHelper.parseString(cursor,LabelCoumnls.LABEL_ID);
         lm.name= DataProviderHelper.parseString(cursor,LabelCoumnls.NAME);
         lm.userId=DataProviderHelper.parseString(cursor,LabelCoumnls.USERID);
         return lm;
@@ -102,6 +109,7 @@ public class LabelModel extends BaseModel{
         return userId;
     }
 
-
-
+    public String getLabelId() {
+        return labelId;
+    }
 }

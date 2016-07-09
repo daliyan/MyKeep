@@ -16,10 +16,10 @@
             android:orientation="vertical">
 
             <android.support.design.widget.TabLayout
+                style="@style/TabLayout"
                 android:id="@+id/pager_strip_tsv"
                 android:layout_width="match_parent"
-                android:layout_height="43dip"
-                style="@style/TabLayout" />
+                android:layout_height="43dip" />
 
             <FrameLayout
                 android:layout_width="match_parent"

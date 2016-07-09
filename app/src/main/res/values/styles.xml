@@ -36,6 +36,7 @@
         <item name="tabIndicatorHeight">3dp</item>
         <item name="tabPaddingStart">12dp</item>
         <item name="tabPaddingEnd">12dp</item>
+        <item name="tabMode">scrollable</item>
         <item name="android:background">@color/main_bg</item>
         <item name="tabTextAppearance">@style/TabTextAppearance</item>
         <item name="tabSelectedTextColor">@color/white</item>
