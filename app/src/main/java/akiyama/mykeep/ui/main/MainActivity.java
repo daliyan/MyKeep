@@ -1,5 +1,6 @@
 package akiyama.mykeep.ui.main;
 
+import android.annotation.SuppressLint;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
@@ -26,16 +27,13 @@ import akiyama.mykeep.R;
 import akiyama.mykeep.adapter.RecordByLabelAdapter;
 import akiyama.mykeep.base.BaseObserverActivity;
 import akiyama.mykeep.common.StatusMode;
-import akiyama.mykeep.dbservice.LabelController;
 import akiyama.mykeep.db.model.BaseModel;
 import akiyama.mykeep.db.model.LabelModel;
 import akiyama.mykeep.db.model.RecordModel;
+import akiyama.mykeep.dbservice.LabelController;
 import akiyama.mykeep.event.EventType;
 import akiyama.mykeep.event.NotifyInfo;
-
 import akiyama.mykeep.event.helper.KeepNotifyCenterHelper;
-import akiyama.mykeep.preferences.KeepPreferenceUtil;
-import akiyama.mykeep.task.QueryByUserDbTask;
 import akiyama.mykeep.ui.LoginRegActivity;
 import akiyama.mykeep.ui.RecordDetailFragment;
 import akiyama.mykeep.util.LoginHelper;
@@ -551,6 +549,7 @@ public class MainActivity extends BaseObserverActivity
         }
     }
 
+    @SuppressLint("ResourceType")
     @Override
     public void goAddRecordFragment(String recordMode, int recordType){
         mCurrentFragment = DETAIL;
@@ -573,6 +572,7 @@ public class MainActivity extends BaseObserverActivity
 
     }
 
+    @SuppressLint("ResourceType")
     @Override
     public void goEditRecordFragment(RecordModel recordModel,View view){
         mCurrentFragment = DETAIL;
